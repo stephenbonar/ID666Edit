@@ -1,0 +1,3 @@
+[submodule "LibCppBinary"]
+	path = LibCppBinary
+	url = https://github.com/stephenbonar/LibCppBinary
