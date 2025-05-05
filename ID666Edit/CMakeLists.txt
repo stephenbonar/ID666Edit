@@ -14,7 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(SOURCES main.cpp)
+set(SOURCES 
+    main.cpp
+    SpcHeader.cpp)
 
 set(INCLUDES ${PROJECT_SOURCE_DIR}/LibCppBinary/LibCppBinary)
 

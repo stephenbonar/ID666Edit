@@ -16,20 +16,32 @@
 
 #include <iostream>
 #include <iomanip>
-#include "StringField.h"
-#include "RawField.h"
-#include "IntField.h"
+#include "DataField.h"
 #include "RawFileStream.h"
+#include "SpcHeader.h"
 
-void PrintField(std::string label, std::string value)
+void PrintField(std::string label, Binary::DataField* field)
 {
     std::cout << std::setw(20) << std::left << label << ": "
-              << value << std::endl;
+              << field->ToString() << std::endl;
 }
 
-void PrintRawField(std::string label, Binary::DataField* field)
+void PrintHeader(SpcHeader& header)
 {
-    PrintField(label, field->ToString(Binary::StringFormat::Hex));
+    PrintField("SPC Header ID", &header.ID);
+    PrintField("Separator", &header.separator);
+    PrintField("Contains Tag", &header.containsTag);
+    PrintField("Version Minor", &header.versionMinor);
+    
+    std::cout << std::endl;
+
+    PrintField("PC Register", &header.pcRegister);
+    PrintField("A Register", &header.aRegister);
+    PrintField("X Register", &header.xRegister);
+    PrintField("Y Register", &header.yRegister);
+    PrintField("PSW Register", &header.pswRegister);
+    PrintField("SP (lower byte)", &header.spRegister);
+    PrintField("Reserved", &header.reserved);
 }
 
 int main(int, char**)
@@ -37,53 +49,17 @@ int main(int, char**)
     std::cout << "ID666Edit v0.1" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 
-    Binary::StringField headerID{ 33 };
-    Binary::RawField separator{ 2 };
-    Binary::UInt8Field containsTag;
-    Binary::UInt8Field versionMinor;
-
-    Binary::RawField pcRegister{ 2 };
-    Binary::RawField aRegister{ 1 };
-    Binary::RawField xRegister{ 1 };
-    Binary::RawField yRegister{ 1 };
-    Binary::RawField pswRegister{ 1 };
-    Binary::RawField spRegister{ 1 };
-    Binary::RawField reserved{ 1 };
-
     Binary::RawFileStream fileStream{ "test.spc" };
     fileStream.Open(Binary::FileMode::Read);
 
     if (fileStream.IsOpen())
     {
         std::cout << "File opened successfully." << std::endl << std::endl;
-        
-        fileStream.Read(&headerID);
-        fileStream.Read(&separator);
-        fileStream.Read(&containsTag);
-        fileStream.Read(&versionMinor);
-        fileStream.Read(&pcRegister);
-        fileStream.Read(&aRegister);
-        fileStream.Read(&xRegister);
-        fileStream.Read(&yRegister);
-        fileStream.Read(&pswRegister);
-        fileStream.Read(&spRegister);
-        fileStream.Read(&reserved);
+
+        SpcHeader header;
+        fileStream.Read(&header);
         fileStream.Close();
-
-        PrintField("SPC Header ID", headerID.Value());
-        PrintRawField("Separator", &separator);
-        PrintField("Contains Tag", std::to_string(containsTag.Value()));
-        PrintField("Version Minor", std::to_string(versionMinor.Value()));
-        
-        std::cout << std::endl;
-
-        PrintRawField("PC Register", &pcRegister);
-        PrintRawField("A Register", &aRegister);
-        PrintRawField("X Register", &xRegister);
-        PrintRawField("Y Register", &yRegister);
-        PrintRawField("PSW Register", &pswRegister);
-        PrintRawField("SP (lower byte)", &spRegister);
-        PrintRawField("Reserved", &reserved);
+        PrintHeader(header);
     }
     else
     {
