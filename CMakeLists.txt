@@ -30,6 +30,8 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_subdirectory(LibCppBinary)
+add_subdirectory(libs/LibCppBinary)
 
-add_subdirectory(ID666Edit)
+add_subdirectory(libs/LibCppCmdLine)
+
+add_subdirectory(src)

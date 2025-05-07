@@ -1,3 +1,6 @@
-[submodule "LibCppBinary"]
-	path = LibCppBinary
+[submodule "libs/LibCppCmdLine"]
+	path = libs/LibCppCmdLine
+	url = https://github.com/stephenbonar/LibCppCmdLine/
+[submodule "libs/LibCppBinary"]
+	path = libs/LibCppBinary
 	url = https://github.com/stephenbonar/LibCppBinary

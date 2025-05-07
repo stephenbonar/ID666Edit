@@ -16,11 +16,15 @@
 
 set(SOURCES 
     main.cpp
-    SpcHeader.cpp)
+    SpcHeader.cpp
+    ID666BinaryTag.cpp
+    ID666TextTag.cpp
+    SpcFile.cpp)
 
-set(INCLUDES ${PROJECT_SOURCE_DIR}/LibCppBinary/LibCppBinary)
+set(INCLUDES 
+    ${PROJECT_SOURCE_DIR}/include)
 
-set(LIBRARIES LibCppBinary)
+set(LIBRARIES LibCppBinary LibCppCmdLine)
 
 add_executable(id666edit ${SOURCES})
 
