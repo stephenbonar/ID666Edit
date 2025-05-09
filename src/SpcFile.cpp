@@ -23,8 +23,11 @@ void SpcFile::Open()
 
 bool SpcFile::HeaderContainsTag()
 {
+    uintmax_t previousPosition = stream.Position();
+    stream.SetPosition(0);
     SpcHeader header;
     Read(&header);
+    stream.SetPosition(previousPosition);
 
     if (header.containsTag.Value() == headerContainsTag)
         return true;
@@ -57,26 +60,46 @@ bool SpcFile::HasBinaryTag()
     return false;
 }
 
+bool SpcFile::HasExtendedTag()
+{
+    if (stream.FileSize() > 0x10200)
+    {
+        uintmax_t previousPosition = stream.Position();
+        stream.SetPosition(0x10200);
+        std::shared_ptr<Binary::ChunkHeader> headerPtr 
+            = stream.FindNextChunk("xid6");
+        stream.SetPosition(previousPosition);
+
+        if (headerPtr == nullptr)
+            return false;
+
+        return true;
+    }
+
+    return false;
+}
+
+void SpcFile::SeekExtendedTag()
+{
+    stream.SetPosition(0x10200);
+}
+
 void SpcFile::Read(SpcHeader* header)
 {
-    uintmax_t previousPosition = stream.Position();
-    stream.SetPosition(0);
     stream.Read(header);
-    stream.SetPosition(previousPosition);
 }
 
 void SpcFile::Read(ID666TextTag* tag)
 {
-    uintmax_t previousPosition = stream.Position();
-    stream.SetPosition(0x2E);
     stream.Read(tag);
-    stream.SetPosition(previousPosition);
 }
 
 void SpcFile::Read(ID666BinaryTag* tag)
 {
-    uintmax_t previousPosition = stream.Position();
-    stream.SetPosition(0x2E);
     stream.Read(tag);
-    stream.SetPosition(previousPosition);
+}
+
+void SpcFile::Read(Binary::ChunkHeader* header)
+{
+    stream.Read(header);
 }

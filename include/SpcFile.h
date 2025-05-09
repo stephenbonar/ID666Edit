@@ -41,9 +41,15 @@ public:
 
     void Read(ID666BinaryTag* tag);
 
+    void Read(Binary::ChunkHeader* header);
+
+    void SeekExtendedTag();
+
     bool HeaderContainsTag();
 
     bool HasBinaryTag();
+
+    bool HasExtendedTag();
 private:
     Binary::RawFileStream stream;
 };

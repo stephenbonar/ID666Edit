@@ -19,8 +19,9 @@
 
 #include "DataStructure.h"
 #include "StringField.h"
+#include "SpcStruct.h"
 
-struct ID666TextTag : public Binary::DataStructure
+struct ID666TextTag : public SpcStruct
 {
     Binary::StringField songTitle{ 32 };
     Binary::StringField gameTitle{ 32 };
@@ -34,9 +35,12 @@ struct ID666TextTag : public Binary::DataStructure
     Binary::StringField emulatorUsed{ 1 };
     Binary::RawField reserved{ 45 };
 
-    std::vector<Binary::DataField*> Fields() override;
+    ID666TextTag();
 
-    size_t Size() const override;
+    std::vector<std::pair<std::string, Binary::DataField*>> 
+        LabeledFields() const override { return labeledFields; }
+private:
+    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields;
 };
 
 #endif

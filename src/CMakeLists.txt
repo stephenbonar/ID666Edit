@@ -16,10 +16,14 @@
 
 set(SOURCES 
     main.cpp
+    Program.cpp
     SpcHeader.cpp
     ID666BinaryTag.cpp
     ID666TextTag.cpp
-    SpcFile.cpp)
+    SpcFile.cpp
+    SpcFormat.cpp
+    SpcStruct.cpp
+    SpcHeader.cpp)
 
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)

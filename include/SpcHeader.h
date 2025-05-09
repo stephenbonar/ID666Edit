@@ -18,12 +18,12 @@
 #define SPC_HEADER_H
 
 #include <vector>
-#include "DataStructure.h"
 #include "StringField.h"
 #include "RawField.h"
 #include "IntField.h"
+#include "SpcStruct.h"
 
-struct SpcHeader : public Binary::DataStructure
+struct SpcHeader : public SpcStruct
 {
     Binary::StringField ID{ 33 };
     Binary::RawField separator{ 2 };
@@ -35,11 +35,14 @@ struct SpcHeader : public Binary::DataStructure
     Binary::RawField yRegister{ 1 };
     Binary::RawField pswRegister{ 1 };
     Binary::RawField spRegister{ 1 };
-    Binary::RawField reserved{ 1 };
+    Binary::RawField reserved{ 2 };
 
-    std::vector<Binary::DataField*> Fields() override;
+    SpcHeader();
 
-    size_t Size() const override;
+    std::vector<std::pair<std::string, Binary::DataField*>> 
+        LabeledFields() const override { return labeledFields; }
+private:
+    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields;
 };
 
 #endif

@@ -16,36 +16,18 @@
 
 #include "ID666TextTag.h"
 
-std::vector<Binary::DataField*> ID666TextTag::Fields()
+ID666TextTag::ID666TextTag()
 {
-    std::vector<Binary::DataField*> fields;
-    fields.push_back(&songTitle);
-    fields.push_back(&gameTitle);
-    fields.push_back(&dumperName);
-    fields.push_back(&comments);
-    fields.push_back(&dateDumped);
-    fields.push_back(&songLength);
-    fields.push_back(&fadeLength);
-    fields.push_back(&songArtist);
-    fields.push_back(&defaultChannelDisables);
-    fields.push_back(&emulatorUsed);
-    fields.push_back(&reserved);
-    return fields;
-}
-
-size_t ID666TextTag::Size() const
-{
-    size_t size{ 0 };
-    size += songTitle.Size();
-    size += gameTitle.Size();
-    size += dumperName.Size();
-    size += comments.Size();
-    size += dateDumped.Size();
-    size += songLength.Size();
-    size += fadeLength.Size();
-    size += songArtist.Size();
-    size += defaultChannelDisables.Size();
-    size += emulatorUsed.Size();
-    size += reserved.Size();
-    return size;
+    labeledFields.push_back({ "Song Title", &songTitle });
+    labeledFields.push_back({ "Game Title", &gameTitle });
+    labeledFields.push_back({ "Dumper", &dumperName });
+    labeledFields.push_back({ "Comments", &comments });
+    labeledFields.push_back({ "Date Dumped", &dateDumped });
+    labeledFields.push_back({ "Song Length (Sec)", &songLength });
+    labeledFields.push_back({ "Fade Length (MS)", &fadeLength });
+    labeledFields.push_back({ "Song Artist", &songArtist });
+    labeledFields.push_back({ "Default Channel Disables", 
+        &defaultChannelDisables });
+    labeledFields.push_back({ "Emulator Used", &emulatorUsed });
+    labeledFields.push_back({ "Reserved", &reserved });
 }

@@ -16,36 +16,17 @@
 
 #include "SpcHeader.h"
 
-std::vector<Binary::DataField*> SpcHeader::Fields()
+SpcHeader::SpcHeader()
 {
-    std::vector<Binary::DataField*> fields;
-    fields.push_back(&ID);
-    fields.push_back(&separator);
-    fields.push_back(&containsTag);
-    fields.push_back(&versionMinor);
-    fields.push_back(&pcRegister);
-    fields.push_back(&aRegister);
-    fields.push_back(&xRegister);
-    fields.push_back(&yRegister);
-    fields.push_back(&pswRegister);
-    fields.push_back(&spRegister);
-    fields.push_back(&reserved);
-    return fields;
-}
-
-size_t SpcHeader::Size() const
-{
-    size_t size{ 0 };
-    size += ID.Size();
-    size += separator.Size();
-    size += containsTag.Size();
-    size += versionMinor.Size();
-    size += pcRegister.Size();
-    size += aRegister.Size();
-    size += xRegister.Size();
-    size += yRegister.Size();
-    size += pswRegister.Size();
-    size += spRegister.Size();
-    size += reserved.Size();
-    return size;
+    labeledFields.push_back({ "SPC Header ID", &ID });
+    labeledFields.push_back({ "Separator", &separator });
+    labeledFields.push_back({ "Contains Tag", &containsTag });
+    labeledFields.push_back({ "Version Minor", &versionMinor });
+    labeledFields.push_back({ "PC Register", &pcRegister });
+    labeledFields.push_back({ "A Register", &aRegister });
+    labeledFields.push_back({ "X Register", &xRegister });
+    labeledFields.push_back({ "Y Register", &yRegister });
+    labeledFields.push_back({ "PSW Register", &pswRegister });
+    labeledFields.push_back({ "SP Register", &spRegister });
+    labeledFields.push_back({ "Reserved", &reserved });
 }
