@@ -29,6 +29,7 @@
 #include "SpcHeader.h"
 #include "SpcFile.h"
 #include "SpcFormat.h"
+#include "ExtendedID666Item.h"
 
 class Program
 {
@@ -45,7 +46,13 @@ private:
     int SelectMode();
     int PrintSpcFile();
     void PrintTextTag(SpcFile& file);
+    void PrintBinaryTag(SpcFile& file);
     void PrintExtendedTag(SpcFile& file);
+    void PrintExtendedItem(ExtendedID666Item& item);
+    void PrintExtendedItem(ExtendedID666Item& item, 
+        Binary::StringField& field);
+    void PrintExtendedItem(ExtendedID666Item& item, 
+        Binary::UInt32Field& field);
 };
 
 #endif

@@ -17,20 +17,20 @@
 #ifndef ID666_BINARY_TAG_H
 #define ID666_BINARY_TAG_H
 
-#include "DataStructure.h"
+#include "SpcStruct.h"
 #include "StringField.h"
 #include "RawField.h"
 #include "IntField.h"
 
-struct ID666BinaryTag : public Binary::DataStructure
+struct ID666BinaryTag : public SpcStruct
 {
     Binary::StringField songTitle{ 32 };
     Binary::StringField gameTitle{ 32 };
     Binary::StringField dumperName{ 16 };
     Binary::StringField comments{ 32 };
-    Binary::UInt16Field dateDumpedYear;
-    Binary::UInt8Field dateDumpedMonth;
     Binary::UInt8Field dateDumpedDay;
+    Binary::UInt8Field dateDumpedMonth;
+    Binary::UInt16Field dateDumpedYear;
     Binary::RawField unused{ 7 };
     Binary::UInt24Field songLength;
     Binary::UInt32Field fadeLength;
@@ -39,9 +39,12 @@ struct ID666BinaryTag : public Binary::DataStructure
     Binary::UInt8Field emulatorUsed;
     Binary::RawField reserved{ 46 };
 
-    std::vector<Binary::DataField*> Fields() override;
+    ID666BinaryTag();
 
-    size_t Size() const override;
+    std::vector<std::pair<std::string, Binary::DataField*>> 
+        LabeledFields() const override { return labeledFields; }
+private:
+    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields;
 };
 
 #endif

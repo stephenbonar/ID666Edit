@@ -84,6 +84,17 @@ void SpcFile::SeekExtendedTag()
     stream.SetPosition(0x10200);
 }
 
+void SpcFile::Read(Binary::DataField* field)
+{
+    stream.Read(field);
+}
+
+void SpcFile::Read(Binary::DataStructure* structure)
+{
+    stream.Read(structure);
+}
+
+/*
 void SpcFile::Read(SpcHeader* header)
 {
     stream.Read(header);
@@ -103,3 +114,4 @@ void SpcFile::Read(Binary::ChunkHeader* header)
 {
     stream.Read(header);
 }
+*/

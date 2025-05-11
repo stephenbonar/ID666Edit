@@ -8,10 +8,10 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/ID666Edit/id666edit",
-            "args": [],
+            "program": "${workspaceFolder}/build/src/id666edit",
+            "args": ["chrono.spc"],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/build/ID666Edit/",
+            "cwd": "${workspaceFolder}/build/src/",
             "environment": [],
             "externalConsole": false,
             "MIMode": "lldb"

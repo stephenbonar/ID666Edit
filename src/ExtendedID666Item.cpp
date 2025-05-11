@@ -1,4 +1,4 @@
-// main.cpp - Defines the ID666Edit main program entrypoint.
+// ExtendedID666Item.h - Defines the ExtendedID666Item class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,16 +14,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <vector>
-#include "Program.h"
+#include "ExtendedID666Item.h"
 
-int main(int argc, char** argv)
+ExtendedID666Item::ExtendedID666Item()
 {
-    std::vector<std::string> arguments;
-
-    for (int i = 0; i < argc; i++)
-        arguments.push_back(argv[i]);
-
-    Program program;
-    return program.Run(arguments);
+    labeledFields.push_back({ "Extended Item ID", &id });
+    labeledFields.push_back({ "Extended Item Type", &type });
+    labeledFields.push_back({ "Extended Item Data", &data });
 }

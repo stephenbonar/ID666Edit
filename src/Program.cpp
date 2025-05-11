@@ -74,17 +74,13 @@ int Program::PrintSpcFile()
         std::cout << FormatValue("Header Contains Tag", "True") << std::endl;
 
         if (file.HasBinaryTag())
-        {
-            std::cout << FormatValue("Tag Type", "Binary") << std::endl;
-        }
+            PrintBinaryTag(file);
         else
-        {
             PrintTextTag(file);
-        }
     }
     else
     {
-        std::cout << FormatValue("Header Contains Tag", "False");
+        std::cout << FormatValue("Header Contains Tag", "False") << std::endl;
     }
 
     if (file.HasExtendedTag())
@@ -96,6 +92,7 @@ int Program::PrintSpcFile()
         std::cout << FormatValue("Has Extended Tag", "False") << std::endl;
     }
 
+    std::cout << std::endl;
     return 0;
 }
 
@@ -109,6 +106,16 @@ void Program::PrintTextTag(SpcFile& file)
     std::cout << tag.ToString() << std::endl;
 }
 
+void Program::PrintBinaryTag(SpcFile& file)
+{
+    std::cout << FormatValue("Tag Type", "Binary") << std::endl;
+    std::cout << std::endl;
+
+    ID666BinaryTag tag;
+    file.Read(&tag);
+    std::cout << tag.ToString() << std::endl;
+}
+
 void Program::PrintExtendedTag(SpcFile& file)
 {
     std::cout << FormatValue("Has Extended Tag", "True") << std::endl;
@@ -118,8 +125,162 @@ void Program::PrintExtendedTag(SpcFile& file)
     file.Read(&tagHeader);
     std::string id = tagHeader.id.Value();
     std::string size = tagHeader.dataSize.ToString();
+    size_t sizeRemaining = tagHeader.dataSize.Value();
     std::cout << FormatValue("Extended Tag ID", id) << std::endl;
     std::cout << FormatValue("Extended Tag Size", size) << std::endl;
+
+    while (sizeRemaining > 0)
+    {
+        ExtendedID666Item item;
+        file.Read(&item);
+
+        switch (item.type.Value())
+        {
+            case extendedTypeDataInHeader:
+                sizeRemaining -= item.Size();
+                PrintExtendedItem(item);
+                break;
+            case extendedTypeString:
+            {
+                size_t dataSize = item.data.Value();
+                sizeRemaining -= item.Size();
+                sizeRemaining -= dataSize;
+                Binary::StringField field{ item.data.Value() };
+                file.Read(&field);
+
+                if (dataSize % 4 != 0)
+                {
+                    size_t paddingSize = 1;
+
+                    while ((dataSize + paddingSize) % 4 != 0)
+                        paddingSize++;
+
+                    Binary::RawField padding{ paddingSize };
+                    file.Read(&padding);
+                    sizeRemaining -= paddingSize;
+                }
+
+                PrintExtendedItem(item, field);
+                break;
+            }
+            case extendedTypeInteger:
+            {
+                sizeRemaining -= item.Size();
+                sizeRemaining -= item.data.Value();
+                Binary::UInt32Field field;
+                file.Read(&field);
+                PrintExtendedItem(item, field);
+                break;
+            }
+            default:
+                std::cerr << "Invalid extended item type. File may be corrupt.";
+                return;
+        }
+    }
+}
+
+void Program::PrintExtendedItem(ExtendedID666Item& item)
+{
+    switch (item.id.Value())
+    {
+        case extendedEmulatorUsedID:
+            std::cout << FormatValue("Emulator Used", item.data.ToString());
+            break;
+        case extendedOSTDiskID:
+            std::cout << FormatValue("OST Disc", item.data.ToString());
+            break;
+        case extendedOSTTrackID:
+        {
+            std::stringstream stream;
+
+            // The extended track has an optional character in the first byte
+            // and the track number in the second byte. This is so you can
+            // do things like Track 1a, Track 1b, etc.
+            char trackChar = item.data.Data()[0];
+            int trackNo = static_cast<int>(item.data.Data()[1]);
+
+            stream << trackNo << trackChar;
+            std::cout << FormatValue("OST Track", stream.str());
+            break;
+        }
+        case extendedCopyrightYearID:
+            std::cout << FormatValue("Copyright Year", item.data.ToString());
+            break;
+        case extendedMutedVoicesID:
+            std::cout << FormatValue("Muted Voices", 
+                item.data.ToString(Binary::StringFormat::Bin));
+            break;
+        case extendedLoopTimesID:
+            std::cout << FormatValue("Loop Times", item.data.ToString());
+            break;
+        case extendedPreampLevelID:
+            std::cout << FormatValue("Preamp Level", item.data.ToString());
+            break;
+        default:
+            std::cerr << "Invalid extended item ID. File may be corrupt.";
+    }
+
+    std::cout << std::endl;
+}
+
+void Program::PrintExtendedItem(ExtendedID666Item& item, 
+    Binary::StringField& field)
+{
+    switch (item.id.Value())
+    {
+        case extendedSongNameID:
+            std::cout << FormatValue("Song Name", field.Value());
+            break;
+        case extendedGameNameID:
+            std::cout << FormatValue("Game Name", field.Value());
+            break;
+        case extendedArtistNameID:
+            std::cout << FormatValue("Artist", field.Value());
+            break;
+        case extendedDumperNameID:
+            std::cout << FormatValue("Dumper", field.Value());
+            break;
+        case extendedCommentsID:
+            std::cout << FormatValue("Comments", field.Value());
+            break;
+        case extendedOSTTitleID:
+            std::cout << FormatValue("OST Title", field.Value());
+            break;
+        case extendedPublisherNameID:
+            std::cout << FormatValue("Publisher", field.Value());
+            break;
+        default:
+            std::cerr << "Invalid extended item ID. File may be corrupt.";
+    }
+
+    std::cout << std::endl;
+}
+
+void Program::PrintExtendedItem(ExtendedID666Item& item, 
+    Binary::UInt32Field& field)
+{
+    switch (item.id.Value())
+    {
+        case extendedDateDumpedID:
+            std::cout << FormatValue("Date Dumped", field.ToString());
+            break;
+        case extendedIntroLengthID:
+            std::cout << FormatValue("Intro Length", field.ToString());
+            break;
+        case extendedLoopLengthID:
+            std::cout << FormatValue("Loop Length", field.ToString());
+            break;
+        case extendedEndLengthID:
+            std::cout << FormatValue("End Length", field.ToString());
+            break;
+        case extendedFadeLengthID:
+            std::cout << FormatValue("Fade Length", field.ToString());
+            break;
+        default:
+            std::cerr << "Invalid extended item ID. File may be corrupt.";
+    }
+
+    std::cout << std::endl;
 }
 
 int Program::Run(std::vector<std::string> arguments)

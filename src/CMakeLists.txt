@@ -23,7 +23,8 @@ set(SOURCES
     SpcFile.cpp
     SpcFormat.cpp
     SpcStruct.cpp
-    SpcHeader.cpp)
+    SpcHeader.cpp
+    ExtendedID666Item.cpp)
 
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)

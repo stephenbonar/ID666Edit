@@ -16,12 +16,21 @@
 
 #include "ID666BinaryTag.h"
 
-std::vector<Binary::DataField*> ID666BinaryTag()
+ID666BinaryTag::ID666BinaryTag()
 {
-    return std::vector<Binary::DataField*>();
-}
-
-size_t ID666BinaryTag::Size() const
-{
-    return 0;
+    labeledFields.push_back({ "Song Title", &songTitle });
+    labeledFields.push_back({ "Game Title", &gameTitle });
+    labeledFields.push_back({ "Dumper", &dumperName });
+    labeledFields.push_back({ "Comments", &comments });
+    labeledFields.push_back({ "Date Dumped Day", &dateDumpedDay });
+    labeledFields.push_back({ "Date Dumped Month", &dateDumpedMonth });
+    labeledFields.push_back({ "Date Dumped Year", &dateDumpedYear });
+    labeledFields.push_back({ "Unused", &unused });
+    labeledFields.push_back({ "Song Length (Sec)", &songLength });
+    labeledFields.push_back({ "Fade Length (MS)", &fadeLength });
+    labeledFields.push_back({ "Song Artist", &songArtist });
+    labeledFields.push_back({ "Default Channel Disables", 
+        &defaultChannelDisables });
+    labeledFields.push_back({ "Emulator Used", &emulatorUsed });
+    labeledFields.push_back({ "Reserved", &reserved });
 }

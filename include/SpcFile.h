@@ -35,6 +35,11 @@ public:
 
     bool IsOpen() { return stream.IsOpen(); }
 
+    void Read(Binary::DataField* field);
+
+    void Read(Binary::DataStructure* structure);
+
+    /*
     void Read(SpcHeader* header);
 
     void Read(ID666TextTag* tag);
@@ -42,6 +47,7 @@ public:
     void Read(ID666BinaryTag* tag);
 
     void Read(Binary::ChunkHeader* header);
+    */
 
     void SeekExtendedTag();
 
