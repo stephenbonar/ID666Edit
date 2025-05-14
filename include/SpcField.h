@@ -20,16 +20,29 @@
 #include <string>
 #include "RawField.h"
 
-/// @brief Representing a binary data field in an SPC file.
+/// @brief Represents a binary data field in an SPC file.
+///
+/// The SpcField is meant for reading and writing individual fields from and to
+/// an SPC file. It is an extension of Binary::RawField that adds labels and
+/// offsets for formatting and locating the field. All fields in an SpcStruct
+/// are expected to inherit from this class.
 class SpcField : public Binary::RawField
 {
 public:
+    /// @brief Constructor; creates a new instance of SpcField.
+    /// @param label The label to use when outputing the field. 
+    /// @param offset The offset where the field can be found in the file.
+    /// @param size The size of the field, in bytes.
     SpcField(std::string label, uintmax_t offset, size_t size) 
         : label{ label }, offset{ offset }, Binary::RawField{ size }
     { }
     
+    /// @brief Gets the field label used to describe the field.
+    /// @return A string representing the field label.
     std::string Label() { return label; }
 
+    /// @brief Gets the offset where the field can be found in the SPC file.
+    /// @return The offset of the field,.
     uintmax_t Offset() { return offset; }
 private:
     std::string label;

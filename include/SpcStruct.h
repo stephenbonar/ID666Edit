@@ -29,13 +29,14 @@
 ///
 /// Adds a ToString() method to the original Binary::DataStructure for
 /// displaying SPC file data. Each field in the structure is labeled so when
-/// ToString() is called, the resulting string lists each field in the format
-/// label: value.
+/// ToString() is called, the resulting string lists each field in the format,
+///
+/// label: value
 ///
 /// Any struct representing a data structure in an SPC file should inherit from
 /// this struct. It provides a default implementation for the Fields(), Size(),
 /// and ToString() methods so all the inheriting struct needs to provide is
-/// an implementation for LabeledFields(). 
+/// an implementation for SpcFields(). 
 struct SpcStruct : Binary::DataStructure
 {
     /// @brief Provides a vector of raw pointers to the structure's fields.
@@ -78,7 +79,7 @@ struct SpcStruct : Binary::DataStructure
     /// Structs that inherit from this struct should provide an implementation
     /// for this method that generates the vector in the correct order.
     ///
-    /// @return A vector containing the pairs of labels and field pointers.
+    /// @return A vector containing pointers to the SpcFields.
     virtual std::vector<SpcField*> SpcFields() const = 0;
 };
 

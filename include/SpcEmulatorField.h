@@ -20,13 +20,23 @@
 #include <string>
 #include "SpcNumericField.h"
 
+/// @brief Represents a numeric field that indicates emulator used.
+///
+/// The same a SpcNumericField but with ToString() adjusted to interpret the
+/// value to determine which emulator was used to dump the SPC file.
 class SpcEmulatorField : public SpcNumericField
 {
 public:
+    /// @brief Constructor; creates a new instance of SpcEmulatorField.
+    /// @param label The label to use when outputing the field. 
+    /// @param offset The offset where the field can be found in the file.
+    /// @param size The size of the field, in bytes.
     SpcEmulatorField(std::string label, uintmax_t offset, size_t size) 
         : SpcNumericField{ label, offset, size }
     { }
     
+    /// @brief Converts the field's data to a string representation.
+    /// @return A string representation of the field's data.
     std::string ToString() const override;
 };
 

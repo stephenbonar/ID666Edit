@@ -27,13 +27,11 @@
 
 inline constexpr int headerContainsTag{ 26 };
 inline constexpr int extendedTagOffset{ 0x10200 };
-//inline constexpr int dateDumpedOffset{ 0x9E };
-//inline constexpr int artistBinaryOffset{ 0xB0 };
-//inline constexpr int reservedBinaryOffset{ 0xD2 };
 
 /// @brief Represents an SPC file stream.
 ///
 /// Provides methods for reading from, writing to, and analyzing an SPC file.
+/// Adds SPC specific functionality to Binary::RawFileStream.
 class SpcFileStream : public Binary::RawFileStream
 {
 public:

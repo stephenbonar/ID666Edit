@@ -23,17 +23,32 @@
 #include "IntField.h"
 #include "SpcField.h"
 
+/// @brief Represents a field containing a date in an SPC file.
+///
+/// Date dumped can either have a text or binary representation. This field
+/// can determine which representation is used and output the date in the
+/// correct format based on the representation.
 class SpcDateField : public SpcField
 {
 public:
+    /// @brief Constructor; creates a new instance of SpcDateField.
+    /// @param label The label to use when outputing the field. 
+    /// @param offset The offset where the field can be found in the file.
+    /// @param size The size of the field, in bytes.
     SpcDateField(std::string label, uintmax_t offset, size_t size) 
         : SpcField{ label, offset, size }
     { }
 
+    /// @brief Determines if the field has a text representation of date.
+    /// @return True if it has a text representation or false if binary.
     bool IsText() const;
 
+    /// @brief Determines if bytes 4 - 7 are unused, which indicates binary.
+    /// @return True if 4 - 7 are 0, otherwise false. 
     bool HasUnusedArea() const;
 
+    /// @brief Converts the field's data to a string representation.
+    /// @return A string representation of the field's data.
     std::string ToString() const override;
 };
 

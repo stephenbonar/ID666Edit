@@ -77,11 +77,11 @@ struct ID666BinaryTag : public SpcStruct
     ///
     /// While this is a standard struct with public fields, it is also an 
     /// SpcStruct, which maintains an internal vector of labeled pointers to
-    /// each public field accessible via the LabeledFields() method. The 
+    /// each public field accessible via the SpcFields() method. The 
     /// constructor initializes this internal vector.
     ID666BinaryTag();
 
-    /// @brief Gets list of pointers to this struct's fields paired w/ labels.
+    /// @brief Gets list of pointers to this struct's fields.
     ///
     /// This method will be called by the ToString() method to output each
     /// field as a formatted string on its own line of the format,

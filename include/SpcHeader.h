@@ -62,7 +62,7 @@ struct SpcHeader : public SpcStruct
     ///
     /// While this is a standard struct with public fields, it is also an 
     /// SpcStruct, which maintains an internal vector of labeled pointers to
-    /// each public field accessible via the LabeledFields() method. The 
+    /// each public field accessible via the SpcFields() method. The 
     /// constructor initializes this internal vector.
     SpcHeader();
 

@@ -20,13 +20,24 @@
 #include <string>
 #include "SpcField.h"
 
+/// @brief Represents a field containing text in an SPC file.
+///
+/// Texts fields are to be used for fields that are guaranteed to contain
+/// strings of ASCII text. They should not be used for fields that can contain
+/// text or binary representations of numbers.
 class SpcTextField : public SpcField
 {
 public:
+    /// @brief Constructor; creates a new instance of SpcField.
+    /// @param label The label to use when outputing the field. 
+    /// @param offset The offset where the field can be found in the file.
+    /// @param size The size of the field, in bytes.
     SpcTextField(std::string label, uintmax_t offset, size_t size) :
         SpcField{ label, offset, size }
     { }
     
+    /// @brief Converts the field's data to a string representation.
+    /// @return A string representation of the field's data.
     std::string ToString() const override
     {
         return Binary::RawField::ToString(Binary::StringFormat::Terminated);
