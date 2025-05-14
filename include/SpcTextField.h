@@ -1,4 +1,4 @@
-// ExtendedID666Item.h - Defines the ExtendedID666Item class.
+// SpcTextField.h - Declares the SpcTextField class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,11 +14,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ExtendedID666Item.h"
+#ifndef SPC_TEXT_FIELD_H
+#define SPC_TEXT_FIELD_H
 
-ExtendedID666Item::ExtendedID666Item()
+#include <string>
+#include "SpcField.h"
+
+class SpcTextField : public SpcField
 {
-    spcFields.push_back(&id);
-    spcFields.push_back(&type);
-    spcFields.push_back(&data);
-}
+public:
+    SpcTextField(std::string label, uintmax_t offset, size_t size) :
+        SpcField{ label, offset, size }
+    { }
+    
+    std::string ToString() const override
+    {
+        return Binary::RawField::ToString(Binary::StringFormat::Terminated);
+    }
+};
+
+#endif

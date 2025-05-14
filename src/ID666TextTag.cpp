@@ -18,16 +18,15 @@
 
 ID666TextTag::ID666TextTag()
 {
-    labeledFields.push_back({ "Song Title", &songTitle });
-    labeledFields.push_back({ "Game Title", &gameTitle });
-    labeledFields.push_back({ "Dumper", &dumperName });
-    labeledFields.push_back({ "Comments", &comments });
-    labeledFields.push_back({ "Date Dumped", &dateDumped });
-    labeledFields.push_back({ "Song Length (Sec)", &songLength });
-    labeledFields.push_back({ "Fade Length (MS)", &fadeLength });
-    labeledFields.push_back({ "Song Artist", &songArtist });
-    labeledFields.push_back({ "Default Channel Disables", 
-        &defaultChannelDisables });
-    labeledFields.push_back({ "Emulator Used", &emulatorUsed });
-    labeledFields.push_back({ "Reserved", &reserved });
+    spcFields.push_back(&songTitle);
+    spcFields.push_back(&gameTitle);
+    spcFields.push_back(&dumperName);
+    spcFields.push_back(&comments);
+    spcFields.push_back(&dateDumped);
+    spcFields.push_back(&songLength);
+    spcFields.push_back(&fadeLength);
+    spcFields.push_back(&songArtist);
+    spcFields.push_back(&defaultChannelDisables);
+    spcFields.push_back(&emulatorUsed);
+    spcFields.push_back(&reserved);
 }

@@ -18,15 +18,15 @@
 
 SpcHeader::SpcHeader()
 {
-    labeledFields.push_back({ "SPC Header ID", &ID });
-    labeledFields.push_back({ "Separator", &separator });
-    labeledFields.push_back({ "Contains Tag", &containsTag });
-    labeledFields.push_back({ "Version Minor", &versionMinor });
-    labeledFields.push_back({ "PC Register", &pcRegister });
-    labeledFields.push_back({ "A Register", &aRegister });
-    labeledFields.push_back({ "X Register", &xRegister });
-    labeledFields.push_back({ "Y Register", &yRegister });
-    labeledFields.push_back({ "PSW Register", &pswRegister });
-    labeledFields.push_back({ "SP Register", &spRegister });
-    labeledFields.push_back({ "Reserved", &reserved });
+    spcFields.push_back(&ID);
+    spcFields.push_back(&separator);
+    spcFields.push_back(&containsTag);
+    spcFields.push_back(&versionMinor);
+    spcFields.push_back(&pcRegister);
+    spcFields.push_back(&aRegister);
+    spcFields.push_back(&xRegister);
+    spcFields.push_back(&yRegister);
+    spcFields.push_back(&pswRegister);
+    spcFields.push_back(&spRegister);
+    spcFields.push_back(&reserved);
 }

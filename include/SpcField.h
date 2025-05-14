@@ -1,4 +1,4 @@
-// ExtendedID666Item.h - Defines the ExtendedID666Item class.
+// SpcField.h - Declares the SpcField class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,11 +14,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ExtendedID666Item.h"
+#ifndef SPC_FIELD_H
+#define SPC_FIELD_H
 
-ExtendedID666Item::ExtendedID666Item()
+#include <string>
+#include "RawField.h"
+
+/// @brief Representing a binary data field in an SPC file.
+class SpcField : public Binary::RawField
 {
-    spcFields.push_back(&id);
-    spcFields.push_back(&type);
-    spcFields.push_back(&data);
-}
+public:
+    SpcField(std::string label, uintmax_t offset, size_t size) 
+        : label{ label }, offset{ offset }, Binary::RawField{ size }
+    { }
+    
+    std::string Label() { return label; }
+
+    uintmax_t Offset() { return offset; }
+private:
+    std::string label;
+    uintmax_t offset;
+};
+
+#endif

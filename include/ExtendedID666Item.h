@@ -15,7 +15,7 @@
 // limitations under the License.
 
 #include "SpcStruct.h"
-#include "IntField.h"
+#include "SpcNumericField.h"
 
 #ifndef EXTENDED_ID666_ITEM_H
 #define EXTENDED_ID666_ITEM_H
@@ -45,16 +45,15 @@ inline constexpr uint8_t extendedTypeInteger{ 4 };
 
 struct ExtendedID666Item : public SpcStruct
 {
-    Binary::UInt8Field id;
-    Binary::UInt8Field type;
-    Binary::UInt16Field data;
+    SpcNumericField id{ "Extended Item ID", 0x10200, 1 };
+    SpcNumericField type{ "Extented Item Type", 0x10200, 1};
+    SpcNumericField data{ "Extended Item Data", 0x10200, 2};
 
     ExtendedID666Item();
 
-    std::vector<std::pair<std::string, Binary::DataField*>> 
-        LabeledFields() const override { return labeledFields; }
+    std::vector<SpcField*> SpcFields() const override { return spcFields; }
 private:
-    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields;
+    std::vector<SpcField*> spcFields;
 };
 
 #endif

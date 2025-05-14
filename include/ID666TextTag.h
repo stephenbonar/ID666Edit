@@ -18,29 +18,82 @@
 #define ID666_TEXT_TAG_H
 
 #include "DataStructure.h"
-#include "StringField.h"
 #include "SpcStruct.h"
+#include "SpcField.h"
+#include "SpcTextField.h"
+#include "SpcDateField.h"
+#include "SpcNumericField.h"
+#include "SpcEmulatorField.h"
 
+/// @brief Represents a text format ID666 tag.
+///
+/// ID666 tags are the metadata tags stored in the header of an SPC file and
+/// come in two formats: text or binary. Text formatted tags tend to store 
+/// numeric values in an ASCII text representation, although some SCP dumps
+/// use a mixture of text and binary numbers. That said, text and binary tags
+/// have slightly different offsets, and dumps that mix text and binary still
+/// tend to use the offsets of one format or the other.
 struct ID666TextTag : public SpcStruct
 {
-    Binary::StringField songTitle{ 32 };
-    Binary::StringField gameTitle{ 32 };
-    Binary::StringField dumperName{ 16 };
-    Binary::StringField comments{ 32 };
-    Binary::StringField dateDumped{ 11 };
-    Binary::StringField songLength{ 3 };
-    Binary::StringField fadeLength{ 5 };
-    Binary::StringField songArtist{ 32 };
-    Binary::StringField defaultChannelDisables{ 1 };
-    Binary::StringField emulatorUsed{ 1 };
-    Binary::RawField reserved{ 45 };
+    /// @brief The title of the song.
+    SpcTextField songTitle{ "Song Title", 0x2E, 32 };
+    
+    /// @brief The name of the game the song is from. 
+    SpcTextField gameTitle{ "Game Title", 0x4E, 32 };
 
+    /// @brief The person who dumped the SPC file.
+    SpcTextField dumperName{ "Dumper", 0x6E, 16 };
+
+    /// @brief Comments the dumper or tagger provided with the song.
+    SpcTextField comments{ "Comments", 0x7E, 32 };
+
+    /// @brief The date the song was dumped.
+    SpcDateField dateDumped{ "Date Dumped", 0x9E, 11 };
+
+    /// @brief The length of the song before fading out, in seconds.
+    SpcNumericField songLength{ "Song Length (sec)", 0xA9, 3 };
+
+    /// @brief The length of fade out, in milliseconds.
+    SpcNumericField fadeLength{ "Fade Length (ms)", 0xAC, 5 };
+
+    /// @brief The composer of the song.
+    SpcTextField songArtist{ "Song Artist", 0xB1, 32 };
+
+    /// @brief Determines if any channels are disabled.
+    SpcNumericField defaultChannelDisables
+    {
+        "Default Channel Disables", 0xD1, 1
+    };
+
+    /// @brief Determines which emulator was used to dump the SPC file.
+    SpcEmulatorField emulatorUsed{ "Emulator Used", 0xD2, 1 };
+
+    /// @brief Bytes reserved for use in future versions of the SPC format.
+    SpcField reserved{ "Reserved", 0xD3, 45 };
+
+    /// @brief Default constructor; initalizes the labeled fields list.
+    ///
+    /// While this is a standard struct with public fields, it is also an 
+    /// SpcStruct, which maintains an internal vector of labeled pointers to
+    /// each public field accessible via the LabeledFields() method. The 
+    /// constructor initializes this internal vector.
     ID666TextTag();
 
-    std::vector<std::pair<std::string, Binary::DataField*>> 
-        LabeledFields() const override { return labeledFields; }
+    /// @brief Gets list of pointers to this struct's fields paired w/ labels.
+    ///
+    /// This method will be called by the ToString() method to output each
+    /// field as a formatted string on its own line of the format,
+    ///
+    /// label: value
+    ///
+    /// This method is also called by the Fields() method to get a pointer to
+    /// each field so SpcFileStream can read this struct from and write it to
+    /// an SPC file in a cross platform way, preserving the order, size, and
+    /// endianness of each field no matter which architecture the program runs
+    /// on.
+    std::vector<SpcField*> SpcFields() const override { return spcFields; }
 private:
-    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields;
+    std::vector<SpcField*> spcFields;
 };
 
 #endif

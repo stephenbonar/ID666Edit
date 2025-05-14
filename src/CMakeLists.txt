@@ -20,11 +20,14 @@ set(SOURCES
     SpcHeader.cpp
     ID666BinaryTag.cpp
     ID666TextTag.cpp
-    SpcFile.cpp
+    SpcFileStream.cpp
     SpcFormat.cpp
     SpcStruct.cpp
     SpcHeader.cpp
-    ExtendedID666Item.cpp)
+    ExtendedID666Item.cpp
+    SpcDateField.cpp
+    SpcNumericField.cpp
+    SpcEmulatorField.cpp)
 
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)

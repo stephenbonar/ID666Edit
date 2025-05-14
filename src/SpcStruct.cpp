@@ -19,11 +19,10 @@
 std::vector<Binary::DataField*> SpcStruct::Fields()
 {
     std::vector<Binary::DataField*> fields;
-    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields =
-        LabeledFields();
+    std::vector<SpcField*> spcFields = SpcFields();
 
-    for (int i = 0; i < labeledFields.size(); ++i)
-        fields.push_back(labeledFields[i].second);
+    for (int i = 0; i < spcFields.size(); ++i)
+        fields.push_back(spcFields[i]);
 
     return fields;
 }
@@ -32,11 +31,10 @@ std::vector<Binary::DataField*> SpcStruct::Fields()
 size_t SpcStruct::Size() const
 {
     size_t size{ 0 };
-    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields =
-        LabeledFields();
+    std::vector<SpcField*> spcFields = SpcFields();
 
-    for (int i = 0; i < labeledFields.size(); i++)
-        size += labeledFields[i].second->Size();
+    for (int i = 0; i < spcFields.size(); i++)
+        size += spcFields[i]->Size();
 
     return size;
 }
@@ -44,13 +42,12 @@ size_t SpcStruct::Size() const
 std::string SpcStruct::ToString() const
 {
     std::stringstream stream;
-    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields =
-        LabeledFields();
+    std::vector<SpcField*> spcFields = SpcFields();
 
-    for (int i = 0; i < labeledFields.size(); i++)
+    for (int i = 0; i < spcFields.size(); i++)
     {
-        std::string label = labeledFields[i].first;
-        std::string value = labeledFields[i].second->ToString();
+        std::string label = spcFields[i]->Label();
+        std::string value = spcFields[i]->ToString();
         stream << FormatValue(label, value) << std::endl;
     }
     

@@ -20,6 +20,10 @@
 #include <iomanip>
 #include <sstream>
 
+/// @brief Formats the specified value prefixed with the specified label.
+/// @param label The label to use.
+/// @param value The value to label.
+/// @return A string representing the formatted value.
 std::string FormatValue(std::string label, std::string value);
 
 #endif

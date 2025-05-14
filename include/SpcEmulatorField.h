@@ -1,4 +1,4 @@
-// ExtendedID666Item.h - Defines the ExtendedID666Item class.
+// SpcEmulatorField.h - Declares the SpcEmulatorField class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,11 +14,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ExtendedID666Item.h"
+#ifndef SPC_EMULATOR_FIELD_H
+#define SPC_EMULATOR_FIELD_H
 
-ExtendedID666Item::ExtendedID666Item()
+#include <string>
+#include "SpcNumericField.h"
+
+class SpcEmulatorField : public SpcNumericField
 {
-    spcFields.push_back(&id);
-    spcFields.push_back(&type);
-    spcFields.push_back(&data);
-}
+public:
+    SpcEmulatorField(std::string label, uintmax_t offset, size_t size) 
+        : SpcNumericField{ label, offset, size }
+    { }
+    
+    std::string ToString() const override;
+};
+
+#endif

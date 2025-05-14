@@ -18,31 +18,69 @@
 #define SPC_HEADER_H
 
 #include <vector>
-#include "StringField.h"
-#include "RawField.h"
-#include "IntField.h"
 #include "SpcStruct.h"
+#include "SpcTextField.h"
+#include "SpcNumericField.h"
 
+/// @brief Represents the file header in an SPC file.
 struct SpcHeader : public SpcStruct
 {
-    Binary::StringField ID{ 33 };
-    Binary::RawField separator{ 2 };
-    Binary::UInt8Field containsTag;
-    Binary::UInt8Field versionMinor;
-    Binary::RawField pcRegister{ 2 };
-    Binary::RawField aRegister{ 1 };
-    Binary::RawField xRegister{ 1 };
-    Binary::RawField yRegister{ 1 };
-    Binary::RawField pswRegister{ 1 };
-    Binary::RawField spRegister{ 1 };
-    Binary::RawField reserved{ 2 };
+    /// @brief The first bytes of the file that identify it as an SPC file.
+    SpcTextField ID{ "SPC Header ID", 0x0, 33 };
 
+    /// @brief Separates the ID from the rest of the header. Purpose unclear.
+    SpcField separator{ "Separator", 0x21, 2 };
+
+    /// @brief A byte related to the separator that determines if a tag exists.
+    SpcNumericField containsTag{ "Contains Tag", 0x23, 1};
+
+    /// @brief The minor version number of the SPC file format used.
+    SpcNumericField versionMinor{ "Version Minor", 0x24, 1};
+
+    /// @brief Saved state of the SPC700's program counter register.
+    SpcField pcRegister{ "PC Register", 0x25, 2 };
+
+    /// @brief Saved state of the SPC700's A register.
+    SpcField aRegister{ "A Register", 0x27, 1 };
+
+    /// @brief Saved state of the SPC700's X register.
+    SpcField xRegister{ "X Register", 0x28, 1 };
+
+    /// @brief Saved state of the SPC700's Y register.
+    SpcField yRegister{ "Y Register", 0x29, 1 };
+
+    /// @brief Saved state of the SPC700's program status word register.
+    SpcField pswRegister{ "PSW Register", 0x2A, 1 };
+
+    /// @brief Saved state of the SPC700's stack pointer register.
+    SpcField spRegister{ "SP Register", 0x2B, 1 };
+
+    /// @brief Reserved bytes for future use in the header.
+    SpcField reserved{ "Reserved", 0x2C, 2 };
+
+    /// @brief Default constructor; initalizes the labeled fields list.
+    ///
+    /// While this is a standard struct with public fields, it is also an 
+    /// SpcStruct, which maintains an internal vector of labeled pointers to
+    /// each public field accessible via the LabeledFields() method. The 
+    /// constructor initializes this internal vector.
     SpcHeader();
 
-    std::vector<std::pair<std::string, Binary::DataField*>> 
-        LabeledFields() const override { return labeledFields; }
+    /// @brief Gets list of pointers to this struct's fields paired w/ labels.
+    ///
+    /// This method will be called by the ToString() method to output each
+    /// field as a formatted string on its own line of the format,
+    ///
+    /// label: value
+    ///
+    /// This method is also called by the Fields() method to get a pointer to
+    /// each field so SpcFileStream can read this struct from and write it to
+    /// an SPC file in a cross platform way, preserving the order, size, and
+    /// endianness of each field no matter which architecture the program runs
+    /// on.
+    std::vector<SpcField*> SpcFields() const override { return spcFields; }
 private:
-    std::vector<std::pair<std::string, Binary::DataField*>> labeledFields;
+    std::vector<SpcField*> spcFields;
 };
 
 #endif

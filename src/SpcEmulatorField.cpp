@@ -1,4 +1,4 @@
-// ExtendedID666Item.h - Defines the ExtendedID666Item class.
+// SpcEmulatorField.cpp - Defines the SpcEmulatorField class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,11 +14,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ExtendedID666Item.h"
+#include "SpcEmulatorField.h"
 
-ExtendedID666Item::ExtendedID666Item()
+std::string SpcEmulatorField::ToString() const
 {
-    spcFields.push_back(&id);
-    spcFields.push_back(&type);
-    spcFields.push_back(&data);
+    switch (DetectValue())
+    {
+        case 1:
+            return "ZSNES";
+        case 2:
+            return "SNES9X";
+        default:
+            return "Unknown";
+    }
 }

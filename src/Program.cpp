@@ -56,9 +56,9 @@ int Program::SelectMode()
 
 int Program::PrintSpcFile()
 {
-    SpcFile file{ spcFileParam->Value() };
+    SpcFileStream file{ spcFileParam->Value() };
     SpcHeader header;
-    file.Open();
+    file.Open(Binary::FileMode::Read);
 
     if (!file.IsOpen())
     {
@@ -96,7 +96,7 @@ int Program::PrintSpcFile()
     return 0;
 }
 
-void Program::PrintTextTag(SpcFile& file)
+void Program::PrintTextTag(SpcFileStream& file)
 {
     std::cout << FormatValue("Tag Type", "Text") << std::endl;
     std::cout << std::endl;
@@ -106,7 +106,7 @@ void Program::PrintTextTag(SpcFile& file)
     std::cout << tag.ToString() << std::endl;
 }
 
-void Program::PrintBinaryTag(SpcFile& file)
+void Program::PrintBinaryTag(SpcFileStream& file)
 {
     std::cout << FormatValue("Tag Type", "Binary") << std::endl;
     std::cout << std::endl;
@@ -116,7 +116,7 @@ void Program::PrintBinaryTag(SpcFile& file)
     std::cout << tag.ToString() << std::endl;
 }
 
-void Program::PrintExtendedTag(SpcFile& file)
+void Program::PrintExtendedTag(SpcFileStream& file)
 {
     std::cout << FormatValue("Has Extended Tag", "True") << std::endl;
     file.SeekExtendedTag();
