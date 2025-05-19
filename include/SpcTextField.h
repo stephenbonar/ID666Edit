@@ -19,6 +19,7 @@
 
 #include <string>
 #include "SpcField.h"
+#include "LibCppBinary.h"
 
 /// @brief Represents a field containing text in an SPC file.
 ///

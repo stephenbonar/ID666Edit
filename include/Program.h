@@ -23,9 +23,7 @@
 #include <iomanip>
 #include <vector>
 #include <utility>
-#include "CmdLine.h"
-#include "DataField.h"
-#include "RawFileStream.h"
+#include "LibCppCmdLine.h"
 #include "SpcHeader.h"
 #include "SpcFileStream.h"
 #include "SpcFormat.h"

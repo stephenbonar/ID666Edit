@@ -18,8 +18,7 @@
 #define SPC_NUMERIC_FIELD_H
 
 #include <string>
-#include "IntField.h"
-#include "RawField.h"
+#include "LibCppBinary.h"
 #include "SpcField.h"
 
 /// @brief Represents a field containing a number in an SPC file.

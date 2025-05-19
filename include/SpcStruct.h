@@ -23,7 +23,7 @@
 #include <utility>
 #include "SpcFormat.h"
 #include "SpcField.h"
-#include "DataStructure.h"
+#include "LibCppBinary.h"
 
 /// @brief Abstract base struct representing a binary data structure in an SPC.
 ///

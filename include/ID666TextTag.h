@@ -17,7 +17,6 @@
 #ifndef ID666_TEXT_TAG_H
 #define ID666_TEXT_TAG_H
 
-#include "DataStructure.h"
 #include "SpcStruct.h"
 #include "SpcField.h"
 #include "SpcTextField.h"

@@ -18,7 +18,7 @@
 #define SPC_FILE_STREAM_H
 
 #include <string>
-#include "RawFileStream.h"
+#include "LibCppBinary.h"
 #include "SpcHeader.h"
 #include "ID666TextTag.h"
 #include "ID666BinaryTag.h"

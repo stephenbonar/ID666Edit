@@ -18,7 +18,7 @@
 #define SPC_FIELD_H
 
 #include <string>
-#include "RawField.h"
+#include "LibCppBinary.h"
 
 /// @brief Represents a binary data field in an SPC file.
 ///

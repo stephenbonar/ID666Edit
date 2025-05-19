@@ -19,8 +19,6 @@
 
 #include <string>
 #include <sstream>
-#include "RawField.h"
-#include "IntField.h"
 #include "SpcField.h"
 
 /// @brief Represents a field containing a date in an SPC file.

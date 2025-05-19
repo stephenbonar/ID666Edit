@@ -18,9 +18,6 @@
 #define ID666_BINARY_TAG_H
 
 #include "SpcStruct.h"
-#include "StringField.h"
-#include "RawField.h"
-#include "IntField.h"
 #include "SpcField.h"
 #include "SpcDateField.h"
 #include "SpcNumericField.h"
