@@ -26,12 +26,12 @@ void Program::DefineCmdLineParameters()
 {
     CmdLine::ProgParam::Definition progParamDef;
     progParamDef.name = "ID666Edit";
-    progParamDef.description = "An ID666 metadata tag editor for .SPC files.";
+    progParamDef.description = "An ID666 metadata tag editor for .SPC files";
     progParam = std::make_unique<CmdLine::ProgParam>(progParamDef);
 
     CmdLine::PosParam::Definition spcFileParamDef;
     spcFileParamDef.name = "spc_file";
-    spcFileParamDef.description = "The SPC file to open.";
+    spcFileParamDef.description = "The SPC file to open";
     spcFileParamDef.isMandatory = true;
     spcFileParam = std::make_unique<CmdLine::PosParam>(spcFileParamDef);
 }
@@ -48,8 +48,14 @@ int Program::SelectMode()
     {
         return PrintSpcFile();
     }
+    else if (parser->BuiltInHelpOptionIsSpecified())
+    {
+        std::cout << parser->GenerateHelp();
+        return 0;
+    }
     else
     {
+        std::cerr << parser->GenerateUsage();
         return 1;
     }
 }
