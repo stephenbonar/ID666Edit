@@ -18,7 +18,7 @@
 
 void Program::PrintProgramInfo()
 {
-    std::cout << "ID666Edit v0.1" << std::endl;
+    std::cout << "ID666Edit v0.2" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -31,22 +31,58 @@ void Program::DefineCmdLineParameters()
 
     CmdLine::PosParam::Definition spcFileParamDef;
     spcFileParamDef.name = "spc_file";
-    spcFileParamDef.description = "The SPC file to open";
+    spcFileParamDef.description = "The .spc file to open";
     spcFileParamDef.isMandatory = true;
     spcFileParam = std::make_unique<CmdLine::PosParam>(spcFileParamDef);
+
+    CmdLine::ValueOption::Definition printOptionDef;
+    printOptionDef.shortName = 'p';
+    printOptionDef.longName = "print";
+    printOptionDef.description = "Prints the specified item in the .spc file";
+    printOption = std::make_unique<CmdLine::ValueOption>(printOptionDef);
+
+    CmdLine::OptionParam::Definition tagPrintParamDef;
+    tagPrintParamDef.name = "tag";
+    tagPrintParamDef.description = "Prints the entire ID666 tag";
+    tagPrintParam = std::make_unique<CmdLine::OptionParam>(tagPrintParamDef);
+    printOption->Add(tagPrintParam.get());
+
+    CmdLine::OptionParam::Definition headerPrintParamDef;
+    headerPrintParamDef.name = "header";
+    headerPrintParamDef.description = "Prints the .spc file header";
+    headerPrintParam = std::make_unique<CmdLine::OptionParam>(
+        headerPrintParamDef);
+    printOption->Add(headerPrintParam.get());
 }
 
 void Program::InitializeCmdLineParser(std::vector<std::string> arguments)
 {
     parser = std::make_unique<CmdLine::Parser>(progParam.get(), arguments);
     parser->Add(spcFileParam.get());
+    parser->Add(printOption.get());
 }
 
 int Program::SelectMode()
 {
     if (spcFileParam->IsSpecified())
     {
-        return PrintSpcFile();
+        SpcFileStream file{ spcFileParam->Value() };
+        file.Open(Binary::FileMode::Read);
+
+        if (!file.IsOpen())
+        {
+            std::cerr << "ERROR: unable to open file." << std::endl;
+            return 2;
+        }
+
+        if (printOption->IsSpecified())
+        {
+            return PrintSpecifiedItems(file);
+        }
+        else
+        {
+            return PrintSpcFile(file);
+        }
     }
     else if (parser->BuiltInHelpOptionIsSpecified())
     {
@@ -60,21 +96,23 @@ int Program::SelectMode()
     }
 }
 
-int Program::PrintSpcFile()
+int Program::PrintSpcFile(SpcFileStream& file)
 {
-    SpcFileStream file{ spcFileParam->Value() };
+    PrintHeader(file);
+    PrintTag(file);
+    std::cout << std::endl;
+    return 0;
+}
+
+void Program::PrintHeader(SpcFileStream& file)
+{
     SpcHeader header;
-    file.Open(Binary::FileMode::Read);
-
-    if (!file.IsOpen())
-    {
-        std::cerr << "ERROR: unable to open file." << std::endl;
-        return 2;
-    }
-
     file.Read(&header);
     std::cout << header.ToString() << std::endl;
+}
 
+void Program::PrintTag(SpcFileStream& file)
+{
     if (file.HeaderContainsTag())
     {
         std::cout << FormatValue("Header Contains Tag", "True") << std::endl;
@@ -97,9 +135,6 @@ int Program::PrintSpcFile()
     {
         std::cout << FormatValue("Has Extended Tag", "False") << std::endl;
     }
-
-    std::cout << std::endl;
-    return 0;
 }
 
 void Program::PrintTextTag(SpcFileStream& file)
@@ -183,6 +218,20 @@ void Program::PrintExtendedTag(SpcFileStream& file)
                 return;
         }
     }
+}
+
+int Program::PrintSpecifiedItems(SpcFileStream& file)
+{
+    if (headerPrintParam->IsSpecified())
+        PrintHeader(file);
+
+    if (tagPrintParam->IsSpecified())
+    {
+        file.SetPosition(tagOffset);
+        PrintTag(file);
+    }
+
+    return 0;
 }
 
 void Program::PrintExtendedItem(ExtendedID666Item& item)

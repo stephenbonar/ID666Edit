@@ -40,6 +40,9 @@ public:
 private:
     std::unique_ptr<CmdLine::ProgParam> progParam;
     std::unique_ptr<CmdLine::PosParam> spcFileParam;
+    std::unique_ptr<CmdLine::ValueOption> printOption;
+    std::unique_ptr<CmdLine::OptionParam> tagPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> headerPrintParam;
     std::unique_ptr<CmdLine::Parser> parser;
 
     /// @brief Prints information about the program to the screen.
@@ -63,7 +66,15 @@ private:
 
     /// @brief Prints the entire SPC file's metadata including tags & headers.
     /// @return The status code returned by the operation.
-    int PrintSpcFile();
+    int PrintSpcFile(SpcFileStream& file);
+
+    /// @brief Prints the SPC file header.
+    /// @param file The file stream to print the header from.
+    void PrintHeader(SpcFileStream& file);
+
+    /// @brief Prints all tag information, including the extended tag info.
+    /// @param stream The file stream to print the tag from.
+    void PrintTag(SpcFileStream& file);
 
     /// @brief Prints the text formattted ID666 tag.
     /// @param file The file stream to use for printing.
@@ -76,6 +87,9 @@ private:
     /// @brief Prints the extended ID666 tag.
     /// @param file The file stream to use for printing. 
     void PrintExtendedTag(SpcFileStream& file);
+
+    /// @brief Prints the items in the .spc file that were specified via args.
+    int PrintSpecifiedItems(SpcFileStream& file);
 
     /// @brief Prints the specified ID666 extended tag item.
     ///
