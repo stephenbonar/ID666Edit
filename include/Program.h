@@ -85,6 +85,20 @@ private:
     /// @return The status code returned by the selected mode upon completion.
     int SelectMode();
 
+    void PrintField(SpcField* field);
+
+    void PrintField(SpcTextField field);
+
+    void PrintField(SpcDateField field);
+
+    void PrintField(SpcNumericField field);
+
+    void PrintField(SpcTrackField field);
+
+    void PrintField(SpcEmulatorField field);
+
+    void PrintField(SpcBinaryField field);
+
     /// @brief Prints the entire SPC file's metadata including tags & headers.
     /// @return The status code returned by the operation.
     int PrintSpcFile(SpcFile& file);

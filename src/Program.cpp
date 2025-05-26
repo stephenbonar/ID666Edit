@@ -18,7 +18,7 @@
 
 void Program::PrintProgramInfo()
 {
-    std::cout << "ID666Edit v0.3" << std::endl;
+    std::cout << "ID666Edit v0.4" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -231,6 +231,41 @@ int Program::SelectMode()
     }
 }
 
+void Program::PrintField(SpcField* field)
+{
+    std::cout << FormatField(field) << std::endl;
+}
+
+void Program::PrintField(SpcTextField field)
+{
+    PrintField(&field);
+}
+
+void Program::PrintField(SpcDateField field)
+{
+    PrintField(&field);
+}
+
+void Program::PrintField(SpcNumericField field)
+{
+    PrintField(&field);
+}
+
+void Program::PrintField(SpcTrackField field)
+{
+    PrintField(&field);
+}
+
+void Program::PrintField(SpcEmulatorField field)
+{
+    PrintField(&field);
+}
+
+void Program::PrintField(SpcBinaryField field)
+{
+    PrintField(&field);
+}
+
 int Program::PrintSpcFile(SpcFile& file)
 {
     PrintHeader(file);
@@ -305,67 +340,88 @@ int Program::PrintSpecifiedItems(SpcFile& file)
         PrintTag(file);
 
     if (songPrintParam->IsSpecified())
-        std::cout << FormatField(&file.SongTitle()) << std::endl;
+        PrintField(file.SongTitle());
+        //std::cout << FormatField(&file.SongTitle()) << std::endl;
 
     if (gamePrintParam->IsSpecified())
-        std::cout << FormatField(&file.GameTitle()) << std::endl;
+        PrintField(file.GameTitle());
+        //std::cout << FormatField(&file.GameTitle()) << std::endl;
 
     if (dumperPrintParam->IsSpecified())
-        std::cout << FormatField(&file.DumperName()) << std::endl;
+        PrintField(file.DumperName());
+        //std::cout << FormatField(&file.DumperName()) << std::endl;
 
     if (commentsPrintParam->IsSpecified())
-        std::cout << FormatField(&file.Comments()) << std::endl;
+        PrintField(file.Comments());
+        //std::cout << FormatField(&file.Comments()) << std::endl;
     
     if (datePrintParam->IsSpecified())
-        std::cout << FormatField(&file.DateDumped()) << std::endl;
+        PrintField(file.DateDumped());
+        //std::cout << FormatField(&file.DateDumped()) << std::endl;
 
     if (songLengthPrintParam->IsSpecified())
-        std::cout << FormatField(&file.SongLength()) << std::endl;
+        PrintField(file.SongLength());
+        //std::cout << FormatField(&file.SongLength()) << std::endl;
 
     if (fadeLengthPrintParam->IsSpecified())
-        std::cout << FormatField(&file.FadeLength()) << std::endl;
+        PrintField(file.FadeLength());
+        //std::cout << FormatField(&file.FadeLength()) << std::endl;
 
     if (artistPrintParam->IsSpecified())
-        std::cout << FormatField(&file.SongArtist()) << std::endl;
+        PrintField(file.SongArtist());
+        //std::cout << FormatField(&file.SongArtist()) << std::endl;
 
     if (channelPrintParam->IsSpecified())
-        std::cout << FormatField(&file.DefaultChannelDisables()) << std::endl;
+        PrintField(file.DefaultChannelDisables());
+        //std::cout << FormatField(&file.DefaultChannelDisables()) << std::endl;
 
     if (emulatorPrintParam->IsSpecified())
-        std::cout << FormatField(&file.EmulatorUsed()) << std::endl;
+        PrintField(file.EmulatorUsed());
+        //std::cout << FormatField(&file.EmulatorUsed()) << std::endl;
 
     if (titlePrintParam->IsSpecified())
-        std::cout << FormatField(&file.OstTitle()) << std::endl;
+        PrintField(file.OstTitle());
+        //std::cout << FormatField(&file.OstTitle()) << std::endl;
 
     if (discPrintParam->IsSpecified())
-        std::cout << FormatField(&file.OstDisc()) << std::endl;
+        PrintField(file.OstDisc());
+        //std::cout << FormatField(&file.OstDisc()) << std::endl;
 
     if (trackPrintParam->IsSpecified())
-        std::cout << FormatField(&file.OstTrack()) << std::endl;
+        PrintField(file.OstTrack());
+        //std::cout << FormatField(&file.OstTrack()) << std::endl;
 
     if (publisherPrintParam->IsSpecified())
-        std::cout << FormatField(&file.PublisherName()) << std::endl;
+        PrintField(file.PublisherName());
+        //std::cout << FormatField(&file.PublisherName()) << std::endl;
 
     if (copyrightPrintParam->IsSpecified())
-        std::cout << FormatField(&file.CopyrightYear()) << std::endl;
+        PrintField(file.CopyrightYear());
+        //std::cout << FormatField(&file.CopyrightYear()) << std::endl;
 
     if (introLengthPrintParam->IsSpecified())
-        std::cout << FormatField(&file.IntroLength()) << std::endl;
+        PrintField(file.IntroLength());
+        //std::cout << FormatField(&file.IntroLength()) << std::endl;
 
     if (loopLengthPrintParam->IsSpecified())
-        std::cout << FormatField(&file.LoopLength()) << std::endl;
+        PrintField(file.LoopLength());
+        //std::cout << FormatField(&file.LoopLength()) << std::endl;
 
     if (endLengthPrintParam->IsSpecified())
-        std::cout << FormatField(&file.EndLength()) << std::endl;
+        PrintField(file.EndLength());
+        //std::cout << FormatField(&file.EndLength()) << std::endl;
 
     if (mutedPrintParam->IsSpecified())
-        std::cout << FormatField(&file.MutedVoices()) << std::endl;
+        PrintField(file.MutedVoices());
+        //std::cout << FormatField(&file.MutedVoices()) << std::endl;
 
     if (loopTimesPrintParam->IsSpecified())
-        std::cout << FormatField(&file.LoopTimes()) << std::endl;
+        PrintField(file.LoopTimes());
+        //std::cout << FormatField(&file.LoopTimes()) << std::endl;
 
     if (preampPrintParam->IsSpecified())
-        std::cout << FormatField(&file.PreampLevel()) << std::endl;
+        PrintField(file.PreampLevel());
+        //std::cout << FormatField(&file.PreampLevel()) << std::endl;
 
     return 0;
 }

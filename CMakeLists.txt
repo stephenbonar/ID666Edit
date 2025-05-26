@@ -16,7 +16,7 @@
 
 cmake_minimum_required(VERSION 3.10.0)
 
-project(ID666Edit VERSION 0.3.0 LANGUAGES C CXX)
+project(ID666Edit VERSION 0.4.0 LANGUAGES C CXX)
 
 # By default, GoogleTest expects to statically link to the C++ runtime on the
 # MSVC compiler. So if we run on Windows, we need to set our compiler flags
