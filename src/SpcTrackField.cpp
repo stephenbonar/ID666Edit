@@ -1,4 +1,4 @@
-// SpcFormat.cpp - Defines functions for formatting SPC fields.
+// SpcTrackField.cpp - Defines the SpcTrackField class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -13,17 +13,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+ 
+#include "SpcTrackField.h"
 
-#include "SpcFormat.h"
-
-std::string FormatValue(std::string label, std::string value)
+uint8_t SpcTrackField::Value() const
 {
-    std::stringstream stream;
-    stream << std::setw(25) << std::left << label << ": " << value;
-    return stream.str();
+    return static_cast<uint8_t>(data[1]);
 }
 
-std::string FormatField(SpcField* field)
+char SpcTrackField::Suffix() const
 {
-    return FormatValue(field->Label(), field->ToString());
+    return data[0];
+}
+
+std::string SpcTrackField::ToString() const
+{
+    std::stringstream stream;
+    stream << std::to_string(Value()) << Suffix();
+    return stream.str();
 }

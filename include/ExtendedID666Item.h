@@ -14,11 +14,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <string>
+#include <memory>
+#include <map>
 #include "SpcStruct.h"
 #include "SpcNumericField.h"
 
 #ifndef EXTENDED_ID666_ITEM_H
 #define EXTENDED_ID666_ITEM_H
+
+extern const std::map<int, std::string> extendedFieldLabels;
 
 inline constexpr uint8_t extendedSongNameID{ 0x1 };
 inline constexpr uint8_t extendedGameNameID{ 0x2 };
@@ -28,7 +33,7 @@ inline constexpr uint8_t extendedDateDumpedID{ 0x5 };
 inline constexpr uint8_t extendedEmulatorUsedID{ 0x6 };
 inline constexpr uint8_t extendedCommentsID{ 0x7 };
 inline constexpr uint8_t extendedOSTTitleID{ 0x10 };
-inline constexpr uint8_t extendedOSTDiskID{ 0x11 };
+inline constexpr uint8_t extendedOSTDiscID{ 0x11 };
 inline constexpr uint8_t extendedOSTTrackID{ 0x12 };
 inline constexpr uint8_t extendedPublisherNameID{ 0x13 };
 inline constexpr uint8_t extendedCopyrightYearID{ 0x14 };
@@ -42,6 +47,11 @@ inline constexpr uint8_t extendedPreampLevelID{ 0x36 };
 inline constexpr uint8_t extendedTypeDataInHeader{ 0 };
 inline constexpr uint8_t extendedTypeString{ 1 };
 inline constexpr uint8_t extendedTypeInteger{ 4 };
+inline constexpr uint8_t extendedTagIDSize{ 1 };
+inline constexpr uint8_t extendedTagTypeSize{ 1 };
+inline constexpr uint8_t extendedTagDataSize{ 2 };
+inline constexpr uint8_t extendedTagStringMaxSize{ 255 };
+inline constexpr int extendedTagOffset{ 0x10200 };
 
 /// @brief Represents an item in the extended ID666 tag.
 ///
@@ -50,13 +60,22 @@ inline constexpr uint8_t extendedTypeInteger{ 4 };
 struct ExtendedID666Item : public SpcStruct
 {
     /// @brief The ID of the item, which determines which metadata field it is.
-    SpcNumericField id{ "Extended Item ID", 0x10200, 1 };
+    SpcNumericField id
+    { 
+        "Extended Item ID", extendedTagOffset, extendedTagIDSize 
+    };
 
     /// @brief Determines the data type: data in header, string, or integer.
-    SpcNumericField type{ "Extented Item Type", 0x10200, 1};
+    SpcNumericField type
+    { 
+        "Extented Item Type", extendedTagOffset, extendedTagTypeSize 
+    };
 
     /// @brief Either represents the value if type 0, or the size of value.
-    SpcNumericField data{ "Extended Item Data", 0x10200, 2};
+    SpcNumericField data
+    { 
+        "Extended Item Data", extendedTagOffset, extendedTagDataSize 
+    };
 
     /// @brief Default constructor; initalizes the labeled fields list.
     ///

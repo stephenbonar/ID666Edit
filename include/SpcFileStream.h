@@ -22,12 +22,12 @@
 #include "SpcHeader.h"
 #include "ID666TextTag.h"
 #include "ID666BinaryTag.h"
+#include "ExtendedID666Item.h"
 #include "SpcDateField.h"
 #include "SpcNumericField.h"
 
 inline constexpr int headerContainsTag{ 26 };
 inline constexpr int tagOffset{ 0x2E };
-inline constexpr int extendedTagOffset{ 0x10200 };
 
 /// @brief Represents an SPC file stream.
 ///

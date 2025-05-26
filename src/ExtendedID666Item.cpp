@@ -16,6 +16,29 @@
 
 #include "ExtendedID666Item.h"
 
+const std::map<int, std::string> extendedFieldLabels
+{
+    { extendedSongNameID, "Song Title" },
+    { extendedGameNameID, "Game Title" },
+    { extendedArtistNameID, "Song Artist" }, 
+    { extendedDumperNameID, "Dumper Name" },
+    { extendedDateDumpedID, "Date Dumped" },
+    { extendedEmulatorUsedID, "Emulator Used" },
+    { extendedCommentsID, "Comments" },
+    { extendedOSTTitleID, "OST Title" },
+    { extendedOSTDiscID, "OST Disc" },
+    { extendedOSTTrackID, "OST Track" },
+    { extendedPublisherNameID, "Publisher Name" },
+    { extendedCopyrightYearID, "Copyright Year" },
+    { extendedIntroLengthID, "Intro Length" },
+    { extendedLoopLengthID, "Loop Length" },
+    { extendedEndLengthID, "End Length" },
+    { extendedFadeLengthID, "Fade Length" },
+    { extendedMutedVoicesID, "Muted Voices" },
+    { extendedLoopTimesID, "Loop Times" },
+    { extendedPreampLevelID, "Preamp Level" }
+};
+
 ExtendedID666Item::ExtendedID666Item()
 {
     spcFields.push_back(&id);

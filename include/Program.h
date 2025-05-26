@@ -25,7 +25,7 @@
 #include <utility>
 #include "LibCppCmdLine.h"
 #include "SpcHeader.h"
-#include "SpcFileStream.h"
+#include "SpcFile.h"
 #include "SpcFormat.h"
 #include "ExtendedID666Item.h"
 
@@ -43,6 +43,27 @@ private:
     std::unique_ptr<CmdLine::ValueOption> printOption;
     std::unique_ptr<CmdLine::OptionParam> tagPrintParam;
     std::unique_ptr<CmdLine::OptionParam> headerPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> songPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> gamePrintParam;
+    std::unique_ptr<CmdLine::OptionParam> dumperPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> commentsPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> datePrintParam;
+    std::unique_ptr<CmdLine::OptionParam> songLengthPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> fadeLengthPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> artistPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> channelPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> emulatorPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> titlePrintParam;
+    std::unique_ptr<CmdLine::OptionParam> discPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> trackPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> publisherPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> copyrightPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> introLengthPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> loopLengthPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> endLengthPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> mutedPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> loopTimesPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> preampPrintParam;
     std::unique_ptr<CmdLine::Parser> parser;
 
     /// @brief Prints information about the program to the screen.
@@ -66,50 +87,30 @@ private:
 
     /// @brief Prints the entire SPC file's metadata including tags & headers.
     /// @return The status code returned by the operation.
-    int PrintSpcFile(SpcFileStream& file);
+    int PrintSpcFile(SpcFile& file);
 
     /// @brief Prints the SPC file header.
     /// @param file The file stream to print the header from.
-    void PrintHeader(SpcFileStream& file);
+    void PrintHeader(SpcFile& file);
 
     /// @brief Prints all tag information, including the extended tag info.
     /// @param stream The file stream to print the tag from.
-    void PrintTag(SpcFileStream& file);
+    void PrintTag(SpcFile& file);
 
     /// @brief Prints the text formattted ID666 tag.
     /// @param file The file stream to use for printing.
-    void PrintTextTag(SpcFileStream& file);
+    void PrintTextTag(SpcFile& file);
 
     /// @brief Prints the binary formatted ID666 tag.
     /// @param file The file stream to use for printing.
-    void PrintBinaryTag(SpcFileStream& file);
+    void PrintBinaryTag(SpcFile& file);
 
     /// @brief Prints the extended ID666 tag.
     /// @param file The file stream to use for printing. 
-    void PrintExtendedTag(SpcFileStream& file);
+    void PrintExtendedTag(SpcFile& file);
 
     /// @brief Prints the items in the .spc file that were specified via args.
-    int PrintSpecifiedItems(SpcFileStream& file);
-
-    /// @brief Prints the specified ID666 extended tag item.
-    ///
-    /// Use this method to print extended tag items where the value is stored
-    /// directly in the item's header data field.
-    ///
-    /// @param item The item to print.
-    void PrintExtendedItem(ExtendedID666Item& item);
-
-    /// @brief Prints the specified ID666 extended tag item.
-    /// @param item The item to print.
-    /// @param field The associated string data field beyond the tag header.
-    void PrintExtendedItem(ExtendedID666Item& item, 
-        Binary::StringField& field);
-
-    /// @brief Prints the specified ID666 extended tag item.
-    /// @param item The item to print.
-    /// @param field The associated int data field beyond the tag header.
-    void PrintExtendedItem(ExtendedID666Item& item, 
-        Binary::UInt32Field& field);
+    int PrintSpecifiedItems(SpcFile& file);
 };
 
 #endif

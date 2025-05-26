@@ -20,63 +20,120 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <map>
 #include "SpcHeader.h"
 #include "ID666BinaryTag.h"
 #include "ID666TextTag.h"
+#include "ID666ExtendedTag.h"
 #include "ExtendedID666Item.h"
 #include "SpcFileStream.h"
 
 class SpcFile
 {
 public:
-    SpcFile(std::string fileName) : fileName{ fileName }
+    SpcFile(std::string fileName) : 
+        fileName{ fileName }, 
+        hasLoaded{ false }, 
+        hasBinaryTag{ false },
+        hasExtendedTag{ false },
+        headerContainsTag{ false }
     {}
 
-    std::string FileName() const;
+    std::string FileName() const { return fileName; }
 
-    SpcHeader Header() const;
+    bool HasLoaded() const { return hasLoaded; }
 
-    ID666BinaryTag BinaryTag() const;
+    bool HasBinaryTag() const { return hasBinaryTag; }
 
-    ID666TextTag TextTag() const;
+    bool HasExtendedTag() const { return hasExtendedTag; }
+
+    bool HeaderContainsTag() const { return headerContainsTag; }
+
+    SpcHeader Header() const { return header; }
+
+    ID666BinaryTag BinaryTag() const { return binaryTag; }
+
+    ID666TextTag TextTag() const { return textTag; }
+
+    ID666ExtendedTag ExtendedTag() const { return extendedTag; }
 
     SpcTextField SongTitle() const;
 
     SpcTextField GameTitle() const;
 
+    SpcTextField DumperName() const;
+
+    SpcTextField Comments() const;
+
+    SpcDateField DateDumped() const;
+
+    SpcNumericField SongLength() const;
+
+    SpcNumericField FadeLength() const;
+
     SpcTextField SongArtist() const;
 
-    SpcTextField DumperName() const;
+    SpcNumericField DefaultChannelDisables() const;
+
+    SpcEmulatorField EmulatorUsed() const;
+
+    SpcTextField OstTitle() const;
+
+    SpcNumericField OstDisc() const;
+
+    SpcTrackField OstTrack() const;
+
+    SpcTextField PublisherName() const;
+
+    SpcNumericField CopyrightYear() const;
+
+    SpcNumericField IntroLength() const;
+
+    SpcNumericField LoopLength() const;
+
+    SpcNumericField EndLength() const;
+
+    //SpcNumericField FadeLength() const;
+
+    SpcBinaryField MutedVoices() const;
+
+    SpcNumericField LoopTimes() const;
+
+    SpcNumericField PreampLevel() const;
 
     bool Load();
 
     bool Save();
 private:
     std::string fileName;
+    bool hasLoaded;
+    bool hasBinaryTag;
+    bool hasExtendedTag;
+    bool headerContainsTag;
     SpcHeader header;
     ID666BinaryTag binaryTag;
     ID666TextTag textTag;
-    std::unique_ptr<SpcTextField> extendedSongName;
-    std::unique_ptr<SpcTextField> extendedGameName;
-    std::unique_ptr<SpcTextField> extendedArtistName;
-    std::unique_ptr<SpcTextField> extendedDumperName;
-    std::unique_ptr<SpcNumericField> extendedDateDumped;
-    std::unique_ptr<SpcNumericField> extendedEmulatorUsed;
-    std::unique_ptr<SpcTextField> extendedComments;
-    std::unique_ptr<SpcTextField> extendedOSTTitle;
-    std::unique_ptr<SpcNumericField> extendedOSTDisk;
-    std::unique_ptr<SpcNumericField> extendedOSTTrack;
-    std::unique_ptr<SpcTextField> extendedPublisherName;
-    std::unique_ptr<SpcNumericField> extendedCopyrightYear;
-    std::unique_ptr<SpcNumericField> extendedIntroLength;
-    std::unique_ptr<SpcNumericField> extendedLoopLength;
-    std::unique_ptr<SpcNumericField> extendedEndLength;
-    std::unique_ptr<SpcNumericField> extendedFadeLength;
-    std::unique_ptr<SpcNumericField> extendedMutedChannels;
-    std::unique_ptr<SpcNumericField> extendedLoopTimes;
-    std::unique_ptr<SpcNumericField> extendedPreamp;
+    ID666ExtendedTag extendedTag;
 
-    void InitializeExtendedFields();
+    //void InitExtendedFields();
+
+    void LoadHeaderField(ExtendedID666Item& item);
+
+    void LoadTextField(ExtendedID666Item& item, SpcFileStream& stream);
+
+    void LoadNumericField(ExtendedID666Item&item, SpcFileStream& stream);
 };
+
+template<typename T>
+std::shared_ptr<T> InitField(int extendedID, size_t size)
+{
+    std::string label = "<Unknown Field>";
+    constexpr uintmax_t offset{ extendedTagOffset };
+
+    if (extendedFieldLabels.find(extendedID) != extendedFieldLabels.end())
+        label = extendedFieldLabels.at(extendedID);
+
+    return std::make_shared<T>(label, offset, size);
+}
 
 #endif

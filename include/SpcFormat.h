@@ -19,11 +19,17 @@
 
 #include <iomanip>
 #include <sstream>
+#include "SpcField.h"
 
 /// @brief Formats the specified value prefixed with the specified label.
 /// @param label The label to use.
 /// @param value The value to label.
 /// @return A string representing the formatted value.
 std::string FormatValue(std::string label, std::string value);
+
+/// @brief Formats the specified field as as string in label: value format.
+/// @param field The field to output as a formatted string.
+/// @return The formatted string representation of the field.
+std::string FormatField(SpcField* field);
 
 #endif

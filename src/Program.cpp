@@ -18,41 +18,177 @@
 
 void Program::PrintProgramInfo()
 {
-    std::cout << "ID666Edit v0.2" << std::endl;
+    std::cout << "ID666Edit v0.3" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
 void Program::DefineCmdLineParameters()
 {
-    CmdLine::ProgParam::Definition progParamDef;
-    progParamDef.name = "ID666Edit";
-    progParamDef.description = "An ID666 metadata tag editor for .SPC files";
-    progParam = std::make_unique<CmdLine::ProgParam>(progParamDef);
+    CmdLine::ProgParam::Definition progDef;
+    progDef.name = "ID666Edit";
+    progDef.description = "An ID666 metadata tag editor for .SPC files";
+    progParam = std::make_unique<CmdLine::ProgParam>(progDef);
 
-    CmdLine::PosParam::Definition spcFileParamDef;
-    spcFileParamDef.name = "spc_file";
-    spcFileParamDef.description = "The .spc file to open";
-    spcFileParamDef.isMandatory = true;
-    spcFileParam = std::make_unique<CmdLine::PosParam>(spcFileParamDef);
+    CmdLine::PosParam::Definition fileDef;
+    fileDef.name = "spc_file";
+    fileDef.description = "The .spc file to open";
+    fileDef.isMandatory = true;
+    spcFileParam = std::make_unique<CmdLine::PosParam>(fileDef);
 
-    CmdLine::ValueOption::Definition printOptionDef;
-    printOptionDef.shortName = 'p';
-    printOptionDef.longName = "print";
-    printOptionDef.description = "Prints the specified item in the .spc file";
-    printOption = std::make_unique<CmdLine::ValueOption>(printOptionDef);
+    CmdLine::ValueOption::Definition printDef;
+    printDef.shortName = 'p';
+    printDef.longName = "print";
+    printDef.description = "Prints the specified item in the .spc file";
+    printOption = std::make_unique<CmdLine::ValueOption>(printDef);
 
-    CmdLine::OptionParam::Definition tagPrintParamDef;
-    tagPrintParamDef.name = "tag";
-    tagPrintParamDef.description = "Prints the entire ID666 tag";
-    tagPrintParam = std::make_unique<CmdLine::OptionParam>(tagPrintParamDef);
+    CmdLine::OptionParam::Definition tagPrintDef;
+    tagPrintDef.name = "tag";
+    tagPrintDef.description = "Prints the entire ID666 tag";
+    tagPrintParam = std::make_unique<CmdLine::OptionParam>(tagPrintDef);
     printOption->Add(tagPrintParam.get());
 
-    CmdLine::OptionParam::Definition headerPrintParamDef;
-    headerPrintParamDef.name = "header";
-    headerPrintParamDef.description = "Prints the .spc file header";
-    headerPrintParam = std::make_unique<CmdLine::OptionParam>(
-        headerPrintParamDef);
+    CmdLine::OptionParam::Definition headerPrintDef;
+    headerPrintDef.name = "header";
+    headerPrintDef.description = "Prints the .spc file header";
+    headerPrintParam = std::make_unique<CmdLine::OptionParam>(headerPrintDef);
     printOption->Add(headerPrintParam.get());
+
+    CmdLine::OptionParam::Definition songPrintDef;
+    songPrintDef.name = "song";
+    songPrintDef.description = "Prints the song name from the tags";
+    songPrintParam = std::make_unique<CmdLine::OptionParam>(songPrintDef);
+    printOption->Add(songPrintParam.get());
+
+    CmdLine::OptionParam::Definition gamePrintDef;
+    gamePrintDef.name = "game";
+    gamePrintDef.description = "Prints the game name from the tags";
+    gamePrintParam = std::make_unique<CmdLine::OptionParam>(gamePrintDef);
+    printOption->Add(gamePrintParam.get());
+
+    CmdLine::OptionParam::Definition dumperPrintDef;
+    dumperPrintDef.name = "dumper";
+    dumperPrintDef.description = "Prints the dumper from the tags";
+    dumperPrintParam = std::make_unique<CmdLine::OptionParam>(dumperPrintDef);
+    printOption->Add(dumperPrintParam.get());
+
+    CmdLine::OptionParam::Definition commentsPrintDef;
+    commentsPrintDef.name = "comments";
+    commentsPrintDef.description = "Prints the comments from the tags";
+    commentsPrintParam = std::make_unique<CmdLine::OptionParam>(
+        commentsPrintDef);
+    printOption->Add(commentsPrintParam.get());
+
+    CmdLine::OptionParam::Definition datePrintDef;
+    datePrintDef.name = "date";
+    datePrintDef.description = "Prints the date dumped from the tags";
+    datePrintParam = std::make_unique<CmdLine::OptionParam>(datePrintDef);
+    printOption->Add(datePrintParam.get());
+
+    CmdLine::OptionParam::Definition songLengthPrintDef;
+    songLengthPrintDef.name = "songlength";
+    songLengthPrintDef.description = "Prints the song length from the tags";
+    songLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
+        songLengthPrintDef);
+    printOption->Add(songLengthPrintParam.get());
+
+    CmdLine::OptionParam::Definition fadeLengthPrintDef;
+    fadeLengthPrintDef.name = "fadelength";
+    fadeLengthPrintDef.description = "Prints the fade length from the tags";
+    fadeLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
+        fadeLengthPrintDef);
+    printOption->Add(fadeLengthPrintParam.get());
+
+    CmdLine::OptionParam::Definition artistPrintDef;
+    artistPrintDef.name = "artist";
+    artistPrintDef.description = "Prints the song artist from the tags";
+    artistPrintParam = std::make_unique<CmdLine::OptionParam>(artistPrintDef);
+    printOption->Add(artistPrintParam.get());
+
+    CmdLine::OptionParam::Definition channelPrintDef;
+    channelPrintDef.name = "channel";
+    channelPrintDef.description = "Prints the channel disables from the tags";
+    channelPrintParam = std::make_unique<CmdLine::OptionParam>(
+        channelPrintDef);
+    printOption->Add(channelPrintParam.get());
+
+    CmdLine::OptionParam::Definition emulatorPrintDef;
+    emulatorPrintDef.name = "emulator";
+    emulatorPrintDef.description = "Prints the emulator used from the tags";
+    emulatorPrintParam = std::make_unique<CmdLine::OptionParam>(
+        emulatorPrintDef);
+    printOption->Add(emulatorPrintParam.get());
+
+    CmdLine::OptionParam::Definition titlePrintDef;
+    titlePrintDef.name = "title";
+    titlePrintDef.description = "Prints the OST title from the tags";
+    titlePrintParam = std::make_unique<CmdLine::OptionParam>(titlePrintDef);
+    printOption->Add(titlePrintParam.get());
+
+    CmdLine::OptionParam::Definition discPrintDef;
+    discPrintDef.name = "disc";
+    discPrintDef.description = "Prints the OST disc from the tags";
+    discPrintParam = std::make_unique<CmdLine::OptionParam>(discPrintDef);
+    printOption->Add(discPrintParam.get());
+
+    CmdLine::OptionParam::Definition trackPrintDef;
+    trackPrintDef.name = "track";
+    trackPrintDef.description = "Prints the OST track from the tags";
+    trackPrintParam = std::make_unique<CmdLine::OptionParam>(trackPrintDef);
+    printOption->Add(trackPrintParam.get());
+
+    CmdLine::OptionParam::Definition publisherPrintDef;
+    publisherPrintDef.name = "publisher";
+    publisherPrintDef.description = "Prints the publisher from the tags";
+    publisherPrintParam = std::make_unique<CmdLine::OptionParam>(publisherPrintDef);
+    printOption->Add(publisherPrintParam.get());
+
+    CmdLine::OptionParam::Definition copyrightPrintDef;
+    copyrightPrintDef.name = "copyright";
+    copyrightPrintDef.description = "Prints the copyright from the tags";
+    copyrightPrintParam = std::make_unique<CmdLine::OptionParam>(copyrightPrintDef);
+    printOption->Add(copyrightPrintParam.get());
+
+    CmdLine::OptionParam::Definition introLengthPrintDef;
+    introLengthPrintDef.name = "introlength";
+    introLengthPrintDef.description = "Prints the intro length from the tags";
+    introLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
+        introLengthPrintDef);
+    printOption->Add(introLengthPrintParam.get());
+
+    CmdLine::OptionParam::Definition loopLengthPrintDef;
+    loopLengthPrintDef.name = "looplength";
+    loopLengthPrintDef.description = "Prints the loop length from the tags";
+    loopLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
+        loopLengthPrintDef);
+    printOption->Add(loopLengthPrintParam.get());
+
+    CmdLine::OptionParam::Definition endLengthPrintDef;
+    endLengthPrintDef.name = "endlength";
+    endLengthPrintDef.description = "Prints the end length from the tags";
+    endLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
+        endLengthPrintDef);
+    printOption->Add(endLengthPrintParam.get());
+
+    CmdLine::OptionParam::Definition mutedPrintDef;
+    mutedPrintDef.name = "muted";
+    mutedPrintDef.description = "Prints the muted voices from the tags";
+    mutedPrintParam = std::make_unique<CmdLine::OptionParam>(
+        mutedPrintDef);
+    printOption->Add(mutedPrintParam.get());
+
+    CmdLine::OptionParam::Definition loopTimesPrintDef;
+    loopTimesPrintDef.name = "looptimes";
+    loopTimesPrintDef.description = "Prints the loop times from the tags";
+    loopTimesPrintParam = std::make_unique<CmdLine::OptionParam>(
+        loopTimesPrintDef);
+    printOption->Add(loopTimesPrintParam.get());
+
+    CmdLine::OptionParam::Definition preampPrintDef;
+    preampPrintDef.name = "preamp";
+    preampPrintDef.description = "Prints the preamp level from the tags";
+    preampPrintParam = std::make_unique<CmdLine::OptionParam>(
+        preampPrintDef);
+    printOption->Add(preampPrintParam.get());
 }
 
 void Program::InitializeCmdLineParser(std::vector<std::string> arguments)
@@ -66,10 +202,9 @@ int Program::SelectMode()
 {
     if (spcFileParam->IsSpecified())
     {
-        SpcFileStream file{ spcFileParam->Value() };
-        file.Open(Binary::FileMode::Read);
-
-        if (!file.IsOpen())
+        SpcFile file{ spcFileParam->Value() };
+        
+        if (!file.Load())
         {
             std::cerr << "ERROR: unable to open file." << std::endl;
             return 2;
@@ -96,7 +231,7 @@ int Program::SelectMode()
     }
 }
 
-int Program::PrintSpcFile(SpcFileStream& file)
+int Program::PrintSpcFile(SpcFile& file)
 {
     PrintHeader(file);
     PrintTag(file);
@@ -104,14 +239,13 @@ int Program::PrintSpcFile(SpcFileStream& file)
     return 0;
 }
 
-void Program::PrintHeader(SpcFileStream& file)
+void Program::PrintHeader(SpcFile& file)
 {
-    SpcHeader header;
-    file.Read(&header);
+    SpcHeader header = file.Header();
     std::cout << header.ToString() << std::endl;
 }
 
-void Program::PrintTag(SpcFileStream& file)
+void Program::PrintTag(SpcFile& file)
 {
     if (file.HeaderContainsTag())
     {
@@ -137,205 +271,103 @@ void Program::PrintTag(SpcFileStream& file)
     }
 }
 
-void Program::PrintTextTag(SpcFileStream& file)
+void Program::PrintTextTag(SpcFile& file)
 {
     std::cout << FormatValue("Tag Type", "Text") << std::endl;
     std::cout << std::endl;
 
-    ID666TextTag tag;
-    file.Read(&tag);
+    ID666TextTag tag = file.TextTag();
     std::cout << tag.ToString() << std::endl;
 }
 
-void Program::PrintBinaryTag(SpcFileStream& file)
+void Program::PrintBinaryTag(SpcFile& file)
 {
     std::cout << FormatValue("Tag Type", "Binary") << std::endl;
     std::cout << std::endl;
 
-    ID666BinaryTag tag;
-    file.Read(&tag);
+    ID666BinaryTag tag = file.BinaryTag();
     std::cout << tag.ToString() << std::endl;
 }
 
-void Program::PrintExtendedTag(SpcFileStream& file)
+void Program::PrintExtendedTag(SpcFile& file)
 {
     std::cout << FormatValue("Has Extended Tag", "True") << std::endl;
-    file.SeekExtendedTag();
-
-    Binary::ChunkHeader tagHeader;
-    file.Read(&tagHeader);
-    std::string id = tagHeader.id.Value();
-    std::string size = tagHeader.dataSize.ToString();
-    size_t sizeRemaining = tagHeader.dataSize.Value();
-    std::cout << FormatValue("Extended Tag ID", id) << std::endl;
-    std::cout << FormatValue("Extended Tag Size", size) << std::endl;
-
-    while (sizeRemaining > 0)
-    {
-        ExtendedID666Item item;
-        file.Read(&item);
-
-        switch (item.type.Value())
-        {
-            case extendedTypeDataInHeader:
-                sizeRemaining -= item.Size();
-                PrintExtendedItem(item);
-                break;
-            case extendedTypeString:
-            {
-                size_t dataSize = item.data.Value();
-                sizeRemaining -= item.Size();
-                sizeRemaining -= dataSize;
-                Binary::StringField field{ item.data.Value() };
-                file.Read(&field);
-
-                if (dataSize % 4 != 0)
-                {
-                    size_t paddingSize = 1;
-
-                    while ((dataSize + paddingSize) % 4 != 0)
-                        paddingSize++;
-
-                    Binary::RawField padding{ paddingSize };
-                    file.Read(&padding);
-                    sizeRemaining -= paddingSize;
-                }
-
-                PrintExtendedItem(item, field);
-                break;
-            }
-            case extendedTypeInteger:
-            {
-                sizeRemaining -= item.Size();
-                sizeRemaining -= item.data.Value();
-                Binary::UInt32Field field;
-                file.Read(&field);
-                PrintExtendedItem(item, field);
-                break;
-            }
-            default:
-                std::cerr << "Invalid extended item type. File may be corrupt.";
-                return;
-        }
-    }
+    ID666ExtendedTag tag = file.ExtendedTag();
+    std::cout << tag.ToString() << std::endl;
 }
 
-int Program::PrintSpecifiedItems(SpcFileStream& file)
+int Program::PrintSpecifiedItems(SpcFile& file)
 {
     if (headerPrintParam->IsSpecified())
         PrintHeader(file);
 
     if (tagPrintParam->IsSpecified())
-    {
-        file.SetPosition(tagOffset);
         PrintTag(file);
-    }
+
+    if (songPrintParam->IsSpecified())
+        std::cout << FormatField(&file.SongTitle()) << std::endl;
+
+    if (gamePrintParam->IsSpecified())
+        std::cout << FormatField(&file.GameTitle()) << std::endl;
+
+    if (dumperPrintParam->IsSpecified())
+        std::cout << FormatField(&file.DumperName()) << std::endl;
+
+    if (commentsPrintParam->IsSpecified())
+        std::cout << FormatField(&file.Comments()) << std::endl;
+    
+    if (datePrintParam->IsSpecified())
+        std::cout << FormatField(&file.DateDumped()) << std::endl;
+
+    if (songLengthPrintParam->IsSpecified())
+        std::cout << FormatField(&file.SongLength()) << std::endl;
+
+    if (fadeLengthPrintParam->IsSpecified())
+        std::cout << FormatField(&file.FadeLength()) << std::endl;
+
+    if (artistPrintParam->IsSpecified())
+        std::cout << FormatField(&file.SongArtist()) << std::endl;
+
+    if (channelPrintParam->IsSpecified())
+        std::cout << FormatField(&file.DefaultChannelDisables()) << std::endl;
+
+    if (emulatorPrintParam->IsSpecified())
+        std::cout << FormatField(&file.EmulatorUsed()) << std::endl;
+
+    if (titlePrintParam->IsSpecified())
+        std::cout << FormatField(&file.OstTitle()) << std::endl;
+
+    if (discPrintParam->IsSpecified())
+        std::cout << FormatField(&file.OstDisc()) << std::endl;
+
+    if (trackPrintParam->IsSpecified())
+        std::cout << FormatField(&file.OstTrack()) << std::endl;
+
+    if (publisherPrintParam->IsSpecified())
+        std::cout << FormatField(&file.PublisherName()) << std::endl;
+
+    if (copyrightPrintParam->IsSpecified())
+        std::cout << FormatField(&file.CopyrightYear()) << std::endl;
+
+    if (introLengthPrintParam->IsSpecified())
+        std::cout << FormatField(&file.IntroLength()) << std::endl;
+
+    if (loopLengthPrintParam->IsSpecified())
+        std::cout << FormatField(&file.LoopLength()) << std::endl;
+
+    if (endLengthPrintParam->IsSpecified())
+        std::cout << FormatField(&file.EndLength()) << std::endl;
+
+    if (mutedPrintParam->IsSpecified())
+        std::cout << FormatField(&file.MutedVoices()) << std::endl;
+
+    if (loopTimesPrintParam->IsSpecified())
+        std::cout << FormatField(&file.LoopTimes()) << std::endl;
+
+    if (preampPrintParam->IsSpecified())
+        std::cout << FormatField(&file.PreampLevel()) << std::endl;
 
     return 0;
-}
-
-void Program::PrintExtendedItem(ExtendedID666Item& item)
-{
-    switch (item.id.Value())
-    {
-        case extendedEmulatorUsedID:
-            std::cout << FormatValue("Emulator Used", item.data.ToString());
-            break;
-        case extendedOSTDiskID:
-            std::cout << FormatValue("OST Disc", item.data.ToString());
-            break;
-        case extendedOSTTrackID:
-        {
-            std::stringstream stream;
-
-            // The extended track has an optional character in the first byte
-            // and the track number in the second byte. This is so you can
-            // do things like Track 1a, Track 1b, etc.
-            char trackChar = item.data.Data()[0];
-            int trackNo = static_cast<int>(item.data.Data()[1]);
-
-            stream << trackNo << trackChar;
-            std::cout << FormatValue("OST Track", stream.str());
-            break;
-        }
-        case extendedCopyrightYearID:
-            std::cout << FormatValue("Copyright Year", item.data.ToString());
-            break;
-        case extendedMutedVoicesID:
-            std::cout << FormatValue("Muted Voices", 
-                item.data.ToString(Binary::StringFormat::Bin));
-            break;
-        case extendedLoopTimesID:
-            std::cout << FormatValue("Loop Times", item.data.ToString());
-            break;
-        case extendedPreampLevelID:
-            std::cout << FormatValue("Preamp Level", item.data.ToString());
-            break;
-        default:
-            std::cerr << "Invalid extended item ID. File may be corrupt.";
-    }
-
-    std::cout << std::endl;
-}
-
-void Program::PrintExtendedItem(ExtendedID666Item& item, 
-    Binary::StringField& field)
-{
-    switch (item.id.Value())
-    {
-        case extendedSongNameID:
-            std::cout << FormatValue("Song Name", field.Value());
-            break;
-        case extendedGameNameID:
-            std::cout << FormatValue("Game Name", field.Value());
-            break;
-        case extendedArtistNameID:
-            std::cout << FormatValue("Artist", field.Value());
-            break;
-        case extendedDumperNameID:
-            std::cout << FormatValue("Dumper", field.Value());
-            break;
-        case extendedCommentsID:
-            std::cout << FormatValue("Comments", field.Value());
-            break;
-        case extendedOSTTitleID:
-            std::cout << FormatValue("OST Title", field.Value());
-            break;
-        case extendedPublisherNameID:
-            std::cout << FormatValue("Publisher", field.Value());
-            break;
-        default:
-            std::cerr << "Invalid extended item ID. File may be corrupt.";
-    }
-
-    std::cout << std::endl;
-}
-
-void Program::PrintExtendedItem(ExtendedID666Item& item, 
-    Binary::UInt32Field& field)
-{
-    switch (item.id.Value())
-    {
-        case extendedDateDumpedID:
-            std::cout << FormatValue("Date Dumped", field.ToString());
-            break;
-        case extendedIntroLengthID:
-            std::cout << FormatValue("Intro Length", field.ToString());
-            break;
-        case extendedLoopLengthID:
-            std::cout << FormatValue("Loop Length", field.ToString());
-            break;
-        case extendedEndLengthID:
-            std::cout << FormatValue("End Length", field.ToString());
-            break;
-        case extendedFadeLengthID:
-            std::cout << FormatValue("Fade Length", field.ToString());
-            break;
-        default:
-            std::cerr << "Invalid extended item ID. File may be corrupt.";
-    }
-
-    std::cout << std::endl;
 }
 
 int Program::Run(std::vector<std::string> arguments)
