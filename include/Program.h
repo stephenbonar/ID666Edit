@@ -41,6 +41,7 @@ private:
     std::unique_ptr<CmdLine::ProgParam> progParam;
     std::unique_ptr<CmdLine::PosParam> spcFileParam;
     std::unique_ptr<CmdLine::ValueOption> printOption;
+    std::unique_ptr<CmdLine::ValueOption> editOption;
     std::unique_ptr<CmdLine::OptionParam> tagPrintParam;
     std::unique_ptr<CmdLine::OptionParam> headerPrintParam;
     std::unique_ptr<CmdLine::OptionParam> songPrintParam;
@@ -64,6 +65,27 @@ private:
     std::unique_ptr<CmdLine::OptionParam> mutedPrintParam;
     std::unique_ptr<CmdLine::OptionParam> loopTimesPrintParam;
     std::unique_ptr<CmdLine::OptionParam> preampPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> songEditParam;
+    std::unique_ptr<CmdLine::OptionParam> gameEditParam;
+    std::unique_ptr<CmdLine::OptionParam> dumperEditParam;
+    std::unique_ptr<CmdLine::OptionParam> commentsEditParam;
+    std::unique_ptr<CmdLine::OptionParam> dateEditParam;
+    std::unique_ptr<CmdLine::OptionParam> songLengthEditParam;
+    std::unique_ptr<CmdLine::OptionParam> fadeLengthEditParam;
+    std::unique_ptr<CmdLine::OptionParam> artistEditParam;
+    std::unique_ptr<CmdLine::OptionParam> channelEditParam;
+    std::unique_ptr<CmdLine::OptionParam> emulatorEditParam;
+    std::unique_ptr<CmdLine::OptionParam> titleEditParam;
+    std::unique_ptr<CmdLine::OptionParam> discEditParam;
+    std::unique_ptr<CmdLine::OptionParam> trackEditParam;
+    std::unique_ptr<CmdLine::OptionParam> publisherEditParam;
+    std::unique_ptr<CmdLine::OptionParam> copyrightEditParam;
+    std::unique_ptr<CmdLine::OptionParam> introLengthEditParam;
+    std::unique_ptr<CmdLine::OptionParam> loopLengthEditParam;
+    std::unique_ptr<CmdLine::OptionParam> endLengthEditParam;
+    std::unique_ptr<CmdLine::OptionParam> mutedEditParam;
+    std::unique_ptr<CmdLine::OptionParam> loopTimesEditParam;
+    std::unique_ptr<CmdLine::OptionParam> preampEditParam;
     std::unique_ptr<CmdLine::Parser> parser;
 
     /// @brief Prints information about the program to the screen.

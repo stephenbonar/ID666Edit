@@ -25,12 +25,12 @@ void Program::PrintProgramInfo()
 void Program::DefineCmdLineParameters()
 {
     CmdLine::ProgParam::Definition progDef;
-    progDef.name = "ID666Edit";
+    progDef.name = "id666edit";
     progDef.description = "An ID666 metadata tag editor for .SPC files";
     progParam = std::make_unique<CmdLine::ProgParam>(progDef);
 
     CmdLine::PosParam::Definition fileDef;
-    fileDef.name = "spc_file";
+    fileDef.name = "spcfile";
     fileDef.description = "The .spc file to open";
     fileDef.isMandatory = true;
     spcFileParam = std::make_unique<CmdLine::PosParam>(fileDef);
@@ -41,154 +41,198 @@ void Program::DefineCmdLineParameters()
     printDef.description = "Prints the specified item in the .spc file";
     printOption = std::make_unique<CmdLine::ValueOption>(printDef);
 
-    CmdLine::OptionParam::Definition tagPrintDef;
-    tagPrintDef.name = "tag";
-    tagPrintDef.description = "Prints the entire ID666 tag";
-    tagPrintParam = std::make_unique<CmdLine::OptionParam>(tagPrintDef);
+    CmdLine::ValueOption::Definition editDef;
+    editDef.shortName = 'e';
+    editDef.longName = "edit";
+    editDef.description = "Edits the specified tag item (use \"name=value\")";
+    editOption = std::make_unique<CmdLine::ValueOption>(editDef);
+
+    CmdLine::OptionParam::Definition tagDef;
+    tagDef.name = "tag";
+    tagDef.description = "The entire ID666 tag";
+    tagPrintParam = std::make_unique<CmdLine::OptionParam>(tagDef);
     printOption->Add(tagPrintParam.get());
 
-    CmdLine::OptionParam::Definition headerPrintDef;
-    headerPrintDef.name = "header";
-    headerPrintDef.description = "Prints the .spc file header";
-    headerPrintParam = std::make_unique<CmdLine::OptionParam>(headerPrintDef);
+    CmdLine::OptionParam::Definition headerDef;
+    headerDef.name = "header";
+    headerDef.description = "The .spc file header";
+    headerPrintParam = std::make_unique<CmdLine::OptionParam>(headerDef);
     printOption->Add(headerPrintParam.get());
 
-    CmdLine::OptionParam::Definition songPrintDef;
-    songPrintDef.name = "song";
-    songPrintDef.description = "Prints the song name from the tags";
-    songPrintParam = std::make_unique<CmdLine::OptionParam>(songPrintDef);
+    CmdLine::OptionParam::Definition songDef;
+    songDef.name = "song";
+    songDef.description = "The name of the song";
+    songPrintParam = std::make_unique<CmdLine::OptionParam>(songDef);
+    songEditParam = std::make_unique<CmdLine::OptionParam>(songDef);
     printOption->Add(songPrintParam.get());
+    editOption->Add(songEditParam.get());
 
-    CmdLine::OptionParam::Definition gamePrintDef;
-    gamePrintDef.name = "game";
-    gamePrintDef.description = "Prints the game name from the tags";
-    gamePrintParam = std::make_unique<CmdLine::OptionParam>(gamePrintDef);
+    CmdLine::OptionParam::Definition gameDef;
+    gameDef.name = "game";
+    gameDef.description = "The name of the game";
+    gamePrintParam = std::make_unique<CmdLine::OptionParam>(gameDef);
+    gameEditParam = std::make_unique<CmdLine::OptionParam>(gameDef);
     printOption->Add(gamePrintParam.get());
+    editOption->Add(gameEditParam.get());
 
-    CmdLine::OptionParam::Definition dumperPrintDef;
-    dumperPrintDef.name = "dumper";
-    dumperPrintDef.description = "Prints the dumper from the tags";
-    dumperPrintParam = std::make_unique<CmdLine::OptionParam>(dumperPrintDef);
+    CmdLine::OptionParam::Definition dumperDef;
+    dumperDef.name = "dumper";
+    dumperDef.description = "The name of the person who dumped the song";
+    dumperPrintParam = std::make_unique<CmdLine::OptionParam>(dumperDef);
+    dumperEditParam = std::make_unique<CmdLine::OptionParam>(dumperDef);
     printOption->Add(dumperPrintParam.get());
+    editOption->Add(dumperEditParam.get());
 
-    CmdLine::OptionParam::Definition commentsPrintDef;
-    commentsPrintDef.name = "comments";
-    commentsPrintDef.description = "Prints the comments from the tags";
-    commentsPrintParam = std::make_unique<CmdLine::OptionParam>(
-        commentsPrintDef);
+    CmdLine::OptionParam::Definition commentsDef;
+    commentsDef.name = "comments";
+    commentsDef.description = "The tagger's comments";
+    commentsPrintParam = std::make_unique<CmdLine::OptionParam>(commentsDef);
+    commentsEditParam = std::make_unique<CmdLine::OptionParam>(commentsDef);
     printOption->Add(commentsPrintParam.get());
+    editOption->Add(commentsEditParam.get());
 
-    CmdLine::OptionParam::Definition datePrintDef;
-    datePrintDef.name = "date";
-    datePrintDef.description = "Prints the date dumped from the tags";
-    datePrintParam = std::make_unique<CmdLine::OptionParam>(datePrintDef);
+    CmdLine::OptionParam::Definition dateDef;
+    dateDef.name = "date";
+    dateDef.description = "The date the song was dumped";
+    datePrintParam = std::make_unique<CmdLine::OptionParam>(dateDef);
+    dateEditParam = std::make_unique<CmdLine::OptionParam>(dateDef);
     printOption->Add(datePrintParam.get());
+    editOption->Add(dateEditParam.get());
 
-    CmdLine::OptionParam::Definition songLengthPrintDef;
-    songLengthPrintDef.name = "songlength";
-    songLengthPrintDef.description = "Prints the song length from the tags";
+    CmdLine::OptionParam::Definition songLengthDef;
+    songLengthDef.name = "songlength";
+    songLengthDef.description = "The length of the song, in seconds";
     songLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
-        songLengthPrintDef);
+        songLengthDef);
+    songLengthEditParam = std::make_unique<CmdLine::OptionParam>(
+        songLengthDef);
     printOption->Add(songLengthPrintParam.get());
+    editOption->Add(songLengthEditParam.get());
 
-    CmdLine::OptionParam::Definition fadeLengthPrintDef;
-    fadeLengthPrintDef.name = "fadelength";
-    fadeLengthPrintDef.description = "Prints the fade length from the tags";
+    CmdLine::OptionParam::Definition fadeLengthDef;
+    fadeLengthDef.name = "fadelength";
+    fadeLengthDef.description = "The length of fade out, in milliseconds";
     fadeLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
-        fadeLengthPrintDef);
+        fadeLengthDef);
+    fadeLengthEditParam = std::make_unique<CmdLine::OptionParam>(
+        fadeLengthDef);
     printOption->Add(fadeLengthPrintParam.get());
+    editOption->Add(fadeLengthEditParam.get());
 
-    CmdLine::OptionParam::Definition artistPrintDef;
-    artistPrintDef.name = "artist";
-    artistPrintDef.description = "Prints the song artist from the tags";
-    artistPrintParam = std::make_unique<CmdLine::OptionParam>(artistPrintDef);
+    CmdLine::OptionParam::Definition artistDef;
+    artistDef.name = "artist";
+    artistDef.description = "The song artist / composer";
+    artistPrintParam = std::make_unique<CmdLine::OptionParam>(artistDef);
+    artistEditParam = std::make_unique<CmdLine::OptionParam>(artistDef);
     printOption->Add(artistPrintParam.get());
 
-    CmdLine::OptionParam::Definition channelPrintDef;
-    channelPrintDef.name = "channel";
-    channelPrintDef.description = "Prints the channel disables from the tags";
-    channelPrintParam = std::make_unique<CmdLine::OptionParam>(
-        channelPrintDef);
+    CmdLine::OptionParam::Definition channelDef;
+    channelDef.name = "channel";
+    channelDef.description = "Default channel disables (purpose unknown)";
+    channelPrintParam = std::make_unique<CmdLine::OptionParam>(channelDef);
+    channelEditParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     printOption->Add(channelPrintParam.get());
+    editOption->Add(channelEditParam.get());
 
-    CmdLine::OptionParam::Definition emulatorPrintDef;
-    emulatorPrintDef.name = "emulator";
-    emulatorPrintDef.description = "Prints the emulator used from the tags";
-    emulatorPrintParam = std::make_unique<CmdLine::OptionParam>(
-        emulatorPrintDef);
+    CmdLine::OptionParam::Definition emulatorDef;
+    emulatorDef.name = "emulator";
+    emulatorDef.description = "The emulator used to dump the song";
+    emulatorPrintParam = std::make_unique<CmdLine::OptionParam>(emulatorDef);
+    emulatorEditParam = std::make_unique<CmdLine::OptionParam>(emulatorDef);
     printOption->Add(emulatorPrintParam.get());
+    editOption->Add(emulatorEditParam.get());
 
-    CmdLine::OptionParam::Definition titlePrintDef;
-    titlePrintDef.name = "title";
-    titlePrintDef.description = "Prints the OST title from the tags";
-    titlePrintParam = std::make_unique<CmdLine::OptionParam>(titlePrintDef);
+    CmdLine::OptionParam::Definition titleDef;
+    titleDef.name = "title";
+    titleDef.description = "The Original Sound Track (OST) album title";
+    titlePrintParam = std::make_unique<CmdLine::OptionParam>(titleDef);
+    titleEditParam = std::make_unique<CmdLine::OptionParam>(titleDef);
     printOption->Add(titlePrintParam.get());
+    editOption->Add(titleEditParam.get());
 
-    CmdLine::OptionParam::Definition discPrintDef;
-    discPrintDef.name = "disc";
-    discPrintDef.description = "Prints the OST disc from the tags";
-    discPrintParam = std::make_unique<CmdLine::OptionParam>(discPrintDef);
+    CmdLine::OptionParam::Definition discDef;
+    discDef.name = "disc";
+    discDef.description = "The Original Sound Track (OST) disc number";
+    discPrintParam = std::make_unique<CmdLine::OptionParam>(discDef);
+    discEditParam = std::make_unique<CmdLine::OptionParam>(discDef);
     printOption->Add(discPrintParam.get());
+    editOption->Add(discEditParam.get());
 
-    CmdLine::OptionParam::Definition trackPrintDef;
-    trackPrintDef.name = "track";
-    trackPrintDef.description = "Prints the OST track from the tags";
-    trackPrintParam = std::make_unique<CmdLine::OptionParam>(trackPrintDef);
+    CmdLine::OptionParam::Definition trackDef;
+    trackDef.name = "track";
+    trackDef.description = "The Original Sound Track (OST) from the tags";
+    trackPrintParam = std::make_unique<CmdLine::OptionParam>(trackDef);
+    trackEditParam = std::make_unique<CmdLine::OptionParam>(trackDef);
     printOption->Add(trackPrintParam.get());
+    editOption->Add(trackEditParam.get());
 
-    CmdLine::OptionParam::Definition publisherPrintDef;
-    publisherPrintDef.name = "publisher";
-    publisherPrintDef.description = "Prints the publisher from the tags";
-    publisherPrintParam = std::make_unique<CmdLine::OptionParam>(publisherPrintDef);
+    CmdLine::OptionParam::Definition publisherDef;
+    publisherDef.name = "publisher";
+    publisherDef.description = "The publisher of the game";
+    publisherPrintParam = std::make_unique<CmdLine::OptionParam>(publisherDef);
+    publisherEditParam = std::make_unique<CmdLine::OptionParam>(publisherDef);
     printOption->Add(publisherPrintParam.get());
+    editOption->Add(publisherPrintParam.get());
 
-    CmdLine::OptionParam::Definition copyrightPrintDef;
-    copyrightPrintDef.name = "copyright";
-    copyrightPrintDef.description = "Prints the copyright from the tags";
-    copyrightPrintParam = std::make_unique<CmdLine::OptionParam>(copyrightPrintDef);
+    CmdLine::OptionParam::Definition copyrightDef;
+    copyrightDef.name = "copyright";
+    copyrightDef.description = "The year the game was copyrighted";
+    copyrightPrintParam = std::make_unique<CmdLine::OptionParam>(copyrightDef);
+    copyrightEditParam = std::make_unique<CmdLine::OptionParam>(copyrightDef);
     printOption->Add(copyrightPrintParam.get());
+    editOption->Add(copyrightEditParam.get());
 
-    CmdLine::OptionParam::Definition introLengthPrintDef;
-    introLengthPrintDef.name = "introlength";
-    introLengthPrintDef.description = "Prints the intro length from the tags";
+    CmdLine::OptionParam::Definition introLengthDef;
+    introLengthDef.name = "introlength";
+    introLengthDef.description = "The length of the song intro, in ticks";
     introLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
-        introLengthPrintDef);
+        introLengthDef);
+    introLengthEditParam = std::make_unique<CmdLine::OptionParam>(
+        introLengthDef);
     printOption->Add(introLengthPrintParam.get());
+    editOption->Add(introLengthEditParam.get());
 
-    CmdLine::OptionParam::Definition loopLengthPrintDef;
-    loopLengthPrintDef.name = "looplength";
-    loopLengthPrintDef.description = "Prints the loop length from the tags";
+    CmdLine::OptionParam::Definition loopLengthDef;
+    loopLengthDef.name = "looplength";
+    loopLengthDef.description = "The length of each song loop, in ticks";
     loopLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
-        loopLengthPrintDef);
+        loopLengthDef);
+    loopLengthEditParam = std::make_unique<CmdLine::OptionParam>(
+        loopLengthDef);
     printOption->Add(loopLengthPrintParam.get());
+    editOption->Add(loopLengthEditParam.get());
 
-    CmdLine::OptionParam::Definition endLengthPrintDef;
-    endLengthPrintDef.name = "endlength";
-    endLengthPrintDef.description = "Prints the end length from the tags";
-    endLengthPrintParam = std::make_unique<CmdLine::OptionParam>(
-        endLengthPrintDef);
+    CmdLine::OptionParam::Definition endLengthDef;
+    endLengthDef.name = "endlength";
+    endLengthDef.description = "The length of the end of the song, in ticks";
+    endLengthPrintParam = std::make_unique<CmdLine::OptionParam>(endLengthDef);
+    endLengthEditParam = std::make_unique<CmdLine::OptionParam>(endLengthDef);
     printOption->Add(endLengthPrintParam.get());
+    editOption->Add(endLengthEditParam.get());
 
-    CmdLine::OptionParam::Definition mutedPrintDef;
-    mutedPrintDef.name = "muted";
-    mutedPrintDef.description = "Prints the muted voices from the tags";
-    mutedPrintParam = std::make_unique<CmdLine::OptionParam>(
-        mutedPrintDef);
+    CmdLine::OptionParam::Definition mutedDef;
+    mutedDef.name = "muted";
+    mutedDef.description = "8-bit value where each set bit mutes a voice";
+    mutedPrintParam = std::make_unique<CmdLine::OptionParam>(mutedDef);
+    mutedEditParam = std::make_unique<CmdLine::OptionParam>(mutedDef);
     printOption->Add(mutedPrintParam.get());
+    editOption->Add(mutedEditParam.get());
 
-    CmdLine::OptionParam::Definition loopTimesPrintDef;
-    loopTimesPrintDef.name = "looptimes";
-    loopTimesPrintDef.description = "Prints the loop times from the tags";
-    loopTimesPrintParam = std::make_unique<CmdLine::OptionParam>(
-        loopTimesPrintDef);
+    CmdLine::OptionParam::Definition loopTimesDef;
+    loopTimesDef.name = "looptimes";
+    loopTimesDef.description = "The number of times the song should loop";
+    loopTimesPrintParam = std::make_unique<CmdLine::OptionParam>(loopTimesDef);
+    loopTimesEditParam = std::make_unique<CmdLine::OptionParam>(loopTimesDef);
     printOption->Add(loopTimesPrintParam.get());
+    editOption->Add(loopTimesEditParam.get());
 
-    CmdLine::OptionParam::Definition preampPrintDef;
-    preampPrintDef.name = "preamp";
-    preampPrintDef.description = "Prints the preamp level from the tags";
-    preampPrintParam = std::make_unique<CmdLine::OptionParam>(
-        preampPrintDef);
+    CmdLine::OptionParam::Definition preampDef;
+    preampDef.name = "preamp";
+    preampDef.description = "The preamp level to apply";
+    preampPrintParam = std::make_unique<CmdLine::OptionParam>(preampDef);
+    preampEditParam = std::make_unique<CmdLine::OptionParam>(preampDef);
     printOption->Add(preampPrintParam.get());
+    editOption->Add(preampEditParam.get());
 }
 
 void Program::InitializeCmdLineParser(std::vector<std::string> arguments)
@@ -196,6 +240,7 @@ void Program::InitializeCmdLineParser(std::vector<std::string> arguments)
     parser = std::make_unique<CmdLine::Parser>(progParam.get(), arguments);
     parser->Add(spcFileParam.get());
     parser->Add(printOption.get());
+    parser->Add(editOption.get());
 }
 
 int Program::SelectMode()
