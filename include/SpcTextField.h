@@ -36,6 +36,14 @@ public:
     SpcTextField(std::string label, uintmax_t offset, size_t size) :
         SpcField{ label, offset, size }
     { }
+
+    /// @brief Gets the text value of the field.
+    /// @return A string representing the text value of the field.
+    std::string Value() const { return ToString(); }
+
+    /// @brief Sets the text value of the field.
+    /// @param value The value to set.
+    void SetValue(std::string value);
     
     /// @brief Converts the field's data to a string representation.
     /// @return A string representation of the field's data.

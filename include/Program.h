@@ -27,7 +27,7 @@
 #include "SpcHeader.h"
 #include "SpcFile.h"
 #include "SpcFormat.h"
-#include "ExtendedID666Item.h"
+#include "ID666ExtendedItem.h"
 
 /// @brief Provides the main program logic.
 class Program
@@ -107,6 +107,8 @@ private:
     /// @return The status code returned by the selected mode upon completion.
     int SelectMode();
 
+    void PrintSectionHeader(std::string title);
+
     void PrintField(SpcField* field);
 
     void PrintField(SpcTextField field);
@@ -142,11 +144,16 @@ private:
     void PrintBinaryTag(SpcFile& file);
 
     /// @brief Prints the extended ID666 tag.
-    /// @param file The file stream to use for printing. 
+    /// @param file The file to use for printing. 
     void PrintExtendedTag(SpcFile& file);
 
     /// @brief Prints the items in the .spc file that were specified via args.
     int PrintSpecifiedItems(SpcFile& file);
+
+    /// @brief Edits the items in the .spc file that were specified via args.
+    /// @param file The file to edit.
+    /// @return The status code.
+    int EditSpecifiedItems(SpcFile& file);
 };
 
 #endif

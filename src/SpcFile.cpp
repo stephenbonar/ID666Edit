@@ -18,191 +18,275 @@
 
 SpcTextField SpcFile::SongTitle() const
 {
-    if (extendedTag.songName != nullptr)
-        return *extendedTag.songName;
-
-    if (hasBinaryTag)
-        return binaryTag.songTitle;
-    else
-        return textTag.songTitle;
+    return GetField<SpcTextField>(binaryTag.songTitle,
+                                  textTag.songTitle, 
+                                  extendedTag.songName.get());
 }
 
 SpcTextField SpcFile::GameTitle() const
 {
-    if (extendedTag.gameName != nullptr)
-        return *extendedTag.gameName;
-
-    if (hasBinaryTag)
-        return binaryTag.gameTitle;
-    else
-        return textTag.gameTitle;
+    return GetField<SpcTextField>(binaryTag.gameTitle,
+                                  textTag.gameTitle, 
+                                  extendedTag.gameName.get());
 }
 
 SpcTextField SpcFile::DumperName() const
 {
-    if (extendedTag.dumperName != nullptr)
-        return *extendedTag.dumperName;
-
-    if (hasBinaryTag)
-        return binaryTag.dumperName;
-    else
-        return textTag.dumperName;
+    return GetField<SpcTextField>(binaryTag.dumperName,
+                                  textTag.dumperName, 
+                                  extendedTag.dumperName.get());
 }
 
 SpcTextField SpcFile::Comments() const
 {
-    if (extendedTag.comments != nullptr)
-        return *extendedTag.comments;
-
-    if (hasBinaryTag)
-        return binaryTag.comments;
-    else
-        return textTag.comments;
+    return GetField<SpcTextField>(binaryTag.comments,
+                                  textTag.comments, 
+                                  extendedTag.comments.get());
 }
 
 SpcDateField SpcFile::DateDumped() const
 {
-    if (extendedTag.dateDumped != nullptr)
-        return *extendedTag.dateDumped;
-
-    if (hasBinaryTag)
-        return binaryTag.dateDumped;
-    else
-        return textTag.dateDumped;
+    return GetField<SpcDateField>(binaryTag.dateDumped,
+                                  textTag.dateDumped, 
+                                  extendedTag.dateDumped.get());
 }
 
 SpcNumericField SpcFile::SongLength() const
 {
-    if (hasBinaryTag)
-        return binaryTag.songLength;
-    else
-        return textTag.songLength;
+    return GetField<SpcNumericField>(binaryTag.songLength, textTag.songLength);
 }
 
 SpcNumericField SpcFile::FadeLength() const
 {
-    if (hasBinaryTag)
-        return binaryTag.fadeLength;
-    else
-        return textTag.fadeLength;
+    return GetField<SpcNumericField>(binaryTag.fadeLength, textTag.fadeLength);
 }
 
 SpcTextField SpcFile::SongArtist() const
 {
-    if (extendedTag.artistName != nullptr)
-        return *extendedTag.artistName;
-
-    if (hasBinaryTag)
-        return binaryTag.songArtist;
-    else
-        return textTag.songArtist;
+    return GetField<SpcTextField>(binaryTag.songArtist, 
+                                  textTag.songArtist, 
+                                  extendedTag.artistName.get());
 }
 
 SpcNumericField SpcFile::DefaultChannelDisables() const
 {
-    if (hasBinaryTag)
-        return binaryTag.defaultChannelDisables;
-    else
-        return textTag.defaultChannelDisables;
+    return GetField<SpcNumericField>(binaryTag.defaultChannelDisables, 
+                                     textTag.defaultChannelDisables);
 }
 
 SpcEmulatorField SpcFile::EmulatorUsed() const
 {
-    if (extendedTag.emulatorUsed != nullptr)
-        return *extendedTag.emulatorUsed;
-    
-    if (hasBinaryTag)
-        return binaryTag.emulatorUsed;
-    else
-        return textTag.emulatorUsed;
+    return GetField<SpcEmulatorField>(binaryTag.emulatorUsed, 
+                                      textTag.emulatorUsed, 
+                                      extendedTag.emulatorUsed.get());
 }
 
 SpcTextField SpcFile::OstTitle() const
 {
-    if (extendedTag.ostTitle != nullptr)
-        return *extendedTag.ostTitle;
-    else
-        return *InitField<SpcTextField>(extendedOSTTitleID, 1);
+    return GetField<SpcTextField>(extendedTag.ostTitle.get(), 
+                                  extendedOSTTitleID, 
+                                  1);
 }
 
 SpcNumericField SpcFile::OstDisc() const
 {
-    if (extendedTag.ostDisc != nullptr)
-        return *extendedTag.ostDisc;
-    else
-        return *InitField<SpcNumericField>(extendedOSTDiscID, 4);
+    return GetField<SpcNumericField>(extendedTag.ostDisc.get(),
+                                     extendedOSTDiscID,
+                                     4);
 }
 
 SpcTrackField SpcFile::OstTrack() const
 {
-    if (extendedTag.ostTrack != nullptr)
-        return *extendedTag.ostTrack;
-    else
-        return *InitField<SpcTrackField>(extendedOSTTrackID, 1);
+    return GetField<SpcTrackField>(extendedTag.ostTrack.get(), 
+                                   extendedOSTTrackID, 
+                                   1);
 }
 
 SpcTextField SpcFile::PublisherName() const
 {
-    if (extendedTag.publisherName != nullptr)
-        return *extendedTag.publisherName;
-    else
-        return *InitField<SpcTextField>(extendedPublisherNameID, 1);
+    return GetField<SpcTextField>(extendedTag.publisherName.get(), 
+                                  extendedPublisherNameID, 
+                                  1);
 }
 
 SpcNumericField SpcFile::CopyrightYear() const
 {
-    if (extendedTag.copyrightYear != nullptr)
-        return *extendedTag.copyrightYear;
-    else
-        return *InitField<SpcNumericField>(extendedCopyrightYearID, 1);
+    return GetField<SpcNumericField>(extendedTag.copyrightYear.get(), 
+                                     extendedCopyrightYearID, 
+                                     1);
 }
 
 SpcNumericField SpcFile::IntroLength() const
 {
-    if (extendedTag.introLength != nullptr)
-        return *extendedTag.introLength;
-    else
-        return *InitField<SpcNumericField>(extendedIntroLengthID, 1);
+    return GetField<SpcNumericField>(extendedTag.introLength.get(), 
+                                     extendedIntroLengthID, 
+                                     1);
 }
 
 SpcNumericField SpcFile::LoopLength() const
 {
-    if (extendedTag.loopLength != nullptr)
-        return *extendedTag.loopLength;
-    else
-        return *InitField<SpcNumericField>(extendedLoopLengthID, 1);
+    return GetField<SpcNumericField>(extendedTag.loopLength.get(), 
+                                     extendedLoopLengthID, 
+                                     1);
 }
 
 SpcNumericField SpcFile::EndLength() const
 {
-    if (extendedTag.endLength != nullptr)
-        return *extendedTag.endLength;
-    else
-        return *InitField<SpcNumericField>(extendedEndLengthID, 1);
+    return GetField<SpcNumericField>(extendedTag.endLength.get(), extendedEndLengthID, 1);
 }
 
 SpcBinaryField SpcFile::MutedVoices() const
 {
-    if (extendedTag.mutedVoices != nullptr)
-        return *extendedTag.mutedVoices;
-    else
-        return *InitField<SpcBinaryField>(extendedMutedVoicesID, 1);
+    return GetField<SpcBinaryField>(extendedTag.mutedVoices.get(), 
+                                    extendedMutedVoicesID, 
+                                    1);
 }
 
 SpcNumericField SpcFile::LoopTimes() const
 {
-    if (extendedTag.loopTimes != nullptr)
-        return *extendedTag.loopTimes;
-    else
-        return *InitField<SpcNumericField>(extendedLoopTimesID, 1);
+    return GetField<SpcNumericField>(extendedTag.loopTimes.get(), 
+                                     extendedLoopLengthID, 
+                                     1);
 }
 
 SpcNumericField SpcFile::PreampLevel() const
 {
-    if (extendedTag.preampLevel != nullptr)
-        return *extendedTag.preampLevel;
+    return GetField<SpcNumericField>(extendedTag.preampLevel.get(), 
+                                     extendedPreampLevelID, 
+                                     1);
+}
+
+void SpcFile::SetSongTitle(std::string value)
+{
+    constexpr int maxSongTileSize{ 32 };
+
+    if (hasBinaryTag)
+        binaryTag.songTitle.SetValue(value);
     else
-        return *InitField<SpcNumericField>(extendedPreampLevelID, 1);
+        textTag.songTitle.SetValue(value);
+
+    if (value.size() > maxSongTileSize)
+    {
+        auto data = InitField<SpcTextField>(extendedSongNameID, value.size());
+        hasExtendedTag = true;
+
+        if (extendedTag.songName == nullptr)
+        {
+            extendedTag.songName = std::make_shared<ID666ExtendedItem>();
+            extendedTag.songName->id->SetValue(extendedSongNameID);
+            extendedTag.songName->type->SetValue(extendedTypeString);
+            auto size = std::static_pointer_cast<SpcNumericField>(
+                extendedTag.songName->data);
+            size->SetValue(value.size());
+        }
+
+        data->SetValue(value);
+        extendedTag.songName->extendedData = data;
+    }
+    else if (extendedTag.songName != nullptr)
+    {
+        extendedTag.songName = nullptr;
+    }
+}
+
+void SpcFile::SetGameTitle(std::string value)
+{
+
+}
+
+void SpcFile::SetDumperName(std::string value)
+{
+
+}
+
+void SpcFile::SetComments(std::string value)
+{
+
+}
+
+void SpcFile::SetDateDumped(std::string value)
+{
+
+}
+
+void SpcFile::SetSongLength(std::string value)
+{
+
+}
+
+void SpcFile::SetFadeLength(std::string value)
+{
+
+}
+
+void SpcFile::SetSongArtist(std::string value)
+{
+
+}
+
+void SpcFile::SetDefaultChannelDisables(std::string value)
+{
+
+}
+
+void SpcFile::SetEmulatorUsed(std::string value)
+{
+
+}
+
+void SpcFile::SetOstTitle(std::string value)
+{
+
+}
+
+void SpcFile::SetOstDisc(std::string value)
+{
+    
+}
+
+void SpcFile::SetOstTrack(std::string value)
+{
+
+}
+
+void SpcFile::SetPublisherName(std::string value)
+{
+
+}
+
+void SpcFile::SetCopyrightYear(std::string value)
+{
+
+}
+
+void SpcFile::SetIntroLength(std::string value)
+{
+
+}
+
+void SpcFile::SetLoopLength(std::string value)
+{
+
+}
+
+void SpcFile::SetEndLength(std::string value)
+{
+
+}
+
+void SpcFile::SetMutedVoices(std::string value)
+{
+
+}
+
+void SpcFile::SetLoopTimes(std::string value)
+{
+
+}
+
+void SpcFile::SetPreampLevel(std::string value)
+{
+
 }
 
 bool SpcFile::Load()
@@ -233,33 +317,41 @@ bool SpcFile::Load()
         }
     }
 
+    file.Read(&spcRam);
+    file.Read(&dspRegisters);
+    file.Read(&unused);
+    file.Read(&extraRam);
+
     if (file.HasExtendedTag())
     {
         hasExtendedTag = true;
-        file.SeekExtendedTag();
-        Binary::ChunkHeader tagHeader;
-        file.Read(&tagHeader);
-        std::string id = tagHeader.id.Value();
-        std::string size = tagHeader.dataSize.ToString();
-        size_t sizeRemaining = tagHeader.dataSize.Value();
+        file.Read(&extendedTagHeader);
+        std::string id = extendedTagHeader.id.Value();
+        std::string size = extendedTagHeader.dataSize.ToString();
+        size_t sizeRemaining = extendedTagHeader.dataSize.Value();
 
         while (sizeRemaining > 0)
         {
-            ExtendedID666Item item;
-            file.Read(&item);
+            auto item = std::make_shared<ID666ExtendedItem>();
+            file.Read(item.get());
 
-            switch (item.type.Value())
+            switch (item->type->Value())
             {
                 case extendedTypeDataInHeader:
-                    sizeRemaining -= item.Size();
-                    LoadHeaderField(item);
+                    item->data->SetLabel(
+                        extendedFieldLabels.at(item->id->Value()));
+                    sizeRemaining -= item->Size();
+                    LoadHeaderItem(item);
                     break;
                 case extendedTypeString:
                 {
-                    size_t dataSize = item.data.Value();
-                    sizeRemaining -= item.Size();
+                    item->data->SetLabel("Item Length");
+                    auto data = std::static_pointer_cast<SpcNumericField>(
+                        item->data);
+                    size_t dataSize = data->Value();
+                    sizeRemaining -= item->Size();
                     sizeRemaining -= dataSize;
-                    LoadTextField(item, file);
+                    LoadTextItem(item, file);
 
                     if (dataSize % 4 != 0)
                     {
@@ -268,8 +360,9 @@ bool SpcFile::Load()
                         while ((dataSize + paddingSize) % 4 != 0)
                             paddingSize++;
 
-                        Binary::RawField padding{ paddingSize };
-                        file.Read(&padding);
+                        item->padding = std::make_shared<SpcTextField>(
+                            "<padding>", extendedTagOffset, paddingSize);
+                        file.Read(item->padding.get());
                         sizeRemaining -= paddingSize;
                     }
 
@@ -277,9 +370,12 @@ bool SpcFile::Load()
                 }
                 case extendedTypeInteger:
                 {
-                    sizeRemaining -= item.Size();
-                    sizeRemaining -= item.data.Value();
-                    LoadNumericField(item, file);                    
+                    item->data->SetLabel("Item Length");
+                    sizeRemaining -= item->Size();
+                    auto data = std::static_pointer_cast<SpcNumericField>(
+                        item->data);
+                    sizeRemaining -= data->Value();
+                    LoadNumericItem(item, file);                    
                     break;
                 }
                 default:
@@ -292,111 +388,198 @@ bool SpcFile::Load()
     return true;
 }
 
-void SpcFile::LoadHeaderField(ExtendedID666Item& item)
+bool SpcFile::Save()
 {
+    if (!hasLoaded)
+        return false;
+
+    SpcFileStream stream{ fileName };
+    stream.Open(Binary::FileMode::Write);
+
+    if (!stream.IsOpen())
+        return false;
+
+    stream.Write(&header);
+
+    if (hasBinaryTag)
+        stream.Write(&binaryTag);
+    else
+        stream.Write(&textTag);
+
+    stream.Write(&spcRam);
+    stream.Write(&dspRegisters);
+    stream.Write(&unused);
+    stream.Write(&extraRam);
+
+    if (hasExtendedTag)
+    {
+        stream.Write(&extendedTagHeader);
+        stream.Write(&extendedTag);
+    }
+
+    return true;
+}
+
+/*
+SpcTextField SpcFile::GetTextField(const SpcTextField& field, 
+                                   ID666ExtendedItem* item)
+{
+    if (item != nullptr)
+    {
+        SpcField* field = item->extendedData.get();
+        SpcTextField* textField = dynamic_cast<SpcTextField*>(field);
+        return *textField;
+    }
+    else
+    {
+        return *field;
+    }
+}
+*/
+
+void SpcFile::LoadHeaderItem(std::shared_ptr<ID666ExtendedItem> item)
+{
+    /*
     constexpr size_t offset{ extendedTagOffset };
     constexpr size_t size{ extendedTagDataSize };
-    const uintmax_t id{ item.id.Value() };
+    const uintmax_t id{ item->id.Value() };
+    */
+
+    switch (item->id->Value())
+    {
+        case extendedEmulatorUsedID:
+        {
+            std::string label = extendedFieldLabels.at(item->id->Value());
+            auto data = std::make_shared<SpcEmulatorField>(
+                label, 
+                extendedTagOffset, 
+                extendedTagDataSize);
+            std::memcpy(data->Data(), item->data->Data(), extendedTagDataSize); 
+            item->data = data;
+            extendedTag.emulatorUsed = item;
+            break;
+        }
+        case extendedOSTDiscID:
+            extendedTag.ostDisc = item;
+            break;
+        case extendedOSTTrackID:
+        {
+            std::string label = extendedFieldLabels.at(item->id->Value());
+            auto data = std::make_shared<SpcTrackField>(label, 
+                                                        extendedTagOffset, 
+                                                        extendedTagDataSize);
+            std::memcpy(data->Data(), item->data->Data(), extendedTagDataSize); 
+            item->data = data;
+            extendedTag.ostTrack = item;
+            break;
+        }
+        case extendedCopyrightYearID:
+            extendedTag.copyrightYear = item;
+            break;
+        case extendedMutedVoicesID:
+        {
+            std::string label = extendedFieldLabels.at(item->id->Value());
+            auto data = std::make_shared<SpcBinaryField>(label, 
+                                                         extendedTagOffset, 
+                                                         extendedTagDataSize);
+            std::memcpy(data->Data(), item->data->Data(), extendedTagDataSize); 
+            item->data = data;
+            extendedTag.mutedVoices = item;
+            break;
+        }
+        case extendedLoopTimesID:
+            extendedTag.loopTimes = item;
+            break;
+    }
+}
+
+void SpcFile::LoadTextItem(std::shared_ptr<ID666ExtendedItem> item, 
+                           SpcFileStream& stream)
+{
+    //constexpr uintmax_t offset{ extendedTagOffset };
+    auto data = std::static_pointer_cast<SpcNumericField>(item->data);
+    const uintmax_t size{ data->Value() };
+    const uintmax_t id{ item->id->Value() };
 
     switch (id)
     {
-        case extendedEmulatorUsedID:
-            extendedTag.emulatorUsed = InitField<SpcEmulatorField>(id, size);
-            std::memcpy(extendedTag.emulatorUsed->Data(), item.data.Data(), size);
-            break;
-        case extendedOSTDiscID:
-            extendedTag.ostDisc = InitField<SpcNumericField>(id, size);
-            std::memcpy(extendedTag.ostDisc->Data(), item.data.Data(), size);
-            break;
-        case extendedOSTTrackID:
-            extendedTag.ostTrack = InitField<SpcTrackField>(id, size);
-            std::memcpy(extendedTag.ostTrack->Data(), item.data.Data(), size);
-            break;
-        case extendedCopyrightYearID:
-            extendedTag.copyrightYear = InitField<SpcNumericField>(id, size);
-            std::memcpy(extendedTag.copyrightYear->Data(), item.data.Data(), size);
-            break;
-        case extendedMutedVoicesID:
-            extendedTag.mutedVoices = InitField<SpcBinaryField>(id, size);
-            std::memcpy(extendedTag.mutedVoices->Data(), item.data.Data(), size);
-            break;
-        case extendedLoopTimesID:
-            extendedTag.loopTimes = InitField<SpcNumericField>(id, size);
-            std::memcpy(extendedTag.loopTimes->Data(), item.data.Data(), size);
-            break;
-    }
-}
-
-void SpcFile::LoadTextField(ExtendedID666Item& item, SpcFileStream& stream)
-{
-    constexpr uintmax_t offset{ extendedTagOffset };
-    const uintmax_t size{ item.data.Value() };
-    const uintmax_t id{ item.id.Value() };
-
-    switch (item.id.Value())
-    {
         case extendedSongNameID:
-            extendedTag.songName = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.songName.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.songName = item;
             break;
         case extendedGameNameID:
-            extendedTag.gameName = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.gameName.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.gameName = item;
             break;
         case extendedArtistNameID:
-            extendedTag.artistName = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.artistName.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.artistName = item;
             break;
         case extendedDumperNameID:
-            extendedTag.dumperName = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.dumperName.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.dumperName = item;
             break;
         case extendedCommentsID:
-            extendedTag.comments = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.comments.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.comments = item;
             break;
         case extendedOSTTitleID:
-            extendedTag.ostTitle = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.ostTitle.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.ostTitle = item;
             break;
         case extendedPublisherNameID:
-            extendedTag.publisherName = InitField<SpcTextField>(id, size);
-            stream.Read(extendedTag.publisherName.get());
+            item->extendedData = InitField<SpcTextField>(id, size);
+            stream.Read(item->extendedData.get());
+            extendedTag.publisherName = item;
             break;
     }
 }
 
-void SpcFile::LoadNumericField(ExtendedID666Item& item, SpcFileStream& stream)
+void SpcFile::LoadNumericItem(std::shared_ptr<ID666ExtendedItem> item, 
+                              SpcFileStream& stream)
 {
-    constexpr uintmax_t offset{ extendedTagOffset };
-    const uintmax_t size{ item.data.Value() };
-    const uintmax_t id{ item.id.Value() };
+    //constexpr uintmax_t offset{ extendedTagOffset };
+    auto data = std::static_pointer_cast<SpcNumericField>(item->data);
+    const uintmax_t size{ data->Value() };
+    const uintmax_t id{ item->id->Value() };
 
     switch (id)
     {
         case extendedDateDumpedID:
-            extendedTag.dateDumped = InitField<SpcDateField>(id, size);
-            stream.Read(extendedTag.dateDumped.get());
+            item->extendedData = InitField<SpcDateField>(id, size);
+            extendedTag.dateDumped = item;
+            stream.Read(item->extendedData.get());
             break;
         case extendedIntroLengthID:
-            extendedTag.introLength =InitField<SpcNumericField>(id, size);
-            stream.Read(extendedTag.introLength.get());
+            item->extendedData = InitField<SpcNumericField>(id, size);
+            extendedTag.introLength = item;
+            stream.Read(item->extendedData.get());
             break;
         case extendedLoopLengthID:
-            extendedTag.loopLength = InitField<SpcNumericField>(id, size);
-            stream.Read(extendedTag.loopLength.get());
+            item->extendedData = InitField<SpcNumericField>(id, size);
+            extendedTag.loopLength = item;
+            stream.Read(item->extendedData.get());
             break;
         case extendedEndLengthID:
-            extendedTag.endLength = InitField<SpcNumericField>(id, size);
-            stream.Read(extendedTag.endLength.get());
+            item->extendedData = InitField<SpcNumericField>(id, size);
+            extendedTag.endLength = item;
+            stream.Read(item->extendedData.get());
             break;
         case extendedFadeLengthID:
-            extendedTag.fadeLength = InitField<SpcNumericField>(id, size);
-            stream.Read(extendedTag.fadeLength.get());
+            item->extendedData = InitField<SpcNumericField>(id, size);
+            extendedTag.fadeLength = item;
+            stream.Read(item->extendedData.get());
             break;
         case extendedPreampLevelID:
-            extendedTag.preampLevel = InitField<SpcNumericField>(id, size);
-            stream.Read(extendedTag.preampLevel.get());
+            item->extendedData = InitField<SpcNumericField>(id, size);
+            extendedTag.preampLevel = item;
+            stream.Read(item->extendedData.get());
             break;
     }
 }

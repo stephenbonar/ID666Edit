@@ -35,8 +35,22 @@ public:
     /// @param label The label to use when outputing the field. 
     /// @param offset The offset where the field can be found in the file.
     /// @param size The size of the field, in bytes.
-    SpcNumericField(std::string label, uintmax_t offset, size_t size) 
-        : SpcField{ label, offset, size }
+    SpcNumericField(std::string label, 
+                    uintmax_t offset, 
+                    size_t size) 
+        : SpcField{ label, offset, size }, alwaysBinary{ true }
+    { };
+
+    /// @brief Constructor; creates a new instance of SpcNumericField.
+    /// @param label The label to use when outputing the field. 
+    /// @param offset The offset where the field can be found in the file.
+    /// @param size The size of the field, in bytes.
+    /// @param alwaysBinary Determines if the field is always binary.
+    SpcNumericField(std::string label, 
+                    uintmax_t offset, 
+                    size_t size, 
+                    bool alwaysBinary) 
+        : SpcField{ label, offset, size }, alwaysBinary{ alwaysBinary }
     { };
 
     /// @brief Determines if all bytes in the field contain zeros. 
@@ -79,6 +93,12 @@ public:
     {
         return Binary::RawField::ToString(format);
     }
+
+    void SetValue(int value);
+    
+    void SetValue(std::string value);
+private:
+    bool alwaysBinary;
 };
 
 #endif

@@ -22,7 +22,7 @@
 #include "SpcHeader.h"
 #include "ID666TextTag.h"
 #include "ID666BinaryTag.h"
-#include "ExtendedID666Item.h"
+#include "ID666ExtendedItem.h"
 #include "SpcDateField.h"
 #include "SpcNumericField.h"
 

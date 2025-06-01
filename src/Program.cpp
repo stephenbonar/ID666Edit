@@ -256,13 +256,12 @@ int Program::SelectMode()
         }
 
         if (printOption->IsSpecified())
-        {
             return PrintSpecifiedItems(file);
-        }
-        else
-        {
-            return PrintSpcFile(file);
-        }
+
+        if (editOption->IsSpecified())
+            return EditSpecifiedItems(file);
+
+        return PrintSpcFile(file);
     }
     else if (parser->BuiltInHelpOptionIsSpecified())
     {
@@ -274,6 +273,13 @@ int Program::SelectMode()
         std::cerr << parser->GenerateUsage();
         return 1;
     }
+}
+
+void Program::PrintSectionHeader(std::string title)
+{
+    std::cout << title << std::endl;
+    std::cout << "-----------------------------------------------------------";
+    std::cout << "--------------------" << std::endl;
 }
 
 void Program::PrintField(SpcField* field)
@@ -322,11 +328,14 @@ int Program::PrintSpcFile(SpcFile& file)
 void Program::PrintHeader(SpcFile& file)
 {
     SpcHeader header = file.Header();
+    PrintSectionHeader("SPC File Header");
     std::cout << header.ToString() << std::endl;
 }
 
 void Program::PrintTag(SpcFile& file)
 {
+    PrintSectionHeader("ID666 Tag");
+
     if (file.HeaderContainsTag())
     {
         std::cout << FormatValue("Header Contains Tag", "True") << std::endl;
@@ -354,8 +363,6 @@ void Program::PrintTag(SpcFile& file)
 void Program::PrintTextTag(SpcFile& file)
 {
     std::cout << FormatValue("Tag Type", "Text") << std::endl;
-    std::cout << std::endl;
-
     ID666TextTag tag = file.TextTag();
     std::cout << tag.ToString() << std::endl;
 }
@@ -363,16 +370,20 @@ void Program::PrintTextTag(SpcFile& file)
 void Program::PrintBinaryTag(SpcFile& file)
 {
     std::cout << FormatValue("Tag Type", "Binary") << std::endl;
-    std::cout << std::endl;
-
     ID666BinaryTag tag = file.BinaryTag();
     std::cout << tag.ToString() << std::endl;
 }
 
 void Program::PrintExtendedTag(SpcFile& file)
 {
+    PrintSectionHeader("Extended ID666 Tag");
     std::cout << FormatValue("Has Extended Tag", "True") << std::endl;
+    Binary::ChunkHeader extendedTagHeader = file.ExtendedTagHeader();
     ID666ExtendedTag tag = file.ExtendedTag();
+    std::cout << FormatValue("IFF Chunk ID", extendedTagHeader.id.ToString());
+    std::cout << std::endl;
+    std::cout << FormatValue("IFF Chunk Size", extendedTagHeader.dataSize.ToString());
+    std::cout << std::endl;
     std::cout << tag.ToString() << std::endl;
 }
 
@@ -468,6 +479,16 @@ int Program::PrintSpecifiedItems(SpcFile& file)
         PrintField(file.PreampLevel());
         //std::cout << FormatField(&file.PreampLevel()) << std::endl;
 
+    return 0;
+}
+
+int Program::EditSpecifiedItems(SpcFile& file)
+{
+    if (songEditParam->IsSpecified())
+        file.SetSongTitle(songEditParam->Value());
+
+    file.Save();
+        
     return 0;
 }
 

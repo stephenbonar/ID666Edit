@@ -1,4 +1,4 @@
-// ExtendedID666Item.h - Defines the ExtendedID666Item class.
+// ID666ExtendedItem.h - Defines the ID666ExtendedItem class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,7 +14,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ExtendedID666Item.h"
+#include "ID666ExtendedItem.h"
 
 const std::map<int, std::string> extendedFieldLabels
 {
@@ -39,9 +39,42 @@ const std::map<int, std::string> extendedFieldLabels
     { extendedPreampLevelID, "Preamp Level" }
 };
 
-ExtendedID666Item::ExtendedID666Item()
+ID666ExtendedItem::ID666ExtendedItem()
 {
-    spcFields.push_back(&id);
-    spcFields.push_back(&type);
-    spcFields.push_back(&data);
+    id = std::make_shared<SpcNumericField>("Item ID", 
+                                           extendedTagOffset, 
+                                           extendedTagIDSize);
+    type = std::make_shared<SpcNumericField>("Item Type",
+                                             extendedTagOffset,
+                                             extendedTagTypeSize);
+    data = std::make_shared<SpcNumericField>("Item Data",
+                                             extendedTagOffset,
+                                             extendedTagDataSize);
+}
+
+/*
+ID666ExtendedItem::ID666ExendedItem()
+{
+    fields.push_back(&id);
+    fields.push_back(&type);
+    fields.push_back(&data);
+}
+*/
+
+std::vector<SpcField*> ID666ExtendedItem::SpcFields() const
+{
+    std::vector<SpcField*> fields;
+    fields.push_back(id.get());
+    fields.push_back(type.get());
+    fields.push_back(data.get());
+
+    if (extendedData != nullptr && type->Value() != extendedTypeDataInHeader)
+    {
+        fields.push_back(extendedData.get());
+
+        if (padding != nullptr)
+            fields.push_back(padding.get());
+    }
+
+    return fields;
 }

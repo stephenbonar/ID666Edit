@@ -25,12 +25,13 @@ set(SOURCES
     SpcFormat.cpp
     SpcStruct.cpp
     SpcHeader.cpp
-    ExtendedID666Item.cpp
+    ID666ExtendedItem.cpp
     SpcDateField.cpp
     SpcNumericField.cpp
     SpcEmulatorField.cpp
     SpcFile.cpp
-    SpcTrackField.cpp)
+    SpcTrackField.cpp
+    SpcTextField.cpp)
 
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)

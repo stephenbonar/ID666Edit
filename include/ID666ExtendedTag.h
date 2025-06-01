@@ -26,28 +26,31 @@
 #include "SpcNumericField.h"
 #include "SpcTrackField.h"
 #include "SpcBinaryField.h"
+#include "ID666ExtendedItem.h"
 
 struct ID666ExtendedTag : public SpcStruct
 {
-    std::shared_ptr<SpcTextField> songName;
-    std::shared_ptr<SpcTextField> gameName;
-    std::shared_ptr<SpcTextField> artistName;
-    std::shared_ptr<SpcTextField> dumperName;
-    std::shared_ptr<SpcDateField> dateDumped;
-    std::shared_ptr<SpcEmulatorField> emulatorUsed;
-    std::shared_ptr<SpcTextField> comments;
-    std::shared_ptr<SpcTextField> ostTitle;
-    std::shared_ptr<SpcNumericField> ostDisc;
-    std::shared_ptr<SpcTrackField> ostTrack;
-    std::shared_ptr<SpcTextField> publisherName;
-    std::shared_ptr<SpcNumericField> copyrightYear;
-    std::shared_ptr<SpcNumericField> introLength;
-    std::shared_ptr<SpcNumericField> loopLength;
-    std::shared_ptr<SpcNumericField> endLength;
-    std::shared_ptr<SpcNumericField> fadeLength;
-    std::shared_ptr<SpcBinaryField> mutedVoices;
-    std::shared_ptr<SpcNumericField> loopTimes;
-    std::shared_ptr<SpcNumericField> preampLevel;
+    std::shared_ptr<ID666ExtendedItem> songName;
+    std::shared_ptr<ID666ExtendedItem> gameName;
+    std::shared_ptr<ID666ExtendedItem> artistName;
+    std::shared_ptr<ID666ExtendedItem> dumperName;
+    std::shared_ptr<ID666ExtendedItem> dateDumped;
+    std::shared_ptr<ID666ExtendedItem> emulatorUsed;
+    std::shared_ptr<ID666ExtendedItem> comments;
+    std::shared_ptr<ID666ExtendedItem> ostTitle;
+    std::shared_ptr<ID666ExtendedItem> ostDisc;
+    std::shared_ptr<ID666ExtendedItem> ostTrack;
+    std::shared_ptr<ID666ExtendedItem> publisherName;
+    std::shared_ptr<ID666ExtendedItem> copyrightYear;
+    std::shared_ptr<ID666ExtendedItem> introLength;
+    std::shared_ptr<ID666ExtendedItem> loopLength;
+    std::shared_ptr<ID666ExtendedItem> endLength;
+    std::shared_ptr<ID666ExtendedItem> fadeLength;
+    std::shared_ptr<ID666ExtendedItem> mutedVoices;
+    std::shared_ptr<ID666ExtendedItem> loopTimes;
+    std::shared_ptr<ID666ExtendedItem> preampLevel;
+
+    Binary::ChunkHeader Header() const;
 
     //ID666ExtendedTag();
 

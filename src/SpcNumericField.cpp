@@ -70,11 +70,14 @@ unsigned long long SpcNumericField::Value() const
 
 std::string SpcNumericField::ToString() const
 {
-    if (IsZero())
-        return "0";
+    if (!alwaysBinary)
+    {
+        if (IsZero())
+            return "0";
 
-    if (IsText())
-        return Binary::RawField::ToString(Binary::StringFormat::Terminated);
+        if (IsText())
+            return Binary::RawField::ToString(Binary::StringFormat::Terminated);   
+    }
 
     Binary::UInt64Field value{ Binary::FieldEndianness::Little };
 
@@ -82,4 +85,20 @@ std::string SpcNumericField::ToString() const
         value.Data()[i] = data[i];
 
     return value.ToString();
+}
+
+void SpcNumericField::SetValue(int value)
+{
+    Binary::UInt32Field field{ value };
+    
+    for (int i = 0; i < size; i++)
+        data[i] = field.Data()[i];
+}
+
+void SpcNumericField::SetValue(std::string value)
+{
+    Binary::UInt32Field field{ std::stoi(value) };
+
+    for (int i = 0; i < size; i++)
+        data[i] = field.Data()[i];
 }

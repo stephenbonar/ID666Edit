@@ -32,10 +32,10 @@ struct SpcHeader : public SpcStruct
     SpcField separator{ "Separator", 0x21, 2 };
 
     /// @brief A byte related to the separator that determines if a tag exists.
-    SpcNumericField containsTag{ "Contains Tag", 0x23, 1};
+    SpcNumericField containsTag{ "Contains Tag", 0x23, 1, true};
 
     /// @brief The minor version number of the SPC file format used.
-    SpcNumericField versionMinor{ "Version Minor", 0x24, 1};
+    SpcNumericField versionMinor{ "Version Minor", 0x24, 1, true};
 
     /// @brief Saved state of the SPC700's program counter register.
     SpcField pcRegister{ "PC Register", 0x25, 2 };

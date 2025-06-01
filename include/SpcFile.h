@@ -25,8 +25,30 @@
 #include "ID666BinaryTag.h"
 #include "ID666TextTag.h"
 #include "ID666ExtendedTag.h"
-#include "ExtendedID666Item.h"
+#include "ID666ExtendedItem.h"
 #include "SpcFileStream.h"
+
+template<typename T>
+std::shared_ptr<T> InitField(int extendedID, size_t size)
+{
+    std::string label = "<Unknown Field>";
+    constexpr uintmax_t offset{ extendedTagOffset };
+
+    if (extendedFieldLabels.find(extendedID) != extendedFieldLabels.end())
+        label = extendedFieldLabels.at(extendedID);
+
+    return std::make_shared<T>(label, offset, size);
+}
+
+/*
+template<typename T>
+std::shared_ptr<ID666ExtendedItem> InitItem(int extendedID, size_t size)
+{
+    auto item = std::make_shared<ID666ExtendedItem>();
+    item->extendedData = InitItem<T>(extendedID, size);
+    return item;
+}
+*/
 
 class SpcFile
 {
@@ -36,7 +58,11 @@ public:
         hasLoaded{ false }, 
         hasBinaryTag{ false },
         hasExtendedTag{ false },
-        headerContainsTag{ false }
+        headerContainsTag{ false },
+        spcRam{ 65536 },
+        dspRegisters{ 128 },
+        unused{ 64 },
+        extraRam{ 64 }
     {}
 
     std::string FileName() const { return fileName; }
@@ -54,6 +80,8 @@ public:
     ID666BinaryTag BinaryTag() const { return binaryTag; }
 
     ID666TextTag TextTag() const { return textTag; }
+
+    Binary::ChunkHeader ExtendedTagHeader() const { return extendedTagHeader; }
 
     ID666ExtendedTag ExtendedTag() const { return extendedTag; }
 
@@ -93,13 +121,53 @@ public:
 
     SpcNumericField EndLength() const;
 
-    //SpcNumericField FadeLength() const;
-
     SpcBinaryField MutedVoices() const;
 
     SpcNumericField LoopTimes() const;
 
     SpcNumericField PreampLevel() const;
+
+    void SetSongTitle(std::string value);
+
+    void SetGameTitle(std::string value);
+
+    void SetDumperName(std::string value);
+
+    void SetComments(std::string value);
+
+    void SetDateDumped(std::string value);
+
+    void SetSongLength(std::string value);
+
+    void SetFadeLength(std::string value);
+
+    void SetSongArtist(std::string value);
+
+    void SetDefaultChannelDisables(std::string value);
+
+    void SetEmulatorUsed(std::string value);
+
+    void SetOstTitle(std::string value);
+
+    void SetOstDisc(std::string value);
+
+    void SetOstTrack(std::string value);
+
+    void SetPublisherName(std::string value);
+
+    void SetCopyrightYear(std::string value);
+
+    void SetIntroLength(std::string value);
+
+    void SetLoopLength(std::string value);
+
+    void SetEndLength(std::string value);
+
+    void SetMutedVoices(std::string value);
+
+    void SetLoopTimes(std::string value);
+
+    void SetPreampLevel(std::string value);
 
     bool Load();
 
@@ -113,27 +181,80 @@ private:
     SpcHeader header;
     ID666BinaryTag binaryTag;
     ID666TextTag textTag;
+    Binary::RawField spcRam;
+    Binary::RawField dspRegisters;
+    Binary::RawField unused;
+    Binary::RawField extraRam;
+    Binary::ChunkHeader extendedTagHeader;
     ID666ExtendedTag extendedTag;
 
-    //void InitExtendedFields();
+    template<typename T>
+    T GetField(const T& binaryField, const T& textField) const
+    {
+        if (hasBinaryTag)
+            return binaryField;
+        else
+            return textField;
+    }
 
-    void LoadHeaderField(ExtendedID666Item& item);
+    template<typename T>
+    T GetField(ID666ExtendedItem* item, int id, int defaultSize) const
+    {
+        if (item != nullptr)
+        {
+            if (item->type->Value() == extendedTypeDataInHeader)
+            {
+                auto field = InitField<T>(id, extendedTagDataSize);
 
-    void LoadTextField(ExtendedID666Item& item, SpcFileStream& stream);
+                for (int i = 0; i < extendedTagDataSize; i++)
+                    field->Data()[i] = item->data->Data()[i];
 
-    void LoadNumericField(ExtendedID666Item&item, SpcFileStream& stream);
+                return *field;
+            }
+
+            if (item->extendedData != nullptr)
+            {
+                SpcField* field = item->extendedData.get();
+                T* convertedField = dynamic_cast<T*>(field);
+                return *convertedField;
+            }
+        }
+
+        return *InitField<T>(id, defaultSize);
+    }
+
+    template<typename T>
+    T GetField(const T& binaryField, 
+               const T& textField, 
+               ID666ExtendedItem* item) const
+    {
+        if (item != nullptr)
+        {
+            if (item->extendedData != nullptr)
+            {
+                SpcField* field = item->extendedData.get();
+                T* convertedField = dynamic_cast<T*>(field);
+                return *convertedField;
+            }
+        }
+        
+        if (hasBinaryTag)
+        {
+            return binaryField;
+        }
+        else
+        {
+            return textField;
+        }
+    }
+
+    void LoadHeaderItem(std::shared_ptr<ID666ExtendedItem> item);
+
+    void LoadTextItem(std::shared_ptr<ID666ExtendedItem> item, 
+                      SpcFileStream& stream);
+
+    void LoadNumericItem(std::shared_ptr<ID666ExtendedItem> item, 
+                         SpcFileStream& stream);
 };
-
-template<typename T>
-std::shared_ptr<T> InitField(int extendedID, size_t size)
-{
-    std::string label = "<Unknown Field>";
-    constexpr uintmax_t offset{ extendedTagOffset };
-
-    if (extendedFieldLabels.find(extendedID) != extendedFieldLabels.end())
-        label = extendedFieldLabels.at(extendedID);
-
-    return std::make_shared<T>(label, offset, size);
-}
 
 #endif

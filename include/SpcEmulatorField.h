@@ -31,8 +31,22 @@ public:
     /// @param label The label to use when outputing the field. 
     /// @param offset The offset where the field can be found in the file.
     /// @param size The size of the field, in bytes.
-    SpcEmulatorField(std::string label, uintmax_t offset, size_t size) 
-        : SpcNumericField{ label, offset, size }
+    SpcEmulatorField(std::string label, 
+                     uintmax_t offset,
+                     size_t size) 
+    : SpcNumericField{ label, offset, size }
+    { }
+
+    /// @brief Constructor; creates a new instance of SpcEmulatorField.
+    /// @param label The label to use when outputing the field. 
+    /// @param offset The offset where the field can be found in the file.
+    /// @param size The size of the field, in bytes.
+    /// @param alwaysBinary Determines if the field is always binary.
+    SpcEmulatorField(std::string label, 
+                     uintmax_t offset,
+                     size_t size, 
+                     bool alwaysBinary) 
+        : SpcNumericField{ label, offset, size, alwaysBinary }
     { }
     
     /// @brief Converts the field's data to a string representation.

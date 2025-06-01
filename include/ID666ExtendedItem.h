@@ -1,4 +1,4 @@
-// ExtendedID666Item.h - Declares the ExtendedID666Item class.
+// ID666ExtendedItem.h - Declares the ID666ExtendedItem class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -19,9 +19,10 @@
 #include <map>
 #include "SpcStruct.h"
 #include "SpcNumericField.h"
+#include "SpcTextField.h"
 
-#ifndef EXTENDED_ID666_ITEM_H
-#define EXTENDED_ID666_ITEM_H
+#ifndef ID666_EXTENDED_ITEM_H
+#define ID666_EXTENDED_ITEM_H
 
 extern const std::map<int, std::string> extendedFieldLabels;
 
@@ -57,33 +58,34 @@ inline constexpr int extendedTagOffset{ 0x10200 };
 ///
 /// The extended ID666 tag is a RIFF chunk that contains multiple sub-chunks
 /// representing items in the tag. This struct represents those sub-chunks.
-struct ExtendedID666Item : public SpcStruct
+struct ID666ExtendedItem : public SpcStruct
 {
+    ID666ExtendedItem();
+    
+    /*
     /// @brief The ID of the item, which determines which metadata field it is.
     SpcNumericField id
     { 
-        "Extended Item ID", extendedTagOffset, extendedTagIDSize 
+        "Item ID", extendedTagOffset, extendedTagIDSize, true 
     };
 
     /// @brief Determines the data type: data in header, string, or integer.
     SpcNumericField type
     { 
-        "Extented Item Type", extendedTagOffset, extendedTagTypeSize 
+        "Item Type", extendedTagOffset, extendedTagTypeSize, true
     };
 
     /// @brief Either represents the value if type 0, or the size of value.
     SpcNumericField data
     { 
-        "Extended Item Data", extendedTagOffset, extendedTagDataSize 
+        "Item Data", extendedTagOffset, extendedTagDataSize, true
     };
-
-    /// @brief Default constructor; initalizes the labeled fields list.
-    ///
-    /// While this is a standard struct with public fields, it is also an 
-    /// SpcStruct, which maintains an internal vector of labeled pointers to
-    /// each public field accessible via the SpcFields() method. The 
-    /// constructor initializes this internal vector.
-    ExtendedID666Item();
+    */
+    std::shared_ptr<SpcNumericField> id;
+    std::shared_ptr<SpcNumericField> type;
+    std::shared_ptr<SpcField> data;
+    std::shared_ptr<SpcField> extendedData;
+    std::shared_ptr<SpcTextField> padding;
 
     /// @brief Gets list of pointers to this struct's fields.
     ///
@@ -97,9 +99,9 @@ struct ExtendedID666Item : public SpcStruct
     /// an SPC file in a cross platform way, preserving the order, size, and
     /// endianness of each field no matter which architecture the program runs
     /// on.
-    std::vector<SpcField*> SpcFields() const override { return spcFields; }
-private:
-    std::vector<SpcField*> spcFields;
+    std::vector<SpcField*> SpcFields() const override;
+// private:
+//     std::vector<SpcField*> spcFields;
 };
 
 #endif

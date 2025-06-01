@@ -50,10 +50,10 @@ struct ID666BinaryTag : public SpcStruct
     SpcDateField dateDumped{ "Date Dumped", 0x9E, 11 };
 
     /// @brief The length of the song before fading out, in seconds.
-    SpcNumericField songLength{ "Song Length (sec)", 0xA9, 3 };
+    SpcNumericField songLength{ "Song Length (sec)", 0xA9, 3, false };
 
     /// @brief The length of fade out, in milliseconds.
-    SpcNumericField fadeLength{ "Fade Length (ms)", 0xAC, 4 };
+    SpcNumericField fadeLength{ "Fade Length (ms)", 0xAC, 4, false };
 
     /// @brief The composer of the song.
     SpcTextField songArtist{ "Song Artist", 0xB0, 32 };
@@ -61,11 +61,11 @@ struct ID666BinaryTag : public SpcStruct
     /// @brief Determines if any channels are disabled.
     SpcNumericField defaultChannelDisables
     {
-        "Default Channel Disables", 0xD0, 1
+        "Default Channel Disables", 0xD0, 1, false
     };
 
     /// @brief Determines which emulator was used to dump the SPC file.
-    SpcEmulatorField emulatorUsed{ "Emulator Used", 0xD1, 1 };
+    SpcEmulatorField emulatorUsed{ "Emulator Used", 0xD1, 1, false };
 
     /// @brief Bytes reserved for use in future versions of the SPC format.
     SpcField reserved{ "Reserved", 0xD2, 45 };
