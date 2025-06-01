@@ -26,6 +26,7 @@
 #include "ID666TextTag.h"
 #include "ID666ExtendedTag.h"
 #include "ID666ExtendedItem.h"
+#include "SetCommand.h"
 #include "SpcFileStream.h"
 
 template<typename T>
@@ -247,6 +248,43 @@ private:
         else
         {
             return textField;
+        }
+    }
+
+    template<typename T>
+    void SetField(SetCommand<T> cmd, std::shared_ptr<ID666ExtendedItem>& item)
+    {
+        T* field;
+
+        if (hasBinaryTag)
+            field = cmd.binaryField;
+        else
+            field = cmd.textField;
+
+        field->SetValue(cmd.value);
+
+        if (cmd.value.size() > field->Size())
+        {
+            auto data = InitField<T>(cmd.extendedID, cmd.value.size());
+            hasExtendedTag = true;
+
+            if (item == nullptr)
+            {
+                item = std::make_shared<ID666ExtendedItem>();
+                item->id->SetValue(cmd.extendedID);
+                item->type->SetValue(cmd.extendedType);
+                auto size = std::static_pointer_cast<SpcNumericField>(
+                    item->data);
+                size->SetValue(cmd.value.size());
+                PadItem(item.get());
+            }
+
+            data->SetValue(cmd.value);
+            item->extendedData = data;
+        }
+        else if (item != nullptr)
+        {
+            item = nullptr;
         }
     }
 

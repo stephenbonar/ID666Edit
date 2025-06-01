@@ -487,6 +487,18 @@ int Program::EditSpecifiedItems(SpcFile& file)
     if (songEditParam->IsSpecified())
         file.SetSongTitle(songEditParam->Value());
 
+    if (gameEditParam->IsSpecified())
+        file.SetGameTitle(gameEditParam->Value());
+
+    if (dumperEditParam->IsSpecified())
+        file.SetDumperName(dumperEditParam->Value());
+
+    if (commentsEditParam->IsSpecified())
+        file.SetComments(commentsEditParam->Value());
+
+    if (dateEditParam->IsSpecified())
+        file.SetDateDumped(dateEditParam->Value());
+
     file.Save();
         
     return 0;

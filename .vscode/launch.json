@@ -20,7 +20,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/id666edit",
-            "args": ["chrono_edited.spc"],
+            "args": ["-e", "game=Haxored", "chrono_edited.spc"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/",
             "environment": [],

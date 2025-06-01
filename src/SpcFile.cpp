@@ -174,51 +174,46 @@ SpcNumericField SpcFile::PreampLevel() const
 
 void SpcFile::SetSongTitle(std::string value)
 {
-    constexpr int maxSongTileSize{ 32 };
-
-    if (hasBinaryTag)
-        binaryTag.songTitle.SetValue(value);
-    else
-        textTag.songTitle.SetValue(value);
-
-    if (value.size() > maxSongTileSize)
-    {
-        auto data = InitField<SpcTextField>(extendedSongNameID, value.size());
-        hasExtendedTag = true;
-
-        if (extendedTag.songName == nullptr)
-        {
-            extendedTag.songName = std::make_shared<ID666ExtendedItem>();
-            extendedTag.songName->id->SetValue(extendedSongNameID);
-            extendedTag.songName->type->SetValue(extendedTypeString);
-            auto size = std::static_pointer_cast<SpcNumericField>(
-                extendedTag.songName->data);
-            size->SetValue(value.size());
-            PadItem(extendedTag.songName.get());
-        }
-
-        data->SetValue(value);
-        extendedTag.songName->extendedData = data;
-    }
-    else if (extendedTag.songName != nullptr)
-    {
-        extendedTag.songName = nullptr;
-    }
+    SetCommand<SpcTextField> command;
+    command.binaryField = &binaryTag.songTitle;
+    command.textField = &textTag.songTitle;
+    command.extendedID = extendedSongNameID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetField<SpcTextField>(command, extendedTag.songName);
 }
 
 void SpcFile::SetGameTitle(std::string value)
 {
-
+    SetCommand<SpcTextField> command;
+    command.binaryField = &binaryTag.gameTitle;
+    command.textField = &textTag.gameTitle;
+    command.extendedID = extendedGameNameID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetField<SpcTextField>(command, extendedTag.gameName);
 }
 
 void SpcFile::SetDumperName(std::string value)
 {
-
+    SetCommand<SpcTextField> command;
+    command.binaryField = &binaryTag.dumperName;
+    command.textField = &textTag.dumperName;
+    command.extendedID = extendedDumperNameID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetField<SpcTextField>(command, extendedTag.dumperName);
 }
 
 void SpcFile::SetComments(std::string value)
 {
-
+    SetCommand<SpcTextField> command;
+    command.binaryField = &binaryTag.comments;
+    command.textField = &textTag.comments;
+    command.extendedID = extendedCommentsID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetField<SpcTextField>(command, extendedTag.comments);
 }
 
 void SpcFile::SetDateDumped(std::string value)
@@ -376,19 +371,6 @@ bool SpcFile::Load()
                         file.Read(item->padding.get());
                         sizeRemaining -= item->padding->Size();
                     }
-                    /*
-                    if (dataSize % 4 != 0)
-                    {
-                        size_t paddingSize = 1;
-
-                        while ((dataSize + paddingSize) % 4 != 0)
-                            paddingSize++;
-
-                        item->padding = std::make_shared<SpcTextField>(
-                            "<padding>", extendedTagOffset, paddingSize);
-                        file.Read(item->padding.get());
-                        sizeRemaining -= paddingSize;
-                    }*/
 
                     break;
                 }
@@ -445,31 +427,8 @@ bool SpcFile::Save()
     return true;
 }
 
-/*
-SpcTextField SpcFile::GetTextField(const SpcTextField& field, 
-                                   ID666ExtendedItem* item)
-{
-    if (item != nullptr)
-    {
-        SpcField* field = item->extendedData.get();
-        SpcTextField* textField = dynamic_cast<SpcTextField*>(field);
-        return *textField;
-    }
-    else
-    {
-        return *field;
-    }
-}
-*/
-
 void SpcFile::LoadHeaderItem(std::shared_ptr<ID666ExtendedItem> item)
 {
-    /*
-    constexpr size_t offset{ extendedTagOffset };
-    constexpr size_t size{ extendedTagDataSize };
-    const uintmax_t id{ item->id.Value() };
-    */
-
     switch (item->id->Value())
     {
         case extendedEmulatorUsedID:
@@ -521,7 +480,6 @@ void SpcFile::LoadHeaderItem(std::shared_ptr<ID666ExtendedItem> item)
 void SpcFile::LoadTextItem(std::shared_ptr<ID666ExtendedItem> item, 
                            SpcFileStream& stream)
 {
-    //constexpr uintmax_t offset{ extendedTagOffset };
     auto data = std::static_pointer_cast<SpcNumericField>(item->data);
     const uintmax_t size{ data->Value() };
     const uintmax_t id{ item->id->Value() };
