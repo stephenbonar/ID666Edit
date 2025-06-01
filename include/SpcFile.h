@@ -40,6 +40,8 @@ std::shared_ptr<T> InitField(int extendedID, size_t size)
     return std::make_shared<T>(label, offset, size);
 }
 
+void PadItem(ID666ExtendedItem* item);
+
 /*
 template<typename T>
 std::shared_ptr<ID666ExtendedItem> InitItem(int extendedID, size_t size)

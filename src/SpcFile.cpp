@@ -16,6 +16,22 @@
 
 #include "SpcFile.h"
 
+void PadItem(ID666ExtendedItem* item)
+{
+    auto size = std::static_pointer_cast<SpcNumericField>(item->data);
+
+    if (size->Value() % 4 != 0)
+    {
+        size_t paddingSize = 1;
+
+        while ((size->Value() + paddingSize) % 4 != 0)
+            paddingSize++;
+
+        item->padding = std::make_shared<SpcTextField>(
+            "<padding>", extendedTagOffset, paddingSize);
+    }
+}
+
 SpcTextField SpcFile::SongTitle() const
 {
     return GetField<SpcTextField>(binaryTag.songTitle,
@@ -178,6 +194,7 @@ void SpcFile::SetSongTitle(std::string value)
             auto size = std::static_pointer_cast<SpcNumericField>(
                 extendedTag.songName->data);
             size->SetValue(value.size());
+            PadItem(extendedTag.songName.get());
         }
 
         data->SetValue(value);
@@ -352,7 +369,14 @@ bool SpcFile::Load()
                     sizeRemaining -= item->Size();
                     sizeRemaining -= dataSize;
                     LoadTextItem(item, file);
+                    PadItem(item.get());
 
+                    if (item->padding != nullptr)
+                    {
+                        file.Read(item->padding.get());
+                        sizeRemaining -= item->padding->Size();
+                    }
+                    /*
                     if (dataSize % 4 != 0)
                     {
                         size_t paddingSize = 1;
@@ -364,7 +388,7 @@ bool SpcFile::Load()
                             "<padding>", extendedTagOffset, paddingSize);
                         file.Read(item->padding.get());
                         sizeRemaining -= paddingSize;
-                    }
+                    }*/
 
                     break;
                 }
@@ -413,6 +437,7 @@ bool SpcFile::Save()
 
     if (hasExtendedTag)
     {
+        extendedTagHeader.dataSize.SetValue(extendedTag.Size());
         stream.Write(&extendedTagHeader);
         stream.Write(&extendedTag);
     }
