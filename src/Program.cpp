@@ -499,6 +499,9 @@ int Program::EditSpecifiedItems(SpcFile& file)
     if (dateEditParam->IsSpecified())
         file.SetDateDumped(dateEditParam->Value());
 
+    if (songLengthEditParam->IsSpecified())
+        file.SetSongLength(songLengthEditParam->Value());
+
     file.Save();
         
     return 0;

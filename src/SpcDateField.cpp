@@ -44,7 +44,7 @@ bool SpcDateField::HasUnusedArea() const
     return true;
 }
 
-std::string SpcDateField::ToString() const
+std::string SpcDateField::Value() const
 {
     if (IsText())
         return Binary::RawField::ToString(Binary::StringFormat::Terminated);
@@ -62,4 +62,59 @@ std::string SpcDateField::ToString() const
     stream << month.ToString() << '/' << day.ToString() << '/' 
            << year.ToString();
     return stream.str();
+}
+
+void SpcDateField::SetTextValue(std::string value)
+{
+    std::istringstream valueStream{ value };
+    std::tm date{};
+
+    valueStream >> std::get_time(&date, "%m/%d/%Y");
+
+    if (!valueStream.fail())
+    {
+        std::stringstream dateStream;
+
+        // We add 1 to date.tm_mon because January is stored as month 0, etc.
+        dateStream << std::setw(2) << std::setfill('0') << date.tm_mon + 1;
+        dateStream << "/";
+
+        dateStream << std::setw(2) << std::setfill('0') << date.tm_mday;
+        dateStream << "/";
+
+        // We add 1900 because years are stored as years since 1900.
+        dateStream << std::setw(4) << std::setfill('0') << date.tm_year + 1900;
+
+        std::memcpy(data.get(), dateStream.str().c_str(), 10);
+
+        // The last byte of the 11 byte date field should always be null.
+        data[10] = 0;
+    }
+}
+
+void SpcDateField::SetBinaryValue(std::string value)
+{
+    std::istringstream valueStream{ value };
+    std::tm date;
+
+    valueStream >> std::get_time(&date, "%m/%d/%Y");
+
+    if (!valueStream.fail())
+    {
+        Binary::UInt8Field day{ date.tm_mday };
+
+        // We add 1 to date.tm_mon because January is stored as month 0, etc.
+        Binary::UInt8Field month{ date.tm_mon + 1 };
+
+        // We add 1900 because years are stored as years since 1900.
+        Binary::UInt16Field year{ date.tm_year + 1900 };
+
+        data[0] = day.Data()[0];
+        data[1] = month.Data()[0];
+        std::memcpy(data.get() + 2, year.Data(), 2);
+
+        // The remaining bytes should all be unused in a binary formatted date.
+        for (int i = 4; i < 11; i++)
+            data[i] = 0;
+    }
 }

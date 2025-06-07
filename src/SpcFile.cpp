@@ -218,7 +218,10 @@ void SpcFile::SetComments(std::string value)
 
 void SpcFile::SetDateDumped(std::string value)
 {
-
+    if (hasBinaryTag)
+        binaryTag.dateDumped.SetBinaryValue(value);
+    else
+        textTag.dateDumped.SetTextValue(value);
 }
 
 void SpcFile::SetSongLength(std::string value)

@@ -19,6 +19,8 @@
 
 #include <string>
 #include <sstream>
+#include <ctime>
+#include <iomanip>
 #include "SpcField.h"
 
 /// @brief Represents a field containing a date in an SPC file.
@@ -45,9 +47,15 @@ public:
     /// @return True if 4 - 7 are 0, otherwise false. 
     bool HasUnusedArea() const;
 
+    std::string Value() const;
+
+    void SetTextValue(std::string value);
+
+    void SetBinaryValue(std::string value);
+
     /// @brief Converts the field's data to a string representation.
     /// @return A string representation of the field's data.
-    std::string ToString() const override;
+    std::string ToString() const override { return Value(); }
 };
 
 #endif
