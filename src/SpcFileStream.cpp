@@ -16,30 +16,13 @@
 
 #include "SpcFileStream.h"
 
-bool SpcFileStream::HeaderContainsTag()
+ID666TagType SpcFileStream::TagType()
 {
-    uintmax_t previousPosition = Position();
-    SetPosition(0);
-    SpcHeader header;
-    Read(&header);
-    SetPosition(previousPosition);
-
-    if (header.containsTag.Value() == headerContainsTag)
-        return true;
-    
-    return false;
-}
-
-bool SpcFileStream::HasBinaryTag()
-{
-    bool hasBinaryValue = false;
-
     // Preserve the existing position as we have to jump around in the file to
     // determine if the tag is binary and we need to get back to where we were.
     uintmax_t previousPosition = Position();
 
     ID666BinaryTag tag;
-
 
     //ID666DateField dateDumped;
     //ID666NumericField songLength{ 3 };
@@ -61,10 +44,13 @@ bool SpcFileStream::HasBinaryTag()
         // absolutely sure. Some older dumps use text offsets but still store
         // times as binary. Let's check the bytes that are normally unused in
         // a binary tag for any non-zero values.
-        if (!tag.dateDumped.HasUnusedArea())
+        if (tag.dateDumped.IsSet())
         {
-            SetPosition(previousPosition);
-            return false;
+            if (!tag.dateDumped.HasUnusedArea())
+            {
+                SetPosition(previousPosition);
+                return ID666TagType::TextMixed;
+            }
         }
 
         /*
@@ -79,7 +65,7 @@ bool SpcFileStream::HasBinaryTag()
         if (tag.songArtist.Data()[0] == 0 && tag.songArtist.Data()[1] != 0)
         {
             SetPosition(previousPosition);
-            return false;
+            return ID666TagType::TextMixed;
         }
 
         /*
@@ -95,17 +81,31 @@ bool SpcFileStream::HasBinaryTag()
             if (tag.reserved.Data()[i] != 0)
             {
                 SetPosition(previousPosition);
-                return false;
+                return ID666TagType::TextMixed;
             }
         }
 
         // If we've made it this far, we can be pretty sure we're using
         // binary offsets.
         SetPosition(previousPosition);
-        return true;
+        return ID666TagType::Binary;
     }
 
     SetPosition(previousPosition);
+    return ID666TagType::Text;
+}
+
+bool SpcFileStream::HeaderContainsTag()
+{
+    uintmax_t previousPosition = Position();
+    SetPosition(0);
+    SpcHeader header;
+    Read(&header);
+    SetPosition(previousPosition);
+
+    if (header.containsTag.Value() == headerContainsTag)
+        return true;
+    
     return false;
 }
 

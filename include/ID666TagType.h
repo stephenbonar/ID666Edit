@@ -1,4 +1,4 @@
-// ID666BinaryTag.cpp - Defines the ID666BinaryTag class.
+// ID666TagType.h - Declares the ID666TagType enum.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,19 +14,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ID666BinaryTag.h"
+#ifndef ID666_TAG_TYPE_H
+#define ID666_TAG_TYPE_H
 
-ID666BinaryTag::ID666BinaryTag()
+enum class ID666TagType
 {
-    spcFields.push_back(&songTitle);
-    spcFields.push_back(&gameTitle);
-    spcFields.push_back(&dumperName);
-    spcFields.push_back(&comments);
-    spcFields.push_back(&dateDumped);
-    spcFields.push_back(&songLength);
-    spcFields.push_back(&fadeLength);
-    spcFields.push_back(&songArtist);
-    spcFields.push_back(&defaultChannelState);
-    spcFields.push_back(&emulatorUsed);
-    spcFields.push_back(&reserved);
-}
+    Binary,
+    Text,
+    TextMixed
+};
+
+#endif

@@ -19,6 +19,7 @@
 
 #include <string>
 #include "SpcNumericField.h"
+#include "SpcNumericType.h"
 
 /// @brief Represents a numeric field that indicates emulator used.
 ///
@@ -41,12 +42,12 @@ public:
     /// @param label The label to use when outputing the field. 
     /// @param offset The offset where the field can be found in the file.
     /// @param size The size of the field, in bytes.
-    /// @param alwaysBinary Determines if the field is always binary.
+    /// @param type Determines the numeric type of the field.
     SpcEmulatorField(std::string label, 
                      uintmax_t offset,
                      size_t size, 
-                     bool alwaysBinary) 
-        : SpcNumericField{ label, offset, size, alwaysBinary }
+                     SpcNumericType type) 
+        : SpcNumericField{ label, offset, size, type }
     { }
     
     /// @brief Converts the field's data to a string representation.

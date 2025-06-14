@@ -47,6 +47,10 @@ public:
     /// @return True if 4 - 7 are 0, otherwise false. 
     bool HasUnusedArea() const;
 
+    /// @brief Determines if the date is set.
+    /// @return Returns true if it is set, otherwise false.
+    bool IsSet() const;
+
     std::string Value() const;
 
     void SetTextValue(std::string value);

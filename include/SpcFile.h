@@ -26,6 +26,7 @@
 #include "ID666TextTag.h"
 #include "ID666ExtendedTag.h"
 #include "ID666ExtendedItem.h"
+#include "ID666TagType.h"
 #include "SetCommand.h"
 #include "SpcFileStream.h"
 
@@ -59,7 +60,7 @@ public:
     SpcFile(std::string fileName) : 
         fileName{ fileName }, 
         hasLoaded{ false }, 
-        hasBinaryTag{ false },
+        tagType{ ID666TagType::Text },
         hasExtendedTag{ false },
         headerContainsTag{ false },
         spcRam{ 65536 },
@@ -72,13 +73,15 @@ public:
 
     bool HasLoaded() const { return hasLoaded; }
 
-    bool HasBinaryTag() const { return hasBinaryTag; }
+    //bool HasBinaryTag() const { return hasBinaryTag; }
 
     bool HasExtendedTag() const { return hasExtendedTag; }
 
     bool HeaderContainsTag() const { return headerContainsTag; }
 
     SpcHeader Header() const { return header; }
+
+    ID666TagType TagType() const { return tagType; }
 
     ID666BinaryTag BinaryTag() const { return binaryTag; }
 
@@ -178,12 +181,12 @@ public:
 private:
     std::string fileName;
     bool hasLoaded;
-    bool hasBinaryTag;
     bool hasExtendedTag;
     bool headerContainsTag;
     SpcHeader header;
     ID666BinaryTag binaryTag;
     ID666TextTag textTag;
+    ID666TagType tagType;
     Binary::RawField spcRam;
     Binary::RawField dspRegisters;
     Binary::RawField unused;
@@ -194,7 +197,7 @@ private:
     template<typename T>
     T GetField(const T& binaryField, const T& textField) const
     {
-        if (hasBinaryTag)
+        if (tagType == ID666TagType::Binary)
             return binaryField;
         else
             return textField;
@@ -241,7 +244,7 @@ private:
             }
         }
         
-        if (hasBinaryTag)
+        if (tagType == ID666TagType::Binary)
         {
             return binaryField;
         }
@@ -252,16 +255,29 @@ private:
     }
 
     template<typename T>
+    void SetField(SetCommand<T> cmd, T* field)
+    {
+        if (tagType == ID666TagType::Binary)
+            field = cmd.binaryField;
+        else
+            field = cmd.textField;
+
+        field->SetValue(cmd.value);
+    }
+
+    template<typename T>
     void SetField(SetCommand<T> cmd, std::shared_ptr<ID666ExtendedItem>& item)
     {
         T* field;
-
+        SetField(cmd, field);
+        /*
         if (hasBinaryTag)
             field = cmd.binaryField;
         else
             field = cmd.textField;
 
         field->SetValue(cmd.value);
+        */
 
         if (cmd.value.size() > field->Size())
         {

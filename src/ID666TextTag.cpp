@@ -26,7 +26,7 @@ ID666TextTag::ID666TextTag()
     spcFields.push_back(&songLength);
     spcFields.push_back(&fadeLength);
     spcFields.push_back(&songArtist);
-    spcFields.push_back(&defaultChannelDisables);
+    spcFields.push_back(&defaultChannelState);
     spcFields.push_back(&emulatorUsed);
     spcFields.push_back(&reserved);
 }

@@ -70,14 +70,20 @@ unsigned long long SpcNumericField::Value() const
 
 std::string SpcNumericField::ToString() const
 {
-    if (!alwaysBinary)
+    if (type == SpcNumericType::Either)
     {
         if (IsZero())
             return "0";
 
         if (IsText())
-            return Binary::RawField::ToString(Binary::StringFormat::Terminated);   
+        {
+            return Binary::RawField::ToString(
+                Binary::StringFormat::Terminated);
+        }  
     }
+    
+    if (type == SpcNumericType::Text)
+        return Binary::RawField::ToString(Binary::StringFormat::Terminated);
 
     Binary::UInt64Field value{ Binary::FieldEndianness::Little };
 
@@ -89,6 +95,16 @@ std::string SpcNumericField::ToString() const
 
 void SpcNumericField::SetValue(int value)
 {
+    if (type == SpcNumericType::Text)
+    {
+        std::stringstream stream;
+        stream << value;
+        std::string stringValue{ stream.str() };
+
+        for (int i = 0; i < size; i++)
+            data[i] = stringValue[i];
+    }
+
     Binary::UInt32Field field{ value };
     
     for (int i = 0; i < size; i++)
@@ -97,8 +113,16 @@ void SpcNumericField::SetValue(int value)
 
 void SpcNumericField::SetValue(std::string value)
 {
-    Binary::UInt32Field field{ std::stoi(value) };
+    if (type == SpcNumericType::Binary)
+    {
+        Binary::UInt32Field field{ std::stoi(value) };
 
-    for (int i = 0; i < size; i++)
-        data[i] = field.Data()[i];
+        for (int i = 0; i < size; i++)
+            data[i] = field.Data()[i];
+    }
+    else
+    {
+        for (int i = 0; i < size; i++)
+            data[i] = value[i];
+    }
 }

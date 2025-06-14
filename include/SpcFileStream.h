@@ -23,6 +23,7 @@
 #include "ID666TextTag.h"
 #include "ID666BinaryTag.h"
 #include "ID666ExtendedItem.h"
+#include "ID666TagType.h"
 #include "SpcDateField.h"
 #include "SpcNumericField.h"
 
@@ -44,13 +45,13 @@ public:
     /// @brief Sets the stream position to the extended tag, if available.
     void SeekExtendedTag();
 
+    /// @brief Determines the type of ID666 tag the file uses.
+    /// @return The type of ID666 tag.
+    ID666TagType TagType();
+
     /// @brief Determines if the SPC file's header contains an ID666 tag.
     /// @return Returns true if it contains a tag, otherwise false.
     bool HeaderContainsTag();
-
-    /// @brief Determines if the SPC file has a binary formatted ID666 tag.
-    /// @return Returns true if the tag is binary, otherwise false.
-    bool HasBinaryTag();
 
     /// @brief Determines if the SPC file contains an extended ID666 tag.
     /// @return Returns true if it has an extended tag, otherwise false.

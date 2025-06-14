@@ -20,6 +20,7 @@
 #include <string>
 #include "LibCppBinary.h"
 #include "SpcField.h"
+#include "SpcNumericType.h"
 
 /// @brief Represents a field containing a number in an SPC file.
 ///
@@ -38,19 +39,19 @@ public:
     SpcNumericField(std::string label, 
                     uintmax_t offset, 
                     size_t size) 
-        : SpcField{ label, offset, size }, alwaysBinary{ true }
+        : SpcField{ label, offset, size }, type{ SpcNumericType::Either }
     { };
 
     /// @brief Constructor; creates a new instance of SpcNumericField.
     /// @param label The label to use when outputing the field. 
     /// @param offset The offset where the field can be found in the file.
     /// @param size The size of the field, in bytes.
-    /// @param alwaysBinary Determines if the field is always binary.
+    /// @param type Determines the numeric type of the field.
     SpcNumericField(std::string label, 
                     uintmax_t offset, 
                     size_t size, 
-                    bool alwaysBinary) 
-        : SpcField{ label, offset, size }, alwaysBinary{ alwaysBinary }
+                    SpcNumericType type) 
+        : SpcField{ label, offset, size }, type{ type }
     { };
 
     /// @brief Determines if all bytes in the field contain zeros. 
@@ -97,8 +98,10 @@ public:
     void SetValue(int value);
     
     void SetValue(std::string value);
+
+    void SetType(SpcNumericType type) { this->type = type; }
 private:
-    bool alwaysBinary;
+    SpcNumericType type;
 };
 
 #endif

@@ -128,7 +128,8 @@ void Program::DefineCmdLineParameters()
 
     CmdLine::OptionParam::Definition channelDef;
     channelDef.name = "channel";
-    channelDef.description = "Default channel disables (purpose unknown)";
+    channelDef.description = 
+        "Default channel state (0 = enabled, 1 = disabled)";
     channelPrintParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     channelEditParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     printOption->Add(channelPrintParam.get());
@@ -340,7 +341,7 @@ void Program::PrintTag(SpcFile& file)
     {
         std::cout << FormatValue("Header Contains Tag", "True") << std::endl;
 
-        if (file.HasBinaryTag())
+        if (file.TagType() == ID666TagType::Binary)
             PrintBinaryTag(file);
         else
             PrintTextTag(file);
@@ -362,7 +363,11 @@ void Program::PrintTag(SpcFile& file)
 
 void Program::PrintTextTag(SpcFile& file)
 {
-    std::cout << FormatValue("Tag Type", "Text") << std::endl;
+    if (file.TagType() == ID666TagType::Text)
+        std::cout << FormatValue("Tag Type", "Text") << std::endl;
+    else
+        std::cout << FormatValue("Tag Type", "Text (Mixed)") << std::endl;
+
     ID666TextTag tag = file.TextTag();
     std::cout << tag.ToString() << std::endl;
 }

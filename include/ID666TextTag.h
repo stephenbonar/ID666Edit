@@ -50,22 +50,37 @@ struct ID666TextTag : public SpcStruct
     SpcDateField dateDumped{ "Date Dumped", 0x9E, 11 };
 
     /// @brief The length of the song before fading out, in seconds.
-    SpcNumericField songLength{ "Song Length (sec)", 0xA9, 3, false };
+    SpcNumericField songLength
+    {
+        "Song Length (sec)", 0xA9, 3, SpcNumericType::Text
+    };
 
     /// @brief The length of fade out, in milliseconds.
-    SpcNumericField fadeLength{ "Fade Length (ms)", 0xAC, 5, false };
+    SpcNumericField fadeLength
+    { 
+        "Fade Length (ms)", 0xAC, 5, SpcNumericType::Text 
+    };
 
     /// @brief The composer of the song.
     SpcTextField songArtist{ "Song Artist", 0xB1, 32 };
 
-    /// @brief Determines if any channels are disabled.
-    SpcNumericField defaultChannelDisables
+    /// @brief Determines the default state of each of the channels.
+    ///
+    /// The exact purpose of this field is unclear from the documentation
+    /// and other source code availabe. In the file format documentation, this
+    /// field is called "default channel disables". The best I can gather is it
+    /// determines if the default state of each channel, where 0 = channels
+    /// are all enabled by default, and 1 = channels are disabled by default.
+    SpcNumericField defaultChannelState
     {
-        "Default Channel Disables", 0xD1, 1, false
+        "Default Channel State", 0xD1, 1, SpcNumericType::Binary
     };
 
     /// @brief Determines which emulator was used to dump the SPC file.
-    SpcEmulatorField emulatorUsed{ "Emulator Used", 0xD2, 1, false };
+    SpcEmulatorField emulatorUsed
+    {
+        "Emulator Used", 0xD2, 1, SpcNumericType::Text 
+    };
 
     /// @brief Bytes reserved for use in future versions of the SPC format.
     SpcField reserved{ "Reserved", 0xD3, 45 };

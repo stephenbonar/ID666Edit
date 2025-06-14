@@ -86,8 +86,8 @@ SpcTextField SpcFile::SongArtist() const
 
 SpcNumericField SpcFile::DefaultChannelDisables() const
 {
-    return GetField<SpcNumericField>(binaryTag.defaultChannelDisables, 
-                                     textTag.defaultChannelDisables);
+    return GetField<SpcNumericField>(binaryTag.defaultChannelState, 
+                                     textTag.defaultChannelState);
 }
 
 SpcEmulatorField SpcFile::EmulatorUsed() const
@@ -218,7 +218,7 @@ void SpcFile::SetComments(std::string value)
 
 void SpcFile::SetDateDumped(std::string value)
 {
-    if (hasBinaryTag)
+    if (tagType == ID666TagType::Binary)
         binaryTag.dateDumped.SetBinaryValue(value);
     else
         textTag.dateDumped.SetTextValue(value);
@@ -226,7 +226,12 @@ void SpcFile::SetDateDumped(std::string value)
 
 void SpcFile::SetSongLength(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.binaryField = &binaryTag.songLength;
+    command.textField = &textTag.songLength;
+    command.value = value;
+    SpcNumericField* songLength;
+    SetField<SpcNumericField>(command, songLength);
 }
 
 void SpcFile::SetFadeLength(std::string value)
@@ -320,15 +325,21 @@ bool SpcFile::Load()
     if (file.HeaderContainsTag())
     {
         headerContainsTag = true;
+        tagType = file.TagType();
 
-        if (file.HasBinaryTag())
+        if (tagType == ID666TagType::Binary)
         {
-            hasBinaryTag = true;
             file.Read(&binaryTag);
         }
         else
         {
             file.Read(&textTag);
+
+            if (tagType == ID666TagType::TextMixed)
+            {
+                textTag.songLength.SetType(SpcNumericType::Binary);
+                textTag.fadeLength.SetType(SpcNumericType::Binary);
+            }
         }
     }
 
@@ -410,7 +421,7 @@ bool SpcFile::Save()
 
     stream.Write(&header);
 
-    if (hasBinaryTag)
+    if (tagType == ID666TagType::Binary)
         stream.Write(&binaryTag);
     else
         stream.Write(&textTag);

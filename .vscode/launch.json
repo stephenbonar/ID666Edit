@@ -20,7 +20,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/id666edit",
-            "args": ["-e", "date=06/07/2025", "chrono_edited.spc"],
+            "args": ["1-01 A Premonition.spc"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/",
             "environment": [],
