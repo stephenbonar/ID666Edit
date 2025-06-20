@@ -125,6 +125,7 @@ void Program::DefineCmdLineParameters()
     artistPrintParam = std::make_unique<CmdLine::OptionParam>(artistDef);
     artistEditParam = std::make_unique<CmdLine::OptionParam>(artistDef);
     printOption->Add(artistPrintParam.get());
+    editOption->Add(artistEditParam.get());
 
     CmdLine::OptionParam::Definition channelDef;
     channelDef.name = "channel";
@@ -173,7 +174,7 @@ void Program::DefineCmdLineParameters()
     publisherPrintParam = std::make_unique<CmdLine::OptionParam>(publisherDef);
     publisherEditParam = std::make_unique<CmdLine::OptionParam>(publisherDef);
     printOption->Add(publisherPrintParam.get());
-    editOption->Add(publisherPrintParam.get());
+    editOption->Add(publisherEditParam.get());
 
     CmdLine::OptionParam::Definition copyrightDef;
     copyrightDef.name = "copyright";
@@ -433,7 +434,7 @@ int Program::PrintSpecifiedItems(SpcFile& file)
         //std::cout << FormatField(&file.SongArtist()) << std::endl;
 
     if (channelPrintParam->IsSpecified())
-        PrintField(file.DefaultChannelDisables());
+        PrintField(file.DefaultChannelState());
         //std::cout << FormatField(&file.DefaultChannelDisables()) << std::endl;
 
     if (emulatorPrintParam->IsSpecified())
@@ -507,6 +508,51 @@ int Program::EditSpecifiedItems(SpcFile& file)
     if (songLengthEditParam->IsSpecified())
         file.SetSongLength(songLengthEditParam->Value());
 
+    if (fadeLengthEditParam->IsSpecified())
+        file.SetFadeLength(fadeLengthEditParam->Value());
+
+    if (artistEditParam->IsSpecified())
+        file.SetSongArtist(artistEditParam->Value());
+
+    if (channelEditParam->IsSpecified())
+        file.SetDefaultChannelState(channelEditParam->Value());
+
+    if (emulatorEditParam->IsSpecified())
+        file.SetEmulatorUsed(emulatorEditParam->Value());
+
+    if (titleEditParam->IsSpecified())
+        file.SetOstTitle(titleEditParam->Value());
+
+    if (discEditParam->IsSpecified())
+        file.SetOstDisc(discEditParam->Value());
+
+    if (trackEditParam->IsSpecified())
+        file.SetOstTrack(trackEditParam->Value());
+
+    if (publisherEditParam->IsSpecified())
+        file.SetPublisherName(publisherEditParam->Value());
+
+    if (copyrightEditParam->IsSpecified())
+        file.SetCopyrightYear(copyrightEditParam->Value());
+
+    if (introLengthEditParam->IsSpecified())
+        file.SetIntroLength(introLengthEditParam->Value());
+
+    if (loopLengthEditParam->IsSpecified())
+        file.SetLoopLength(loopLengthEditParam->Value());
+
+    if (endLengthEditParam->IsSpecified())
+        file.SetEndLength(endLengthEditParam->Value());
+
+    if (mutedEditParam->IsSpecified())
+        file.SetMutedVoices(mutedEditParam->Value());
+
+    if (loopTimesEditParam->IsSpecified())
+        file.SetLoopTimes(loopTimesEditParam->Value());
+
+    if (preampEditParam->IsSpecified())
+        file.SetPreampLevel(preampEditParam->Value());
+        
     file.Save();
         
     return 0;

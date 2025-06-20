@@ -17,10 +17,16 @@
 #ifndef ID666_TAG_TYPE_H
 #define ID666_TAG_TYPE_H
 
+/// @brief Represents the type of the ID666 tag.
 enum class ID666TagType
 {
+    /// @brief The tag has binary representation of numeric values.
     Binary,
+
+    /// @brief The tag has text representation of numeric values.
     Text,
+
+    /// @brief The tag has text offsets, but some numeric values are binary.
     TextMixed
 };
 

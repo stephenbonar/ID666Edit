@@ -32,3 +32,17 @@ std::string SpcTrackField::ToString() const
     stream << std::to_string(Value()) << Suffix();
     return stream.str();
 }
+
+void SpcTrackField::SetValue(std::string value)
+{
+    std::istringstream stream{ value };
+    int trackNo;
+    char trackChar;
+
+    stream >> trackNo;
+
+    if (stream >> trackChar)
+        data[0] = trackChar;
+
+    data[1] = trackNo;
+}

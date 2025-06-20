@@ -84,7 +84,7 @@ SpcTextField SpcFile::SongArtist() const
                                   extendedTag.artistName.get());
 }
 
-SpcNumericField SpcFile::DefaultChannelDisables() const
+SpcNumericField SpcFile::DefaultChannelState() const
 {
     return GetField<SpcNumericField>(binaryTag.defaultChannelState, 
                                      textTag.defaultChannelState);
@@ -236,77 +236,158 @@ void SpcFile::SetSongLength(std::string value)
 
 void SpcFile::SetFadeLength(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.binaryField = &binaryTag.fadeLength;
+    command.textField = &textTag.fadeLength;
+    command.value = value;
+    SpcNumericField* fadeLength;
+    SetField<SpcNumericField>(command, fadeLength);
 }
 
 void SpcFile::SetSongArtist(std::string value)
 {
-
+    SetCommand<SpcTextField> command;
+    command.binaryField = &binaryTag.songArtist;
+    command.textField = &textTag.songArtist;
+    command.extendedID = extendedArtistNameID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetField<SpcTextField>(command, extendedTag.artistName);
 }
 
-void SpcFile::SetDefaultChannelDisables(std::string value)
+void SpcFile::SetDefaultChannelState(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.binaryField = &binaryTag.defaultChannelState;
+    command.textField = &textTag.defaultChannelState;
+    command.value = value;
+    SpcNumericField* defaultChannelState;
+    SetField<SpcNumericField>(command, defaultChannelState);
 }
 
 void SpcFile::SetEmulatorUsed(std::string value)
 {
+    std::string numericValue{ "0" };
+    std::string v{ value };
+    std::transform(v.begin(), v.end(), v.begin(), [](char c)
+    {
+        return std::toupper(c);
+    });
 
+    if (v == "UNKNOWN")
+        numericValue = "0";
+    else if (v == "ZSNES")
+        numericValue = "1";
+    else if (v == "SNES9X")
+        numericValue = "2";
+    else
+        return;
+
+    SetCommand<SpcNumericField> command;
+    command.binaryField = &binaryTag.emulatorUsed;
+    command.textField = &textTag.emulatorUsed;
+    command.value = numericValue;
+    SpcNumericField* emulatorUsed;
+    SetField<SpcNumericField>(command, emulatorUsed);
 }
 
 void SpcFile::SetOstTitle(std::string value)
 {
-
+    SetCommand<SpcTextField> command;
+    command.extendedID = extendedOSTTitleID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetExtendedItem<SpcTextField>(command, extendedTag.ostTitle);
 }
 
 void SpcFile::SetOstDisc(std::string value)
 {
-    
+    SetCommand<SpcNumericField> command;
+    command.extendedID = extendedOSTDiscID;
+    command.extendedType = extendedTypeDataInHeader;
+    command.value = value;
+    SetExtendedItem<SpcNumericField>(command, extendedTag.ostDisc);
 }
 
 void SpcFile::SetOstTrack(std::string value)
 {
-
+    SetCommand<SpcTrackField> command;
+    command.extendedID = extendedOSTTrackID;
+    command.extendedType = extendedTypeDataInHeader;
+    command.value = value;
+    SetExtendedItem<SpcTrackField>(command, extendedTag.ostTrack);
 }
 
 void SpcFile::SetPublisherName(std::string value)
 {
-
+    SetCommand<SpcTextField> command;
+    command.extendedID = extendedPublisherNameID;
+    command.extendedType = extendedTypeString;
+    command.value = value;
+    SetExtendedItem<SpcTextField>(command, extendedTag.publisherName);
 }
 
 void SpcFile::SetCopyrightYear(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.extendedID = extendedCopyrightYearID;
+    command.extendedType = extendedTypeDataInHeader;
+    command.value = value;
+    SetExtendedItem<SpcNumericField>(command, extendedTag.copyrightYear);
 }
 
 void SpcFile::SetIntroLength(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.extendedID = extendedIntroLengthID;
+    command.extendedType = extendedTypeInteger;
+    command.value = value;
+    SetExtendedItem<SpcNumericField>(command, extendedTag.introLength);
 }
 
 void SpcFile::SetLoopLength(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.extendedID = extendedLoopLengthID;
+    command.extendedType = extendedTypeInteger;
+    command.value = value;
+    SetExtendedItem<SpcNumericField>(command, extendedTag.loopLength);
 }
 
 void SpcFile::SetEndLength(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.extendedID = extendedEndLengthID;
+    command.extendedType = extendedTypeInteger;
+    command.value = value;
+    SetExtendedItem<SpcNumericField>(command, extendedTag.endLength);
 }
 
 void SpcFile::SetMutedVoices(std::string value)
 {
-
+    SetCommand<SpcBinaryField> command;
+    command.extendedID = extendedMutedVoicesID;
+    command.extendedType = extendedTypeDataInHeader;
+    command.value = value;
+    SetExtendedItem<SpcBinaryField>(command, extendedTag.mutedVoices);
 }
 
 void SpcFile::SetLoopTimes(std::string value)
 {
-
+    SetCommand<SpcBinaryField> command;
+    command.extendedID = extendedLoopTimesID;
+    command.extendedType = extendedTypeDataInHeader;
+    command.value = value;
+    SetExtendedItem<SpcBinaryField>(command, extendedTag.loopTimes);
 }
 
 void SpcFile::SetPreampLevel(std::string value)
 {
-
+    SetCommand<SpcNumericField> command;
+    command.extendedID = extendedPreampLevelID;
+    command.extendedType = extendedTypeInteger;
+    command.value = value;
+    SetExtendedItem<SpcNumericField>(command, extendedTag.preampLevel);
 }
 
 bool SpcFile::Load()
@@ -501,37 +582,37 @@ void SpcFile::LoadTextItem(std::shared_ptr<ID666ExtendedItem> item,
     switch (id)
     {
         case extendedSongNameID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.songName = item;
             break;
         case extendedGameNameID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.gameName = item;
             break;
         case extendedArtistNameID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.artistName = item;
             break;
         case extendedDumperNameID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.dumperName = item;
             break;
         case extendedCommentsID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.comments = item;
             break;
         case extendedOSTTitleID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.ostTitle = item;
             break;
         case extendedPublisherNameID:
-            item->extendedData = InitField<SpcTextField>(id, size);
+            item->extendedData = InitExtendedField<SpcTextField>(id, size);
             stream.Read(item->extendedData.get());
             extendedTag.publisherName = item;
             break;
@@ -549,32 +630,32 @@ void SpcFile::LoadNumericItem(std::shared_ptr<ID666ExtendedItem> item,
     switch (id)
     {
         case extendedDateDumpedID:
-            item->extendedData = InitField<SpcDateField>(id, size);
+            item->extendedData = InitExtendedField<SpcDateField>(id, size);
             extendedTag.dateDumped = item;
             stream.Read(item->extendedData.get());
             break;
         case extendedIntroLengthID:
-            item->extendedData = InitField<SpcNumericField>(id, size);
+            item->extendedData = InitExtendedField<SpcNumericField>(id, size);
             extendedTag.introLength = item;
             stream.Read(item->extendedData.get());
             break;
         case extendedLoopLengthID:
-            item->extendedData = InitField<SpcNumericField>(id, size);
+            item->extendedData = InitExtendedField<SpcNumericField>(id, size);
             extendedTag.loopLength = item;
             stream.Read(item->extendedData.get());
             break;
         case extendedEndLengthID:
-            item->extendedData = InitField<SpcNumericField>(id, size);
+            item->extendedData = InitExtendedField<SpcNumericField>(id, size);
             extendedTag.endLength = item;
             stream.Read(item->extendedData.get());
             break;
         case extendedFadeLengthID:
-            item->extendedData = InitField<SpcNumericField>(id, size);
+            item->extendedData = InitExtendedField<SpcNumericField>(id, size);
             extendedTag.fadeLength = item;
             stream.Read(item->extendedData.get());
             break;
         case extendedPreampLevelID:
-            item->extendedData = InitField<SpcNumericField>(id, size);
+            item->extendedData = InitExtendedField<SpcNumericField>(id, size);
             extendedTag.preampLevel = item;
             stream.Read(item->extendedData.get());
             break;

@@ -95,9 +95,9 @@ public:
         return Binary::RawField::ToString(format);
     }
 
-    void SetValue(int value);
+    virtual void SetValue(int value);
     
-    void SetValue(std::string value);
+    virtual void SetValue(std::string value);
 
     void SetType(SpcNumericType type) { this->type = type; }
 private:

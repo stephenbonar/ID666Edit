@@ -21,13 +21,24 @@
 #include <string>
 #include "ID666ExtendedItem.h"
 
+/// @brief Represents the parameters of a set operation.
+/// @tparam T The type of SPC field being set.
 template<typename T>
 struct SetCommand
 {
+    /// @brief A pointer to the field on the binary tag.
     T* binaryField;
+
+    /// @brief A pointer to the field on the text tag.
     T* textField;
+
+    /// @brief The extended item ID.
     int extendedID;
+
+    /// @brief The extended item type.
     int extendedType;
+
+    /// @brief The value to set on the field.
     std::string value;
 };
 

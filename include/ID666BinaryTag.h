@@ -24,10 +24,10 @@
 #include "SpcEmulatorField.h"
 #include "SpcTextField.h"
 
-/// @brief Represents a binar format ID666 tag.
+/// @brief Represents a binary format ID666 tag.
 ///
 /// ID666 tags are the metadata tags stored in the header of an SPC file and
-/// come in two formats: text or binary. Binar formatted tags tend to store 
+/// come in two formats: text or binary. Binary formatted tags tend to store 
 /// numeric values as unsigned binary integers, although some SCP dumps
 /// use a mixture of text and binary numbers. That said, text and binary tags
 /// have slightly different offsets, and dumps that mix text and binary still

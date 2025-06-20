@@ -17,6 +17,7 @@
 #ifndef SPC_TRACK_FIELD_H
 #define SPC_TRACK_FIELD_H
 
+#include <sstream>
 #include "SpcField.h"
 
 class SpcTrackField : public SpcField
@@ -35,6 +36,8 @@ public:
     char Suffix() const;
 
     std::string ToString() const override;
+
+    void SetValue(std::string value);
 };
 
 #endif

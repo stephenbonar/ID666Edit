@@ -56,35 +56,30 @@ inline constexpr int extendedTagOffset{ 0x10200 };
 
 /// @brief Represents an item in the extended ID666 tag.
 ///
-/// The extended ID666 tag is a RIFF chunk that contains multiple sub-chunks
+/// The extended ID666 tag is an IFF chunk that contains multiple sub-chunks
 /// representing items in the tag. This struct represents those sub-chunks.
 struct ID666ExtendedItem : public SpcStruct
 {
+    /// @brief Default constructor; creates new instance of ID666ExtendedItem.
     ID666ExtendedItem();
     
-    /*
-    /// @brief The ID of the item, which determines which metadata field it is.
-    SpcNumericField id
-    { 
-        "Item ID", extendedTagOffset, extendedTagIDSize, true 
-    };
-
-    /// @brief Determines the data type: data in header, string, or integer.
-    SpcNumericField type
-    { 
-        "Item Type", extendedTagOffset, extendedTagTypeSize, true
-    };
-
-    /// @brief Either represents the value if type 0, or the size of value.
-    SpcNumericField data
-    { 
-        "Item Data", extendedTagOffset, extendedTagDataSize, true
-    };
-    */
+    /// @brief Determines which extended item this instance represents.
     std::shared_ptr<SpcNumericField> id;
+
+    /// @brief Determines the type of extended item.
+    ///
+    /// 0 = The value is contained in the data field.
+    /// 1 = The value is in extendedData and represents a string.
+    /// 4 = The value is in extendedData and represents a 32-bit integer.
     std::shared_ptr<SpcNumericField> type;
+
+    /// @brief Depending on the type, represents either data length or value.
     std::shared_ptr<SpcField> data;
+
+    /// @brief Contains the item value if type is not 0.
     std::shared_ptr<SpcField> extendedData;
+
+    /// @brief Points to the padding bytes, if any.
     std::shared_ptr<SpcTextField> padding;
 
     /// @brief Gets list of pointers to this struct's fields.
@@ -100,8 +95,6 @@ struct ID666ExtendedItem : public SpcStruct
     /// endianness of each field no matter which architecture the program runs
     /// on.
     std::vector<SpcField*> SpcFields() const override;
-// private:
-//     std::vector<SpcField*> spcFields;
 };
 
 #endif

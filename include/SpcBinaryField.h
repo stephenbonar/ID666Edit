@@ -20,6 +20,7 @@
 #include <string>
 #include "SpcNumericField.h"
 
+/// @brief Represents a field that should be formatted as binary by default.
 class SpcBinaryField : public SpcNumericField
 {
 public:
@@ -29,12 +30,24 @@ public:
     /// @param size The size of the field, in bytes.
     SpcBinaryField(std::string label, uintmax_t offset, size_t size) :
         SpcNumericField{ label, offset, size }
-    { }
+    {
+        SetType(SpcNumericType::Binary);
+    }
 
+    /// @brief Converts the field's data to a string representation.
+    /// @return A string representation of the field's data.
     std::string ToString() const override
     {
         return Binary::RawField::ToString(Binary::StringFormat::Bin);
     }
+
+    virtual void SetValue(std::string value) override
+    {
+        int binaryValue = std::stoi(value, nullptr, 2);
+        SpcNumericField::SetValue(binaryValue);
+    }
+
+    using SpcNumericField::SetValue;
 };
 
 #endif
