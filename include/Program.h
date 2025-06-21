@@ -39,9 +39,11 @@ public:
     int Run(std::vector<std::string> arguments);
 private:
     std::unique_ptr<CmdLine::ProgParam> progParam;
-    std::unique_ptr<CmdLine::PosParam> spcFileParam;
+    std::unique_ptr<CmdLine::MultiPosParam> spcFileParam;
     std::unique_ptr<CmdLine::ValueOption> printOption;
     std::unique_ptr<CmdLine::ValueOption> editOption;
+    std::unique_ptr<CmdLine::Option> detailedOption;
+    std::unique_ptr<CmdLine::Option> versionOption;
     std::unique_ptr<CmdLine::OptionParam> tagPrintParam;
     std::unique_ptr<CmdLine::OptionParam> headerPrintParam;
     std::unique_ptr<CmdLine::OptionParam> songPrintParam;
@@ -109,6 +111,8 @@ private:
 
     void PrintSectionHeader(std::string title);
 
+    void PrintSectionHeader(std::string title, int length);
+
     void PrintField(SpcField* field);
 
     void PrintField(SpcTextField field);
@@ -123,9 +127,11 @@ private:
 
     void PrintField(SpcBinaryField field);
 
+    int PrintSpcFile(SpcFile& file);
+
     /// @brief Prints the entire SPC file's metadata including tags & headers.
     /// @return The status code returned by the operation.
-    int PrintSpcFile(SpcFile& file);
+    int PrintSpcFileDetailed(SpcFile& file);
 
     /// @brief Prints the SPC file header.
     /// @param file The file stream to print the header from.

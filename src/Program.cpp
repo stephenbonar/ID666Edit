@@ -18,7 +18,7 @@
 
 void Program::PrintProgramInfo()
 {
-    std::cout << "ID666Edit v0.4" << std::endl;
+    std::cout << "ID666Edit v0.5" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -29,16 +29,16 @@ void Program::DefineCmdLineParameters()
     progDef.description = "An ID666 metadata tag editor for .SPC files";
     progParam = std::make_unique<CmdLine::ProgParam>(progDef);
 
-    CmdLine::PosParam::Definition fileDef;
+    CmdLine::MultiPosParam::Definition fileDef;
     fileDef.name = "spcfile";
-    fileDef.description = "The .spc file to open";
+    fileDef.description = "The .spc file(s) to open";
     fileDef.isMandatory = true;
-    spcFileParam = std::make_unique<CmdLine::PosParam>(fileDef);
+    spcFileParam = std::make_unique<CmdLine::MultiPosParam>(fileDef);
 
     CmdLine::ValueOption::Definition printDef;
     printDef.shortName = 'p';
     printDef.longName = "print";
-    printDef.description = "Prints the specified item in the .spc file";
+    printDef.description = "Prints the specified item in the file(s)";
     printOption = std::make_unique<CmdLine::ValueOption>(printDef);
 
     CmdLine::ValueOption::Definition editDef;
@@ -46,6 +46,18 @@ void Program::DefineCmdLineParameters()
     editDef.longName = "edit";
     editDef.description = "Edits the specified tag item (use \"name=value\")";
     editOption = std::make_unique<CmdLine::ValueOption>(editDef);
+
+    CmdLine::Option::Definition detailedDef;
+    detailedDef.shortName = 'd';
+    detailedDef.longName = "detailed";
+    detailedDef.description = "Prints detailed information about the file(s)";
+    detailedOption = std::make_unique<CmdLine::Option>(detailedDef);
+
+    CmdLine::Option::Definition versionDef;
+    versionDef.shortName = 'v';
+    versionDef.longName = "version";
+    versionDef.description = "Prints program version information";
+    versionOption = std::make_unique<CmdLine::Option>(versionDef);
 
     CmdLine::OptionParam::Definition tagDef;
     tagDef.name = "tag";
@@ -240,38 +252,62 @@ void Program::DefineCmdLineParameters()
 void Program::InitializeCmdLineParser(std::vector<std::string> arguments)
 {
     parser = std::make_unique<CmdLine::Parser>(progParam.get(), arguments);
-    parser->Add(spcFileParam.get());
+    parser->Set(spcFileParam.get());
     parser->Add(printOption.get());
     parser->Add(editOption.get());
+    parser->Add(detailedOption.get());
+    parser->Add(versionOption.get());
 }
 
 int Program::SelectMode()
 {
-    if (spcFileParam->IsSpecified())
+    if (versionOption->IsSpecified())
     {
-        SpcFile file{ spcFileParam->Value() };
-        
-        if (!file.Load())
+        PrintProgramInfo();
+        return 0;
+    }
+    else if (spcFileParam->IsSpecified())
+    {
+        for (std::string value : spcFileParam->Values())
         {
-            std::cerr << "ERROR: unable to open file." << std::endl;
-            return 2;
+            int result = 0;
+            SpcFile file{ value };
+        
+            if (!file.Load())
+            {
+                std::cerr << "ERROR: unable to open file." << std::endl;
+                return 2;
+            }
+
+            if (printOption->IsSpecified())
+                result = PrintSpecifiedItems(file);
+
+            if (editOption->IsSpecified())
+                result = EditSpecifiedItems(file);
+
+            if (!printOption->IsSpecified() && !editOption->IsSpecified())
+            {
+                if (detailedOption->IsSpecified())
+                    result = PrintSpcFileDetailed(file);
+                else
+                    result = PrintSpcFile(file);
+            }
+
+            if (result != 0)
+                return result;
         }
 
-        if (printOption->IsSpecified())
-            return PrintSpecifiedItems(file);
-
-        if (editOption->IsSpecified())
-            return EditSpecifiedItems(file);
-
-        return PrintSpcFile(file);
+        return 0;
     }
     else if (parser->BuiltInHelpOptionIsSpecified())
     {
+        PrintProgramInfo();
         std::cout << parser->GenerateHelp();
         return 0;
     }
     else
     {
+        PrintProgramInfo();
         std::cerr << parser->GenerateUsage();
         return 1;
     }
@@ -279,9 +315,17 @@ int Program::SelectMode()
 
 void Program::PrintSectionHeader(std::string title)
 {
+    PrintSectionHeader(title, title.length());
+}
+
+void Program::PrintSectionHeader(std::string title, int length)
+{
     std::cout << title << std::endl;
-    std::cout << "-----------------------------------------------------------";
-    std::cout << "--------------------" << std::endl;
+
+    for (int i = 0; i < length; ++i)
+        std::cout << '-';
+
+    std::cout << std::endl;
 }
 
 void Program::PrintField(SpcField* field)
@@ -321,6 +365,36 @@ void Program::PrintField(SpcBinaryField field)
 
 int Program::PrintSpcFile(SpcFile& file)
 {
+    PrintSectionHeader(file.FileName(), 79);
+    PrintField(file.SongTitle());
+    PrintField(file.GameTitle());
+    PrintField(file.DumperName());
+    PrintField(file.Comments());
+    PrintField(file.DateDumped());
+    PrintField(file.SongLength());
+    PrintField(file.FadeLength());
+    PrintField(file.SongArtist());
+    PrintField(file.DefaultChannelState());
+    PrintField(file.EmulatorUsed());
+    PrintField(file.OstTitle());
+    PrintField(file.OstDisc());
+    PrintField(file.OstTrack());
+    PrintField(file.PublisherName());
+    PrintField(file.CopyrightYear());
+    PrintField(file.IntroLength());
+    PrintField(file.LoopLength());
+    PrintField(file.EndLength());
+    PrintField(file.MutedVoices());
+    PrintField(file.LoopTimes());
+    PrintField(file.PreampLevel());
+    std::cout << std::endl;
+    return 0;
+}
+
+int Program::PrintSpcFileDetailed(SpcFile& file)
+{
+    PrintSectionHeader(file.FileName(), 79);
+    std::cout << std::endl;
     PrintHeader(file);
     PrintTag(file);
     std::cout << std::endl;
@@ -395,6 +469,8 @@ void Program::PrintExtendedTag(SpcFile& file)
 
 int Program::PrintSpecifiedItems(SpcFile& file)
 {
+    PrintSectionHeader(file.FileName(), 79);
+
     if (headerPrintParam->IsSpecified())
         PrintHeader(file);
 
@@ -403,87 +479,68 @@ int Program::PrintSpecifiedItems(SpcFile& file)
 
     if (songPrintParam->IsSpecified())
         PrintField(file.SongTitle());
-        //std::cout << FormatField(&file.SongTitle()) << std::endl;
 
     if (gamePrintParam->IsSpecified())
         PrintField(file.GameTitle());
-        //std::cout << FormatField(&file.GameTitle()) << std::endl;
 
     if (dumperPrintParam->IsSpecified())
         PrintField(file.DumperName());
-        //std::cout << FormatField(&file.DumperName()) << std::endl;
 
     if (commentsPrintParam->IsSpecified())
         PrintField(file.Comments());
-        //std::cout << FormatField(&file.Comments()) << std::endl;
     
     if (datePrintParam->IsSpecified())
         PrintField(file.DateDumped());
-        //std::cout << FormatField(&file.DateDumped()) << std::endl;
 
     if (songLengthPrintParam->IsSpecified())
         PrintField(file.SongLength());
-        //std::cout << FormatField(&file.SongLength()) << std::endl;
 
     if (fadeLengthPrintParam->IsSpecified())
         PrintField(file.FadeLength());
-        //std::cout << FormatField(&file.FadeLength()) << std::endl;
 
     if (artistPrintParam->IsSpecified())
         PrintField(file.SongArtist());
-        //std::cout << FormatField(&file.SongArtist()) << std::endl;
 
     if (channelPrintParam->IsSpecified())
         PrintField(file.DefaultChannelState());
-        //std::cout << FormatField(&file.DefaultChannelDisables()) << std::endl;
 
     if (emulatorPrintParam->IsSpecified())
         PrintField(file.EmulatorUsed());
-        //std::cout << FormatField(&file.EmulatorUsed()) << std::endl;
 
     if (titlePrintParam->IsSpecified())
         PrintField(file.OstTitle());
-        //std::cout << FormatField(&file.OstTitle()) << std::endl;
 
     if (discPrintParam->IsSpecified())
         PrintField(file.OstDisc());
-        //std::cout << FormatField(&file.OstDisc()) << std::endl;
 
     if (trackPrintParam->IsSpecified())
         PrintField(file.OstTrack());
-        //std::cout << FormatField(&file.OstTrack()) << std::endl;
 
     if (publisherPrintParam->IsSpecified())
         PrintField(file.PublisherName());
-        //std::cout << FormatField(&file.PublisherName()) << std::endl;
 
     if (copyrightPrintParam->IsSpecified())
         PrintField(file.CopyrightYear());
-        //std::cout << FormatField(&file.CopyrightYear()) << std::endl;
 
     if (introLengthPrintParam->IsSpecified())
         PrintField(file.IntroLength());
-        //std::cout << FormatField(&file.IntroLength()) << std::endl;
 
     if (loopLengthPrintParam->IsSpecified())
         PrintField(file.LoopLength());
-        //std::cout << FormatField(&file.LoopLength()) << std::endl;
 
     if (endLengthPrintParam->IsSpecified())
         PrintField(file.EndLength());
-        //std::cout << FormatField(&file.EndLength()) << std::endl;
 
     if (mutedPrintParam->IsSpecified())
         PrintField(file.MutedVoices());
-        //std::cout << FormatField(&file.MutedVoices()) << std::endl;
 
     if (loopTimesPrintParam->IsSpecified())
         PrintField(file.LoopTimes());
-        //std::cout << FormatField(&file.LoopTimes()) << std::endl;
 
     if (preampPrintParam->IsSpecified())
         PrintField(file.PreampLevel());
-        //std::cout << FormatField(&file.PreampLevel()) << std::endl;
+
+    std::cout << std::endl;
 
     return 0;
 }
@@ -560,7 +617,6 @@ int Program::EditSpecifiedItems(SpcFile& file)
 
 int Program::Run(std::vector<std::string> arguments)
 {
-    PrintProgramInfo();
     DefineCmdLineParameters();
     InitializeCmdLineParser(arguments);
     CmdLine::Parser::Status status = parser->Parse();
