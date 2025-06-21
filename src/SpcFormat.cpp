@@ -18,8 +18,36 @@
 
 std::string FormatValue(std::string label, std::string value)
 {
+    // This value is enough to fit all labels with at least one space after.
+    constexpr int labelSize{ 22 };
+
+    // This value perfectly wraps hexadecimal output.
+    constexpr int valueChunkSize{ 54 };
+
     std::stringstream stream;
-    stream << std::setw(25) << std::left << label << ": " << value;
+    stream << std::setw(labelSize) << std::left << label << ": ";
+    
+    // If the value is long enough that it will wrap in an 80 column terminal,
+    // then we split the value into chunks to cleanly wrap it, otherwise we
+    // simply output the value as-is.
+    if (value.length() > valueChunkSize)
+    {
+        for (int i = 0; i < value.length(); i += valueChunkSize)
+        {
+            // Write the next chunk.
+            stream << value.substr(i, valueChunkSize);
+
+            // If there's still enough to wrap another line, we do so to keep
+            // the output format aligned.
+            if (i + valueChunkSize < value.length())
+                stream << std::endl << std::setw(labelSize) << " " << "  ";
+        }
+    }
+    else
+    {
+        stream << value;
+    }
+
     return stream.str();
 }
 

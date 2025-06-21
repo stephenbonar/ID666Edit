@@ -91,7 +91,7 @@ private:
     std::unique_ptr<CmdLine::Parser> parser;
 
     /// @brief Prints information about the program to the screen.
-    void PrintProgramInfo();
+    void PrintVersion();
 
     /// @brief Defines the command line parameters the program supports.
     ///
@@ -99,11 +99,11 @@ private:
     /// interpret the command line arguments passed to the program. Once
     /// defined, the program can use the CmdLine::Parser to parse the arguments
     /// and automatically generate usage information for the program.
-    void DefineCmdLineParameters();
+    void DefineParameters();
 
     /// @brief Initializes the CmdLine::Parser.
     /// @param arguments The command line arguments to load into the parser.
-    void InitializeCmdLineParser(std::vector<std::string> arguments);
+    void InitializeParser(std::vector<std::string> arguments);
 
     /// @brief Selects the program's mode of operation based on the arguments.
     /// @return The status code returned by the selected mode upon completion.

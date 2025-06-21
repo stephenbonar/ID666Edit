@@ -16,13 +16,13 @@
 
 #include "Program.h"
 
-void Program::PrintProgramInfo()
+void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v0.5" << std::endl;
+    std::cout << "ID666Edit v0.6" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
-void Program::DefineCmdLineParameters()
+void Program::DefineParameters()
 {
     CmdLine::ProgParam::Definition progDef;
     progDef.name = "id666edit";
@@ -249,7 +249,7 @@ void Program::DefineCmdLineParameters()
     editOption->Add(preampEditParam.get());
 }
 
-void Program::InitializeCmdLineParser(std::vector<std::string> arguments)
+void Program::InitializeParser(std::vector<std::string> arguments)
 {
     parser = std::make_unique<CmdLine::Parser>(progParam.get(), arguments);
     parser->Set(spcFileParam.get());
@@ -263,7 +263,7 @@ int Program::SelectMode()
 {
     if (versionOption->IsSpecified())
     {
-        PrintProgramInfo();
+        PrintVersion();
         return 0;
     }
     else if (spcFileParam->IsSpecified())
@@ -297,17 +297,20 @@ int Program::SelectMode()
                 return result;
         }
 
+        std::cout << "* indicates value is stored as extended tag data"
+                  << std::endl;
+
         return 0;
     }
     else if (parser->BuiltInHelpOptionIsSpecified())
     {
-        PrintProgramInfo();
+        PrintVersion();
         std::cout << parser->GenerateHelp();
         return 0;
     }
     else
     {
-        PrintProgramInfo();
+        PrintVersion();
         std::cerr << parser->GenerateUsage();
         return 1;
     }
@@ -397,7 +400,6 @@ int Program::PrintSpcFileDetailed(SpcFile& file)
     std::cout << std::endl;
     PrintHeader(file);
     PrintTag(file);
-    std::cout << std::endl;
     return 0;
 }
 
@@ -547,78 +549,145 @@ int Program::PrintSpecifiedItems(SpcFile& file)
 
 int Program::EditSpecifiedItems(SpcFile& file)
 {
+    PrintSectionHeader(file.FileName(), 79);
+
     if (songEditParam->IsSpecified())
+    {
         file.SetSongTitle(songEditParam->Value());
+        PrintField(file.SongTitle());
+    }
 
     if (gameEditParam->IsSpecified())
+    {
         file.SetGameTitle(gameEditParam->Value());
+        PrintField(file.GameTitle());
+    }
 
     if (dumperEditParam->IsSpecified())
+    {
         file.SetDumperName(dumperEditParam->Value());
+        PrintField(file.DumperName());
+    }
 
     if (commentsEditParam->IsSpecified())
+    {
         file.SetComments(commentsEditParam->Value());
+        PrintField(file.Comments());
+    }
 
     if (dateEditParam->IsSpecified())
+    {
         file.SetDateDumped(dateEditParam->Value());
+        PrintField(file.DateDumped());
+    }
 
     if (songLengthEditParam->IsSpecified())
+    {
         file.SetSongLength(songLengthEditParam->Value());
+        PrintField(file.SongLength());
+    }
 
     if (fadeLengthEditParam->IsSpecified())
+    {
         file.SetFadeLength(fadeLengthEditParam->Value());
+        PrintField(file.FadeLength());
+    }
 
     if (artistEditParam->IsSpecified())
+    {
         file.SetSongArtist(artistEditParam->Value());
+        PrintField(file.SongArtist());
+    }
 
     if (channelEditParam->IsSpecified())
+    {
         file.SetDefaultChannelState(channelEditParam->Value());
+        PrintField(file.DefaultChannelState());
+    }
 
     if (emulatorEditParam->IsSpecified())
+    {
         file.SetEmulatorUsed(emulatorEditParam->Value());
+        PrintField(file.EmulatorUsed());
+    }
 
     if (titleEditParam->IsSpecified())
+    {
         file.SetOstTitle(titleEditParam->Value());
+        PrintField(file.OstTitle());
+    }
 
     if (discEditParam->IsSpecified())
+    {
         file.SetOstDisc(discEditParam->Value());
+        PrintField(file.OstDisc());
+    }
 
     if (trackEditParam->IsSpecified())
+    {
         file.SetOstTrack(trackEditParam->Value());
+        PrintField(file.OstTrack());
+    }
 
     if (publisherEditParam->IsSpecified())
+    {
         file.SetPublisherName(publisherEditParam->Value());
+        PrintField(file.PublisherName());
+    }
 
     if (copyrightEditParam->IsSpecified())
+    {
         file.SetCopyrightYear(copyrightEditParam->Value());
+        PrintField(file.CopyrightYear());
+    }
 
     if (introLengthEditParam->IsSpecified())
+    {
         file.SetIntroLength(introLengthEditParam->Value());
+        PrintField(file.IntroLength());
+    }
 
     if (loopLengthEditParam->IsSpecified())
+    {
         file.SetLoopLength(loopLengthEditParam->Value());
+        PrintField(file.LoopLength());
+    }
 
     if (endLengthEditParam->IsSpecified())
+    {
         file.SetEndLength(endLengthEditParam->Value());
+        PrintField(file.EndLength());
+    }
 
     if (mutedEditParam->IsSpecified())
+    {
         file.SetMutedVoices(mutedEditParam->Value());
+        PrintField(file.MutedVoices());
+    }
 
     if (loopTimesEditParam->IsSpecified())
+    {
         file.SetLoopTimes(loopTimesEditParam->Value());
+        PrintField(file.LoopTimes());
+    }
 
     if (preampEditParam->IsSpecified())
+    {
         file.SetPreampLevel(preampEditParam->Value());
+        PrintField(file.PreampLevel());
+    }
         
     file.Save();
+
+    std::cout << std::endl;
         
     return 0;
 }
 
 int Program::Run(std::vector<std::string> arguments)
 {
-    DefineCmdLineParameters();
-    InitializeCmdLineParser(arguments);
+    DefineParameters();
+    InitializeParser(arguments);
     CmdLine::Parser::Status status = parser->Parse();
 
     if (status == CmdLine::Parser::Status::Success)
