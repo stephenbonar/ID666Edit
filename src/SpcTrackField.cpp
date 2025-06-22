@@ -29,7 +29,12 @@ char SpcTrackField::Suffix() const
 std::string SpcTrackField::ToString() const
 {
     std::stringstream stream;
-    stream << std::to_string(Value()) << Suffix();
+
+    if (Suffix() != 0)
+        stream << std::to_string(Value()) << Suffix();
+    else
+        stream << std::to_string(Value());
+        
     return stream.str();
 }
 

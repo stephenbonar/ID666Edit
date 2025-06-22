@@ -18,7 +18,7 @@
 
 void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v0.7" << std::endl;
+    std::cout << "ID666Edit v0.8" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -47,12 +47,19 @@ void Program::DefineParameters()
     editDef.description = "Edits the specified tag item (use \"name=value\")";
     editOption = std::make_unique<CmdLine::ValueOption>(editDef);
 
-    CmdLine::ValueOption::Definition filenameToTagDef;
-    filenameToTagDef.shortName = 'f';
-    filenameToTagDef.longName = "filename-to-tag";
-    filenameToTagDef.description = "Sets tags from filename using a pattern";
-    filenameToTagOption = std::make_unique<CmdLine::ValueOption>(
-        filenameToTagDef);
+    CmdLine::ValueOption::Definition fileNameToTagDef;
+    fileNameToTagDef.shortName = 'f';
+    fileNameToTagDef.longName = "filename-to-tag";
+    fileNameToTagDef.description = "Sets tags from filename using a pattern";
+    fileNameToTagOption = std::make_unique<CmdLine::ValueOption>(
+        fileNameToTagDef);
+
+    CmdLine::ValueOption::Definition tagToFileNameDef;
+    tagToFileNameDef.shortName = 't';
+    tagToFileNameDef.longName = "tag-to-filename";
+    tagToFileNameDef.description = "Sets file name to tag values using a pattern";
+    tagToFileNameOption = std::make_unique<CmdLine::ValueOption>(
+        tagToFileNameDef);
 
     CmdLine::Option::Definition detailedDef;
     detailedDef.shortName = 'd';
@@ -262,7 +269,8 @@ void Program::InitializeParser(std::vector<std::string> arguments)
     parser->Set(spcFileParam.get());
     parser->Add(printOption.get());
     parser->Add(editOption.get());
-    parser->Add(filenameToTagOption.get());
+    parser->Add(fileNameToTagOption.get());
+    parser->Add(tagToFileNameOption.get());
     parser->Add(detailedOption.get());
     parser->Add(versionOption.get());
 }
@@ -295,9 +303,13 @@ int Program::SelectMode()
             {
                 result = EditSpecifiedItems(file);
             }
-            else if (filenameToTagOption->IsSpecified())
+            else if (fileNameToTagOption->IsSpecified())
             {
-                file.FileNameToTag(filenameToTagOption->Values()[0]);
+                file.FileNameToTag(fileNameToTagOption->Values()[0]);
+            }
+            else if (tagToFileNameOption->IsSpecified())
+            {
+                file.TagToFileName(tagToFileNameOption->Values()[0]);
             }
             else if (!printOption->IsSpecified() && !editOption->IsSpecified())
             {

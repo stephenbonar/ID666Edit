@@ -23,6 +23,7 @@
 #include <map>
 #include <algorithm>
 #include <stdexcept>
+#include <iomanip>
 #include "SpcHeader.h"
 #include "ID666BinaryTag.h"
 #include "ID666TextTag.h"
@@ -183,7 +184,11 @@ public:
 
     bool Save();
 
+    bool Save(std::string outFileName);
+
     void FileNameToTag(std::string pattern);
+
+    void TagToFileName(std::string pattern);
 private:
     std::string fileName;
     bool hasLoaded;
@@ -405,5 +410,7 @@ private:
     void LoadNumericItem(std::shared_ptr<ID666ExtendedItem> item, 
                          SpcFileStream& stream);
 };
+
+std::string RemoveInvalidChars(std::string filename);
 
 #endif

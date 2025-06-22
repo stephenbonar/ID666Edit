@@ -491,10 +491,15 @@ bool SpcFile::Load()
 
 bool SpcFile::Save()
 {
+    return Save(fileName);
+}
+
+bool SpcFile::Save(std::string outFileName)
+{
     if (!hasLoaded)
         return false;
 
-    SpcFileStream stream{ fileName };
+    SpcFileStream stream{ outFileName };
     stream.Open(Binary::FileMode::Write);
 
     if (!stream.IsOpen())
@@ -686,4 +691,73 @@ void SpcFile::FileNameToTag(std::string pattern)
     }
 
     Save();
+}
+
+void SpcFile::TagToFileName(std::string pattern)
+{
+    if (pattern.find('%') == std::string::npos)
+        throw std::invalid_argument{ "Pattern does not contain tokens" };
+
+    StringTokenizer tokenizer{ pattern };
+    std::vector<std::shared_ptr<StringSegment>> segs = tokenizer.Segments();
+    std::stringstream fileNameStream;
+
+    for (std::shared_ptr<StringSegment> seg : segs)
+    {
+        if (seg->SegmentType() == StringSegmentType::Delimiter)
+        {
+            auto delimeter = std::static_pointer_cast<StringDelimiter>(seg);
+            fileNameStream << delimeter->Value();
+        }
+        else
+        {
+            auto token = std::static_pointer_cast<StringToken>(seg);
+            
+            if (token->Name() == "song")
+            {
+                fileNameStream << SongTitle().Value();
+            }
+            else if (token->Name() == "game")
+            {
+                fileNameStream << GameTitle().Value();
+            }
+            else if (token->Name() == "artist")
+            {
+                fileNameStream << SongArtist().Value();
+            }
+            else if (token->Name() == "track")
+            {
+                fileNameStream << std::setw(2) << std::setfill('0') 
+                               << OstTrack().ToString();
+            }
+            else
+            {
+                throw std::invalid_argument{ "Unsupported token name" };
+            }
+        }
+    }
+
+    Save(RemoveInvalidChars(fileNameStream.str()));
+}
+
+std::string RemoveInvalidChars(std::string fileName)
+{
+    std::stringstream cleanFileName;
+
+    for (int i = 0; i < fileName.length(); i++)
+    {
+        char c = fileName[i];
+
+        if (c == '<' || c == '>' || c == ':' || c == '"' || c == '/' || 
+            c == '\\' || c == '|' || c == '?' || c == '*')
+        {
+            continue;
+        }
+        else
+        {
+            cleanFileName << c;
+        }
+    }
+
+    return cleanFileName.str();
 }

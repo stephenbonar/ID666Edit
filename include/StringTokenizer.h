@@ -32,6 +32,8 @@ public:
     StringTokenizer(std::string pattern) { ParsePattern(pattern); }
 
     std::vector<std::shared_ptr<StringToken>> Tokenize(std::string text);
+
+    std::vector<std::shared_ptr<StringSegment>> Segments() { return segments; }
 private:
     std::vector<std::shared_ptr<StringSegment>> segments;
 
