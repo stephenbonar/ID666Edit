@@ -31,7 +31,10 @@ set(SOURCES
     SpcEmulatorField.cpp
     SpcFile.cpp
     SpcTrackField.cpp
-    SpcTextField.cpp)
+    SpcTextField.cpp
+    StringDelimiter.cpp
+    StringToken.cpp
+    StringTokenizer.cpp)
 
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)

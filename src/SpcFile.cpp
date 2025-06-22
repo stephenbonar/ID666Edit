@@ -661,3 +661,29 @@ void SpcFile::LoadNumericItem(std::shared_ptr<ID666ExtendedItem> item,
             break;
     }
 }
+
+void SpcFile::FileNameToTag(std::string pattern)
+{
+    if (pattern.find('%') == std::string::npos)
+        throw std::invalid_argument{ "Pattern does not contain tokens" };
+
+    StringTokenizer tokenizer{ pattern };
+    std::vector<std::shared_ptr<StringToken>> tokens = 
+        tokenizer.Tokenize(fileName);
+
+    for (std::shared_ptr<StringToken> token : tokens)
+    {
+        if (token->Name() == "song")
+            SetSongTitle(token->Value());
+        else if (token->Name() == "game")
+            SetGameTitle(token->Value());
+        else if (token->Name() == "artist")
+            SetSongArtist(token->Value());
+        else if (token->Name() == "track")
+            SetOstTrack(token->Value());
+        else
+            throw std::invalid_argument{ "Unrecognized token name" };
+    }
+
+    Save();
+}

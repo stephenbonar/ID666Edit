@@ -22,6 +22,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include <stdexcept>
 #include "SpcHeader.h"
 #include "ID666BinaryTag.h"
 #include "ID666TextTag.h"
@@ -30,6 +31,7 @@
 #include "ID666TagType.h"
 #include "SetCommand.h"
 #include "SpcFileStream.h"
+#include "StringTokenizer.h"
 
 /// @brief Initalizes an SpcField with the correct extended item label.
 /// @tparam T The type of SpcFile to initialize.
@@ -180,6 +182,8 @@ public:
     bool Load();
 
     bool Save();
+
+    void FileNameToTag(std::string pattern);
 private:
     std::string fileName;
     bool hasLoaded;

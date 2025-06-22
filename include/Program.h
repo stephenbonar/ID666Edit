@@ -42,6 +42,7 @@ private:
     std::unique_ptr<CmdLine::MultiPosParam> spcFileParam;
     std::unique_ptr<CmdLine::ValueOption> printOption;
     std::unique_ptr<CmdLine::ValueOption> editOption;
+    std::unique_ptr<CmdLine::ValueOption> filenameToTagOption;
     std::unique_ptr<CmdLine::Option> detailedOption;
     std::unique_ptr<CmdLine::Option> versionOption;
     std::unique_ptr<CmdLine::OptionParam> tagPrintParam;

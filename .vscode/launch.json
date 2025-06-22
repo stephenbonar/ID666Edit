@@ -20,7 +20,7 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/id666edit",
-            "args": ["-e", "muted=11111111", "chrono_edited.spc"],
+            "args": ["-f", "%game%-%track%.spc", "ct-02.spc"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/",
             "environment": [],

@@ -18,7 +18,7 @@
 
 void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v0.6" << std::endl;
+    std::cout << "ID666Edit v0.7" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -46,6 +46,13 @@ void Program::DefineParameters()
     editDef.longName = "edit";
     editDef.description = "Edits the specified tag item (use \"name=value\")";
     editOption = std::make_unique<CmdLine::ValueOption>(editDef);
+
+    CmdLine::ValueOption::Definition filenameToTagDef;
+    filenameToTagDef.shortName = 'f';
+    filenameToTagDef.longName = "filename-to-tag";
+    filenameToTagDef.description = "Sets tags from filename using a pattern";
+    filenameToTagOption = std::make_unique<CmdLine::ValueOption>(
+        filenameToTagDef);
 
     CmdLine::Option::Definition detailedDef;
     detailedDef.shortName = 'd';
@@ -255,6 +262,7 @@ void Program::InitializeParser(std::vector<std::string> arguments)
     parser->Set(spcFileParam.get());
     parser->Add(printOption.get());
     parser->Add(editOption.get());
+    parser->Add(filenameToTagOption.get());
     parser->Add(detailedOption.get());
     parser->Add(versionOption.get());
 }
@@ -280,12 +288,18 @@ int Program::SelectMode()
             }
 
             if (printOption->IsSpecified())
+            {
                 result = PrintSpecifiedItems(file);
-
-            if (editOption->IsSpecified())
+            }
+            else if (editOption->IsSpecified())
+            {
                 result = EditSpecifiedItems(file);
-
-            if (!printOption->IsSpecified() && !editOption->IsSpecified())
+            }
+            else if (filenameToTagOption->IsSpecified())
+            {
+                file.FileNameToTag(filenameToTagOption->Values()[0]);
+            }
+            else if (!printOption->IsSpecified() && !editOption->IsSpecified())
             {
                 if (detailedOption->IsSpecified())
                     result = PrintSpcFileDetailed(file);
