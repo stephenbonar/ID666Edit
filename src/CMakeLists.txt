@@ -16,30 +16,12 @@
 
 set(SOURCES 
     main.cpp
-    Program.cpp
-    SpcHeader.cpp
-    ID666BinaryTag.cpp
-    ID666TextTag.cpp
-    ID666ExtendedTag.cpp
-    SpcFileStream.cpp
-    SpcFormat.cpp
-    SpcStruct.cpp
-    SpcHeader.cpp
-    ID666ExtendedItem.cpp
-    SpcDateField.cpp
-    SpcNumericField.cpp
-    SpcEmulatorField.cpp
-    SpcFile.cpp
-    SpcTrackField.cpp
-    SpcTextField.cpp
-    StringDelimiter.cpp
-    StringToken.cpp
-    StringTokenizer.cpp)
+    Program.cpp)
 
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)
 
-set(LIBRARIES LibCppBinary LibCppCmdLine)
+set(LIBRARIES LibCppSpc LibCppCmdLine)
 
 add_executable(id666edit ${SOURCES})
 

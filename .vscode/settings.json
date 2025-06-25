@@ -93,5 +93,6 @@
         "xtree": "cpp",
         "xutility": "cpp",
         "__tree": "cpp"
-    }
+    },
+    "editor.rulers": [80]
 }

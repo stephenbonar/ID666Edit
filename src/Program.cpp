@@ -18,7 +18,7 @@
 
 void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v0.8" << std::endl;
+    std::cout << "ID666Edit v0.9" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -57,7 +57,7 @@ void Program::DefineParameters()
     CmdLine::ValueOption::Definition tagToFileNameDef;
     tagToFileNameDef.shortName = 't';
     tagToFileNameDef.longName = "tag-to-filename";
-    tagToFileNameDef.description = "Sets file name to tag values using a pattern";
+    tagToFileNameDef.description = "Sets file name to tag values using pattern";
     tagToFileNameOption = std::make_unique<CmdLine::ValueOption>(
         tagToFileNameDef);
 
@@ -287,7 +287,7 @@ int Program::SelectMode()
         for (std::string value : spcFileParam->Values())
         {
             int result = 0;
-            SpcFile file{ value };
+            Spc::File file{ value };
         
             if (!file.Load())
             {
@@ -357,42 +357,42 @@ void Program::PrintSectionHeader(std::string title, int length)
     std::cout << std::endl;
 }
 
-void Program::PrintField(SpcField* field)
+void Program::PrintField(Spc::Field* field)
 {
     std::cout << FormatField(field) << std::endl;
 }
 
-void Program::PrintField(SpcTextField field)
+void Program::PrintField(Spc::TextField field)
 {
     PrintField(&field);
 }
 
-void Program::PrintField(SpcDateField field)
+void Program::PrintField(Spc::DateField field)
 {
     PrintField(&field);
 }
 
-void Program::PrintField(SpcNumericField field)
+void Program::PrintField(Spc::NumericField field)
 {
     PrintField(&field);
 }
 
-void Program::PrintField(SpcTrackField field)
+void Program::PrintField(Spc::TrackField field)
 {
     PrintField(&field);
 }
 
-void Program::PrintField(SpcEmulatorField field)
+void Program::PrintField(Spc::EmulatorField field)
 {
     PrintField(&field);
 }
 
-void Program::PrintField(SpcBinaryField field)
+void Program::PrintField(Spc::BinaryField field)
 {
     PrintField(&field);
 }
 
-int Program::PrintSpcFile(SpcFile& file)
+int Program::PrintSpcFile(Spc::File& file)
 {
     PrintSectionHeader(file.FileName(), 79);
     PrintField(file.SongTitle());
@@ -420,7 +420,7 @@ int Program::PrintSpcFile(SpcFile& file)
     return 0;
 }
 
-int Program::PrintSpcFileDetailed(SpcFile& file)
+int Program::PrintSpcFileDetailed(Spc::File& file)
 {
     PrintSectionHeader(file.FileName(), 79);
     std::cout << std::endl;
@@ -429,29 +429,31 @@ int Program::PrintSpcFileDetailed(SpcFile& file)
     return 0;
 }
 
-void Program::PrintHeader(SpcFile& file)
+void Program::PrintHeader(Spc::File& file)
 {
-    SpcHeader header = file.Header();
+    Spc::Header header = file.Header();
     PrintSectionHeader("SPC File Header");
     std::cout << header.ToString() << std::endl;
 }
 
-void Program::PrintTag(SpcFile& file)
+void Program::PrintTag(Spc::File& file)
 {
     PrintSectionHeader("ID666 Tag");
 
     if (file.HeaderContainsTag())
     {
-        std::cout << FormatValue("Header Contains Tag", "True") << std::endl;
+        std::cout << Spc::FormatValue("Header Contains Tag", "True") 
+                  << std::endl;
 
-        if (file.TagType() == ID666TagType::Binary)
+        if (file.TagType() == Spc::TagType::Binary)
             PrintBinaryTag(file);
         else
             PrintTextTag(file);
     }
     else
     {
-        std::cout << FormatValue("Header Contains Tag", "False") << std::endl;
+        std::cout << Spc::FormatValue("Header Contains Tag", "False") 
+                  << std::endl;
     }
 
     if (file.HasExtendedTag())
@@ -460,42 +462,45 @@ void Program::PrintTag(SpcFile& file)
     }
     else
     {
-        std::cout << FormatValue("Has Extended Tag", "False") << std::endl;
+        std::cout << Spc::FormatValue("Has Extended Tag", "False")
+                  << std::endl;
     }
 }
 
-void Program::PrintTextTag(SpcFile& file)
+void Program::PrintTextTag(Spc::File& file)
 {
-    if (file.TagType() == ID666TagType::Text)
-        std::cout << FormatValue("Tag Type", "Text") << std::endl;
+    if (file.TagType() == Spc::TagType::Text)
+        std::cout << Spc::FormatValue("Tag Type", "Text") << std::endl;
     else
-        std::cout << FormatValue("Tag Type", "Text (Mixed)") << std::endl;
+        std::cout << Spc::FormatValue("Tag Type", "Text (Mixed)") << std::endl;
 
-    ID666TextTag tag = file.TextTag();
+    Spc::TextTag tag = file.TextTag();
     std::cout << tag.ToString() << std::endl;
 }
 
-void Program::PrintBinaryTag(SpcFile& file)
+void Program::PrintBinaryTag(Spc::File& file)
 {
-    std::cout << FormatValue("Tag Type", "Binary") << std::endl;
-    ID666BinaryTag tag = file.BinaryTag();
+    std::cout << Spc::FormatValue("Tag Type", "Binary") << std::endl;
+    Spc::BinaryTag tag = file.BinaryTag();
     std::cout << tag.ToString() << std::endl;
 }
 
-void Program::PrintExtendedTag(SpcFile& file)
+void Program::PrintExtendedTag(Spc::File& file)
 {
     PrintSectionHeader("Extended ID666 Tag");
-    std::cout << FormatValue("Has Extended Tag", "True") << std::endl;
+    std::cout << Spc::FormatValue("Has Extended Tag", "True") << std::endl;
     Binary::ChunkHeader extendedTagHeader = file.ExtendedTagHeader();
-    ID666ExtendedTag tag = file.ExtendedTag();
-    std::cout << FormatValue("IFF Chunk ID", extendedTagHeader.id.ToString());
+    Spc::ExtendedTag tag = file.ExtendedTag();
+    std::cout << Spc::FormatValue("IFF Chunk ID", 
+                                  extendedTagHeader.id.ToString());
     std::cout << std::endl;
-    std::cout << FormatValue("IFF Chunk Size", extendedTagHeader.dataSize.ToString());
+    std::cout << Spc::FormatValue("IFF Chunk Size",
+                                  extendedTagHeader.dataSize.ToString());
     std::cout << std::endl;
     std::cout << tag.ToString() << std::endl;
 }
 
-int Program::PrintSpecifiedItems(SpcFile& file)
+int Program::PrintSpecifiedItems(Spc::File& file)
 {
     PrintSectionHeader(file.FileName(), 79);
 
@@ -573,7 +578,7 @@ int Program::PrintSpecifiedItems(SpcFile& file)
     return 0;
 }
 
-int Program::EditSpecifiedItems(SpcFile& file)
+int Program::EditSpecifiedItems(Spc::File& file)
 {
     PrintSectionHeader(file.FileName(), 79);
 

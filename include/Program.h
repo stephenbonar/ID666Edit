@@ -23,11 +23,8 @@
 #include <iomanip>
 #include <vector>
 #include <utility>
-#include "LibCppCmdLine.h"
-#include "SpcHeader.h"
-#include "SpcFile.h"
-#include "SpcFormat.h"
-#include "ID666ExtendedItem.h"
+#include <LibCppCmdLine.h>
+#include <LibCppSpc.h>
 
 /// @brief Provides the main program logic.
 class Program
@@ -115,53 +112,53 @@ private:
 
     void PrintSectionHeader(std::string title, int length);
 
-    void PrintField(SpcField* field);
+    void PrintField(Spc::Field* field);
 
-    void PrintField(SpcTextField field);
+    void PrintField(Spc::TextField field);
 
-    void PrintField(SpcDateField field);
+    void PrintField(Spc::DateField field);
 
-    void PrintField(SpcNumericField field);
+    void PrintField(Spc::NumericField field);
 
-    void PrintField(SpcTrackField field);
+    void PrintField(Spc::TrackField field);
 
-    void PrintField(SpcEmulatorField field);
+    void PrintField(Spc::EmulatorField field);
 
-    void PrintField(SpcBinaryField field);
+    void PrintField(Spc::BinaryField field);
 
-    int PrintSpcFile(SpcFile& file);
+    int PrintSpcFile(Spc::File& file);
 
     /// @brief Prints the entire SPC file's metadata including tags & headers.
     /// @return The status code returned by the operation.
-    int PrintSpcFileDetailed(SpcFile& file);
+    int PrintSpcFileDetailed(Spc::File& file);
 
     /// @brief Prints the SPC file header.
     /// @param file The file stream to print the header from.
-    void PrintHeader(SpcFile& file);
+    void PrintHeader(Spc::File& file);
 
     /// @brief Prints all tag information, including the extended tag info.
     /// @param stream The file stream to print the tag from.
-    void PrintTag(SpcFile& file);
+    void PrintTag(Spc::File& file);
 
     /// @brief Prints the text formattted ID666 tag.
     /// @param file The file stream to use for printing.
-    void PrintTextTag(SpcFile& file);
+    void PrintTextTag(Spc::File& file);
 
     /// @brief Prints the binary formatted ID666 tag.
     /// @param file The file stream to use for printing.
-    void PrintBinaryTag(SpcFile& file);
+    void PrintBinaryTag(Spc::File& file);
 
     /// @brief Prints the extended ID666 tag.
     /// @param file The file to use for printing. 
-    void PrintExtendedTag(SpcFile& file);
+    void PrintExtendedTag(Spc::File& file);
 
     /// @brief Prints the items in the .spc file that were specified via args.
-    int PrintSpecifiedItems(SpcFile& file);
+    int PrintSpecifiedItems(Spc::File& file);
 
     /// @brief Edits the items in the .spc file that were specified via args.
     /// @param file The file to edit.
     /// @return The status code.
-    int EditSpecifiedItems(SpcFile& file);
+    int EditSpecifiedItems(Spc::File& file);
 };
 
 #endif
