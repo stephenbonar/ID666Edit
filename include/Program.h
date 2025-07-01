@@ -41,6 +41,7 @@ private:
     std::unique_ptr<CmdLine::ValueOption> editOption;
     std::unique_ptr<CmdLine::ValueOption> fileNameToTagOption;
     std::unique_ptr<CmdLine::ValueOption> tagToFileNameOption;
+    std::unique_ptr<CmdLine::ValueOption> incrementOption;
     std::unique_ptr<CmdLine::Option> detailedOption;
     std::unique_ptr<CmdLine::Option> versionOption;
     std::unique_ptr<CmdLine::OptionParam> tagPrintParam;
@@ -159,6 +160,8 @@ private:
     /// @param file The file to edit.
     /// @return The status code.
     int EditSpecifiedItems(Spc::File& file);
+
+    int IncrementTrack(Spc::File& file);
 };
 
 #endif

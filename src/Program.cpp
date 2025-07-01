@@ -61,6 +61,13 @@ void Program::DefineParameters()
     tagToFileNameOption = std::make_unique<CmdLine::ValueOption>(
         tagToFileNameDef);
 
+    CmdLine::ValueOption::Definition incrementDef;
+    incrementDef.shortName = 'i';
+    incrementDef.longName = "increment-track";
+    incrementDef.description = 
+        "Increments track number by the specified amount";
+    incrementOption = std::make_unique<CmdLine::ValueOption>(incrementDef);
+
     CmdLine::Option::Definition detailedDef;
     detailedDef.shortName = 'd';
     detailedDef.longName = "detailed";
@@ -272,6 +279,7 @@ void Program::InitializeParser(std::vector<std::string> arguments)
     parser->Add(fileNameToTagOption.get());
     parser->Add(tagToFileNameOption.get());
     parser->Add(detailedOption.get());
+    parser->Add(incrementOption.get());
     parser->Add(versionOption.get());
 }
 
@@ -310,6 +318,10 @@ int Program::SelectMode()
             else if (tagToFileNameOption->IsSpecified())
             {
                 file.TagToFileName(tagToFileNameOption->Values()[0]);
+            }
+            else if (incrementOption->IsSpecified())
+            {
+                IncrementTrack(file);
             }
             else if (!printOption->IsSpecified() && !editOption->IsSpecified())
             {
@@ -712,6 +724,16 @@ int Program::EditSpecifiedItems(Spc::File& file)
 
     std::cout << std::endl;
         
+    return 0;
+}
+
+int Program::IncrementTrack(Spc::File& file)
+{
+    uint8_t track = file.OstTrack().Value();
+    int incrementAmount = std::stoi(incrementOption->Values()[0]);
+    track += incrementAmount;
+    file.SetOstTrack(std::to_string(track));
+    file.Save();
     return 0;
 }
 
