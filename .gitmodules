@@ -4,3 +4,6 @@
 [submodule "libs/LibCppSpc"]
 	path = libs/LibCppSpc
 	url = https://github.com/stephenbonar/LibCppSpc
+[submodule "libs/wxWidgets"]
+	path = libs/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets/
