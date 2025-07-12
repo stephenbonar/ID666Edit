@@ -14,17 +14,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-set(SOURCES 
-    main.cpp
-    Program.cpp)
-
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)
 
-set(LIBRARIES LibCppSpc LibCppCmdLine)
+add_executable(id666editc main.cpp Program.cpp)
 
-add_executable(id666edit ${SOURCES})
+add_executable(ID666Edit ID666Edit.cpp MainWindow.cpp)
 
-target_include_directories(id666edit PUBLIC ${INCLUDES})
+target_include_directories(id666editc PUBLIC ${INCLUDES})
 
-target_link_libraries(id666edit ${LIBRARIES})
+target_include_directories(ID666Edit PUBLIC ${INCLUDES})
+
+target_link_libraries(id666editc LibCppCmdLine LibCppSpc)
+
+target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
