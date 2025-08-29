@@ -37,24 +37,58 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit")
     containsTag = new wxStaticText{ panel, wxID_ANY, "-" };
     tagTypeLabel = new wxStaticText{ panel, wxID_ANY, "Tag Type:" };
     tagType = new wxStaticText{ panel, wxID_ANY, "-" };
+    versionMinorLabel = new wxStaticText{ panel, wxID_ANY, "Version Minor:" };
+    versionMinor = new wxStaticText{ panel, wxID_ANY, "-" };
+    pcRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PC Register:" };
+    pcRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    aRegisterLabel = new wxStaticText{ panel, wxID_ANY, "A Register:" };
+    aRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    xRegisterLabel = new wxStaticText{ panel, wxID_ANY, "X Register:" };
+    xRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    yRegisterLabel = new wxStaticText{ panel, wxID_ANY, "Y Register:" };
+    yRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    pswRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PSW Register:" };
+    pswRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    spRegisterLabel = new wxStaticText{ panel, wxID_ANY, "SP Register:" };
+    spRegister = new wxStaticText{ panel, wxID_ANY, "-" };
 
-    wxBoxSizer* headerLabelColumnSizer = new wxBoxSizer{ wxVERTICAL };
-    headerLabelColumnSizer->Add(idLabel, 0, wxALL, 5);
-    headerLabelColumnSizer->Add(containsTagLabel, 0, wxALL, 5);
-    headerLabelColumnSizer->Add(tagTypeLabel, 0, wxALL, 5);
+    wxBoxSizer* headerLabelColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
+    headerLabelColumn1Sizer->Add(idLabel, 0, wxALL, 5);
+    headerLabelColumn1Sizer->Add(containsTagLabel, 0, wxALL, 5);
+    headerLabelColumn1Sizer->Add(tagTypeLabel, 0, wxALL, 5);
+    headerLabelColumn1Sizer->Add(versionMinorLabel, 0, wxALL, 5);
 
-    wxBoxSizer* headerValueColumnSizer = new wxBoxSizer{ wxVERTICAL };
-    headerValueColumnSizer->Add(id, 0, wxALL, 5);
-    headerValueColumnSizer->Add(containsTag, 0, wxALL, 5);
-    headerValueColumnSizer->Add(tagType, 0, wxALL, 5);
+    wxBoxSizer* headerValueColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
+    headerValueColumn1Sizer->Add(id, 0, wxALL, 5);
+    headerValueColumn1Sizer->Add(containsTag, 0, wxALL, 5);
+    headerValueColumn1Sizer->Add(tagType, 0, wxALL, 5);
+    headerValueColumn1Sizer->Add(versionMinor, 0, wxALL, 5);
+
+    wxBoxSizer* headerLabelColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
+    headerLabelColumn2Sizer->Add(pcRegisterLabel, 0, wxALL, 5);
+    headerLabelColumn2Sizer->Add(aRegisterLabel, 0, wxALL, 5);
+    headerLabelColumn2Sizer->Add(xRegisterLabel, 0, wxALL, 5);
+    headerLabelColumn2Sizer->Add(yRegisterLabel, 0, wxALL, 5);
+    headerLabelColumn2Sizer->Add(pswRegisterLabel, 0, wxALL, 5);
+    headerLabelColumn2Sizer->Add(spRegisterLabel, 0, wxALL, 5);
+
+    wxBoxSizer* headerValueColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
+    headerValueColumn2Sizer->Add(pcRegister, 0, wxALL, 5);
+    headerValueColumn2Sizer->Add(aRegister, 0, wxALL, 5);
+    headerValueColumn2Sizer->Add(xRegister, 0, wxALL, 5);
+    headerValueColumn2Sizer->Add(yRegister, 0, wxALL, 5);
+    headerValueColumn2Sizer->Add(pswRegister, 0, wxALL, 5);
+    headerValueColumn2Sizer->Add(spRegister, 0, wxALL, 5);
 
     wxStaticBoxSizer* headerSizer = new wxStaticBoxSizer
     { 
         wxHORIZONTAL, panel, "Header" 
     };
 
-    headerSizer->Add(headerLabelColumnSizer, 0, wxALL | wxEXPAND);
-    headerSizer->Add(headerValueColumnSizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerLabelColumn1Sizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerValueColumn1Sizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerLabelColumn2Sizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerValueColumn2Sizer, 0, wxALL | wxEXPAND);
     rightColumnSizer->Add(headerSizer, 0, wxALL | wxEXPAND, 5);
 
     wxBoxSizer* panelSizer = new wxBoxSizer{ wxHORIZONTAL };
@@ -140,4 +174,12 @@ void MainWindow::OnSelected(wxListEvent& event)
     {
         containsTag->SetLabelText("False");
     }
+
+    versionMinor->SetLabelText(wxString{ header.versionMinor.ToString() });
+    pcRegister->SetLabelText(wxString{ header.pcRegister.ToString() });
+    aRegister->SetLabelText(wxString{ header.aRegister.ToString() });
+    xRegister->SetLabelText(wxString{ header.xRegister.ToString() });
+    yRegister->SetLabelText(wxString{ header.yRegister.ToString() });
+    pswRegister->SetLabelText(wxString{ header.pswRegister.ToString() });
+    spRegister->SetLabelText(wxString{ header.spRegister.ToString() });
 }

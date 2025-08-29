@@ -36,6 +36,20 @@ private:
     wxStaticText* containsTag;
     wxStaticText* tagTypeLabel;
     wxStaticText* tagType;
+    wxStaticText* versionMinorLabel;
+    wxStaticText* versionMinor;
+    wxStaticText* pcRegisterLabel;
+    wxStaticText* pcRegister;
+    wxStaticText* aRegisterLabel;
+    wxStaticText* aRegister;
+    wxStaticText* xRegisterLabel;
+    wxStaticText* xRegister;
+    wxStaticText* yRegisterLabel;
+    wxStaticText* yRegister;
+    wxStaticText* pswRegisterLabel;
+    wxStaticText* pswRegister;
+    wxStaticText* spRegisterLabel;
+    wxStaticText* spRegister;
     std::vector<std::shared_ptr<Spc::File>> files;
 
     void OnExit(wxCommandEvent& event);
