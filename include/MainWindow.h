@@ -29,28 +29,64 @@ class MainWindow : public wxFrame
 public:
     MainWindow();
 private:
+    wxPanel* panel;
+    wxBoxSizer* leftColumnSizer;
+    wxBoxSizer* rightColumnSizer;
+    wxBoxSizer* headerLabelColumn1Sizer;
+    wxBoxSizer* headerValueColumn1Sizer;
+    wxBoxSizer* headerLabelColumn2Sizer;
+    wxBoxSizer* headerValueColumn2Sizer;
+    wxBoxSizer* tagLabelColumnSizer;
+    wxBoxSizer* tagTextBoxColumnSizer;
+    wxStaticBoxSizer* headerSizer;
+    wxStaticBoxSizer* tagSizer;
+    wxBoxSizer* panelSizer;
     wxListView* fileListView;
     wxStaticText* idLabel;
-    wxStaticText* id;
     wxStaticText* containsTagLabel;
-    wxStaticText* containsTag;
     wxStaticText* tagTypeLabel;
-    wxStaticText* tagType;
     wxStaticText* versionMinorLabel;
-    wxStaticText* versionMinor;
     wxStaticText* pcRegisterLabel;
-    wxStaticText* pcRegister;
     wxStaticText* aRegisterLabel;
-    wxStaticText* aRegister;
     wxStaticText* xRegisterLabel;
-    wxStaticText* xRegister;
     wxStaticText* yRegisterLabel;
-    wxStaticText* yRegister;
     wxStaticText* pswRegisterLabel;
-    wxStaticText* pswRegister;
     wxStaticText* spRegisterLabel;
+    wxStaticText* songTitleLabel;
+    wxStaticText* gameTitleLabel;
+    wxStaticText* id;
+    wxStaticText* containsTag;
+    wxStaticText* tagType;
+    wxStaticText* versionMinor;
+    wxStaticText* pcRegister;
+    wxStaticText* aRegister;
+    wxStaticText* xRegister;
+    wxStaticText* yRegister;
+    wxStaticText* pswRegister;
     wxStaticText* spRegister;
+    wxTextCtrl* songTitleTextBox;
+    wxTextCtrl* gameTitleTextBox;
     std::vector<std::shared_ptr<Spc::File>> files;
+
+    void CreateMenuBar();
+
+    void CreateSizers();
+
+    void CreateLabelText();
+
+    void CreateValueText();
+
+    void CreateTextBoxes();
+
+    void CreateFileListView();
+
+    void CreateHeaderLayout();
+
+    void CreateTagLayout();
+
+    void CreatePanelLayout();
+
+    void BindEvents();
 
     void OnExit(wxCommandEvent& event);
 
