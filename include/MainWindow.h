@@ -32,15 +32,14 @@ private:
     wxPanel* panel;
     wxBoxSizer* leftColumnSizer;
     wxBoxSizer* rightColumnSizer;
-    wxBoxSizer* headerLabelColumn1Sizer;
-    wxBoxSizer* headerValueColumn1Sizer;
-    wxBoxSizer* headerLabelColumn2Sizer;
-    wxBoxSizer* headerValueColumn2Sizer;
-    wxBoxSizer* tagLabelColumnSizer;
-    wxBoxSizer* tagTextBoxColumnSizer;
+    wxBoxSizer* headerColumn1Sizer;
+    wxBoxSizer* headerColumn2Sizer;
+    wxBoxSizer* tagColumn1Sizer;
+    wxBoxSizer* tagColumn2Sizer;
     wxStaticBoxSizer* headerSizer;
     wxStaticBoxSizer* tagSizer;
     wxBoxSizer* panelSizer;
+    wxBoxSizer* windowSizer;
     wxListView* fileListView;
     wxStaticText* idLabel;
     wxStaticText* containsTagLabel;
@@ -54,6 +53,25 @@ private:
     wxStaticText* spRegisterLabel;
     wxStaticText* songTitleLabel;
     wxStaticText* gameTitleLabel;
+    wxStaticText* dumperNameLabel;
+    wxStaticText* commentsLabel;
+    wxStaticText* dateDumpedLabel;
+    wxStaticText* songLengthLabel;
+    wxStaticText* fadeLengthLabel;
+    wxStaticText* songArtistLabel;
+    wxStaticText* defaultChannelStateLabel;
+    wxStaticText* emulatorUsedLabel;
+    wxStaticText* ostTitleLabel;
+    wxStaticText* ostDiscLabel;
+    wxStaticText* ostTrackLabel;
+    wxStaticText* publisherNameLabel;
+    wxStaticText* copyrightYearLabel;
+    wxStaticText* introLengthLabel;
+    wxStaticText* loopLengthLabel;
+    wxStaticText* endLengthLabel;
+    wxStaticText* mutedVoicesLabel;
+    wxStaticText* loopTimesLabel;
+    wxStaticText* preampLevelLabel;
     wxStaticText* id;
     wxStaticText* containsTag;
     wxStaticText* tagType;
@@ -66,6 +84,26 @@ private:
     wxStaticText* spRegister;
     wxTextCtrl* songTitleTextBox;
     wxTextCtrl* gameTitleTextBox;
+    wxTextCtrl* dumperNameTextBox;
+    wxTextCtrl* commentsTextBox;
+    wxTextCtrl* dateDumpedTextBox;
+    wxTextCtrl* songLengthTextBox;
+    wxTextCtrl* fadeLengthTextBox;
+    wxTextCtrl* songArtistTextBox;
+    wxTextCtrl* defaultChannelStateTextBox;
+    wxTextCtrl* emulatorUsedTextBox;
+    wxTextCtrl* ostTitleTextBox;
+    wxTextCtrl* ostDiscTextBox;
+    wxTextCtrl* ostTrackTextBox;
+    wxTextCtrl* publisherNameTextBox;
+    wxTextCtrl* copyrightYearTextBox;
+    wxTextCtrl* introLengthTextBox;
+    wxTextCtrl* loopLengthTextBox;
+    wxTextCtrl* endLengthTextBox;
+    wxTextCtrl* mutedVoicesTextBox;
+    wxTextCtrl* loopTimesTextBox;
+    wxTextCtrl* preampLevelTextBox;
+    
     std::vector<std::shared_ptr<Spc::File>> files;
 
     void CreateMenuBar();
@@ -98,5 +136,9 @@ private:
 
     void OnSelected(wxListEvent& event);
 };
+
+void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer);
+
+void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer);
 
 #endif
