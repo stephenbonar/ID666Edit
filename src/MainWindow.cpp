@@ -138,8 +138,25 @@ void MainWindow::CreateTextBoxes()
 
 void MainWindow::CreateFileListView()
 {
-    fileListView = new wxListView{ panel, wxID_ANY, wxDefaultPosition };
+    fileListView = new wxListView
+    { 
+        panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT 
+    };
+
     fileListView->AppendColumn("Filename");
+
+    // Bind an event to adjust the column width when the view is resized.
+    fileListView->Bind(wxEVT_SIZE, [this](wxSizeEvent& event) {
+        // Get the current width of the view.
+        int listViewWidth = fileListView->GetClientSize().GetWidth();
+
+        // Set the column width to fill the entire width of the view.
+        fileListView->SetColumnWidth(0, listViewWidth);
+
+        // Allow the event to propagate.
+        event.Skip();
+    });
+
     fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, &MainWindow::OnSelected, this);
 }
 
@@ -193,7 +210,7 @@ void MainWindow::CreatePanelLayout()
     rightColumnSizer->Add(headerSizer, 0, wxALL | wxEXPAND, 5);
     rightColumnSizer->Add(tagSizer, 0, wxALL | wxEXPAND, 5);
     panelSizer->Add(leftColumnSizer, 1, wxALL | wxEXPAND);
-    panelSizer->Add(rightColumnSizer, 2, wxALL | wxEXPAND);
+    panelSizer->Add(rightColumnSizer, 3, wxALL | wxEXPAND);
     panel->SetSizer(panelSizer);
     windowSizer->Add(panel, 1, wxEXPAND | wxALL);
 
@@ -213,6 +230,218 @@ void MainWindow::BindEvents()
     Bind(wxEVT_MENU, &MainWindow::OnSave, this, WidgetID::Save);
 }
 
+void MainWindow::UpdateHeaderLabels()
+{
+    std::vector<wxString> idValues;
+    std::vector<wxString> headerContainsTagValues;
+    std::vector<wxString> tagTypeValues;
+    std::vector<wxString> versionMinorValues;
+    std::vector<wxString> pcRegisterValues;
+    std::vector<wxString> aRegisterValues;
+    std::vector<wxString> xRegisterValues;
+    std::vector<wxString> yRegisterValues;
+    std::vector<wxString> pswRegisterValues;
+    std::vector<wxString> spRegisterValues;
+
+    for (std::shared_ptr<Spc::File> file : selectedFiles)
+    {
+        Spc::Header header = file->Header();
+        idValues.push_back(wxString{ header.ID.ToString() });
+
+        if (file->HeaderContainsTag())
+        {
+            headerContainsTagValues.push_back("True");
+
+            switch (file->TagType())
+            {
+                case Spc::TagType::Text:
+                    tagTypeValues.push_back("Text");
+                    break;
+                case Spc::TagType::Binary:
+                    tagTypeValues.push_back("Binary");
+                    break;
+                case Spc::TagType::TextMixed:
+                    tagTypeValues.push_back("Mixed");
+                    break;
+                default:
+                    tagTypeValues.push_back("-");
+            }
+        }
+        else
+        {
+            headerContainsTagValues.push_back("False");
+            tagTypeValues.push_back("-");
+        }
+
+        versionMinorValues.push_back(header.versionMinor.ToString());
+        pcRegisterValues.push_back(header.pcRegister.ToString());
+        aRegisterValues.push_back(header.aRegister.ToString());
+        xRegisterValues.push_back(header.xRegister.ToString());
+        yRegisterValues.push_back(header.yRegister.ToString());
+        pswRegisterValues.push_back(header.pswRegister.ToString());
+        spRegisterValues.push_back(header.spRegister.ToString());
+    }
+
+    SetLabel(id, idValues);
+    SetLabel(containsTag, headerContainsTagValues);
+    SetLabel(tagType, tagTypeValues);
+    SetLabel(versionMinor, versionMinorValues);
+    SetLabel(pcRegister, pcRegisterValues);
+    SetLabel(aRegister, aRegisterValues);
+    SetLabel(xRegister, xRegisterValues);
+    SetLabel(yRegister, yRegisterValues);
+    SetLabel(pswRegister, pswRegisterValues);
+    SetLabel(spRegister, spRegisterValues);
+}
+
+void MainWindow::UpdateTagTextBoxes()
+{
+    std::vector<wxString> songTitleValues;
+    std::vector<wxString> gameTitleValues;
+    std::vector<wxString> dumperNameValues;
+    std::vector<wxString> commentsValues;
+    std::vector<wxString> dateDumpedValues;
+    std::vector<wxString> songLengthValues;
+    std::vector<wxString> fadeLengthValues;
+    std::vector<wxString> songArtistValues;
+    std::vector<wxString> defaultChannelStateValues;
+    std::vector<wxString> emulatorUsedValues;
+    std::vector<wxString> ostTitleValues;
+    std::vector<wxString> ostDiscValues;
+    std::vector<wxString> ostTrackValues;
+    std::vector<wxString> publisherNameValues;
+    std::vector<wxString> copyrightYearValues;
+    std::vector<wxString> introLengthValues;
+    std::vector<wxString> loopLengthValues;
+    std::vector<wxString> endLengthValues;
+    std::vector<wxString> mutedVoicesValues;
+    std::vector<wxString> loopTimesValues;
+    std::vector<wxString> preampLevelValues;
+
+    for (std::shared_ptr<Spc::File> file : selectedFiles)
+    {
+        songTitleValues.push_back(file->SongTitle().ToString());
+        gameTitleValues.push_back(file->GameTitle().ToString());
+        dumperNameValues.push_back(file->DumperName().ToString());
+        commentsValues.push_back(file->Comments().ToString());
+        dateDumpedValues.push_back(file->DateDumped().ToString());
+        songLengthValues.push_back(file->SongLength().ToString());
+        fadeLengthValues.push_back(file->FadeLength().ToString());
+        songArtistValues.push_back(file->SongArtist().ToString());
+        defaultChannelStateValues.push_back(
+            file->DefaultChannelState().ToString());
+        emulatorUsedValues.push_back(file->EmulatorUsed().ToString());
+        ostTitleValues.push_back(file->OstTitle().ToString());
+        ostDiscValues.push_back(file->OstDisc().ToString());
+        ostTrackValues.push_back(file->OstTrack().ToString());
+        publisherNameValues.push_back(file->PublisherName().ToString());
+        copyrightYearValues.push_back(file->CopyrightYear().ToString());
+        introLengthValues.push_back(file->IntroLength().ToString());
+        loopLengthValues.push_back(file->LoopLength().ToString());
+        endLengthValues.push_back(file->EndLength().ToString());
+        mutedVoicesValues.push_back(file->MutedVoices().ToString());
+        loopTimesValues.push_back(file->LoopTimes().ToString());
+        preampLevelValues.push_back(file->PreampLevel().ToString());
+    }
+
+    SetTextBox(songTitleTextBox, songTitleValues);
+    SetTextBox(gameTitleTextBox, gameTitleValues);
+    SetTextBox(dumperNameTextBox, dumperNameValues);
+    SetTextBox(commentsTextBox, commentsValues);
+    SetTextBox(dateDumpedTextBox, dateDumpedValues);
+    SetTextBox(songLengthTextBox, songLengthValues);
+    SetTextBox(fadeLengthTextBox, fadeLengthValues);
+    SetTextBox(songArtistTextBox, songArtistValues);
+    SetTextBox(defaultChannelStateTextBox, defaultChannelStateValues);
+    SetTextBox(emulatorUsedTextBox, emulatorUsedValues);
+    SetTextBox(ostTitleTextBox, ostTitleValues);
+    SetTextBox(ostDiscTextBox, ostDiscValues);
+    SetTextBox(ostTrackTextBox, ostTrackValues);
+    SetTextBox(publisherNameTextBox, publisherNameValues);
+    SetTextBox(copyrightYearTextBox, copyrightYearValues);
+    SetTextBox(introLengthTextBox, introLengthValues);
+    SetTextBox(loopLengthTextBox, loopLengthValues);
+    SetTextBox(endLengthTextBox, endLengthValues);
+    SetTextBox(mutedVoicesTextBox, mutedVoicesValues);
+    SetTextBox(loopTimesTextBox, loopTimesValues);
+    SetTextBox(preampLevelTextBox, preampLevelValues);
+}
+
+void MainWindow::SetLabel(wxStaticText* label, std::vector<wxString>& values)
+{
+    if (values.empty())
+    {
+        label->SetLabel("-");
+    }
+    else if (values.size() == 1)
+    {
+        label->SetLabel(values.at(0));
+    }
+    else
+    {
+        bool allSame = true;
+        const wxString& firstValue = values.at(0);
+
+        for (const wxString& value : values)
+        {
+            if (value != firstValue)
+            {
+                allSame = false;
+                break;
+            }
+        }
+
+        if (allSame)
+        {
+            label->SetLabel(firstValue);
+        }
+        else
+        {
+            label->SetLabel("<multiple values>");
+        }
+    }
+}
+
+void MainWindow::SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values)
+{
+    if (values.empty())
+    {
+        // If the vector is empty, clear the text box
+        textBox->Clear();
+    }
+    else if (values.size() == 1)
+    {
+        // If there is only one value, set it in the text box
+        textBox->SetValue(values.at(0));
+    }
+    else
+    {
+        // Check if all values are the same.
+        bool allSame = true;
+        const wxString& firstValue = values.at(0);
+
+        for (const wxString& value : values)
+        {
+            if (value != firstValue)
+            {
+                allSame = false;
+                break;
+            }
+        }
+
+        if (allSame)
+        {
+            // If all values are the same, set the first value
+            textBox->SetValue(firstValue);
+        }
+        else
+        {
+            // If values differ, set "<multiple values>"
+            textBox->SetValue("<multiple values>");
+        }
+    }
+}
+
 void MainWindow::OnExit(wxCommandEvent& event)
 {
     Close(true);
@@ -225,9 +454,11 @@ void MainWindow::OnAbout(wxCommandEvent& event)
 
 void MainWindow::OnOpen(wxCommandEvent& event)
 {
-    wxFileDialog dialog(this);
+    // Allow multiple file selection by adding wxFD_MULTIPLE.
+    wxFileDialog dialog(this, "Open SPC Files", wxEmptyString, wxEmptyString, 
+                         "SPC Files (*.spc)|*.spc", wxFD_OPEN | wxFD_MULTIPLE);
 
-    if(dialog.ShowModal() != wxID_OK) 
+    if (dialog.ShowModal() != wxID_OK) 
         return;
 
     files.clear();
@@ -242,7 +473,13 @@ void MainWindow::OnOpen(wxCommandEvent& event)
         auto file = std::make_shared<Spc::File>(path.ToStdString());
         file->Load();
         files.push_back(file);
-        fileListView->InsertItem(itemIndex, path);
+
+        // Extract the file name from the path.
+        wxFileName fileName{ path };
+        wxString nameOnly = fileName.GetFullName();
+
+        // Insert the file name into the fileListView.
+        fileListView->InsertItem(itemIndex, nameOnly);
         itemIndex++;
     }
 }
@@ -254,67 +491,20 @@ void MainWindow::OnSave(wxCommandEvent& event)
 
 void MainWindow::OnSelected(wxListEvent& event)
 {
-    long selectedIndex = event.GetIndex();
-    std::shared_ptr<Spc::File> file = files.at(selectedIndex);
-    Spc::Header header = file->Header();
-    id->SetLabelText(wxString{ header.ID.ToString() });
+    //long selectedIndex = event.GetIndex();
+    //std::shared_ptr<Spc::File> file = files.at(selectedIndex);
 
-    if (file->HeaderContainsTag())
-    {
-        containsTag->SetLabelText("True");
+    selectedFiles.clear();
+    long itemIndex{ -1 };
 
-        switch (file->TagType())
-        {
-            case Spc::TagType::Text:
-                tagType->SetLabelText("Text");
-                break;
-            case Spc::TagType::Binary:
-                tagType->SetLabelText("Binary");
-                break;
-            case Spc::TagType::TextMixed:
-                tagType->SetLabelText("Mixed");
-                break;
-            default:
-                tagType->SetLabelText("-");
-        }
-    }
-    else
+    while ((itemIndex = fileListView->GetNextItem(itemIndex, wxLIST_NEXT_ALL, 
+                                                  wxLIST_STATE_SELECTED)) != -1)
     {
-        containsTag->SetLabelText("False");
+        selectedFiles.push_back(files.at(itemIndex));
     }
 
-    versionMinor->SetLabelText(wxString{ header.versionMinor.ToString() });
-    pcRegister->SetLabelText(wxString{ header.pcRegister.ToString() });
-    aRegister->SetLabelText(wxString{ header.aRegister.ToString() });
-    xRegister->SetLabelText(wxString{ header.xRegister.ToString() });
-    yRegister->SetLabelText(wxString{ header.yRegister.ToString() });
-    pswRegister->SetLabelText(wxString{ header.pswRegister.ToString() });
-    spRegister->SetLabelText(wxString{ header.spRegister.ToString() });
-    
-    songTitleTextBox->SetValue(wxString{ file->SongTitle().ToString() });
-    gameTitleTextBox->SetValue(wxString{ file->GameTitle().ToString() });
-    dumperNameTextBox->SetValue(wxString{ file->DumperName().ToString() });
-    commentsTextBox->SetValue(wxString{ file->Comments().ToString() });
-    dateDumpedTextBox->SetValue(wxString{ file->DateDumped().ToString() });
-    songLengthTextBox->SetValue(wxString{ file->SongLength().ToString() });
-    fadeLengthTextBox->SetValue(wxString{ file->FadeLength().ToString() });
-    songArtistTextBox->SetValue(wxString{ file->SongArtist().ToString() });
-    defaultChannelStateTextBox->SetValue(wxString
-    { 
-        file->DefaultChannelState().ToString() 
-    });
-    emulatorUsedTextBox->SetValue(wxString{ file->EmulatorUsed().ToString() });
-    ostTitleTextBox->SetValue(wxString{ file->OstTitle().ToString() });
-    ostDiscTextBox->SetValue(wxString{ file->OstDisc().ToString() });
-    ostTrackTextBox->SetValue(wxString{ file->OstTrack().ToString() });
-    publisherNameTextBox->SetValue(wxString{file->PublisherName().ToString()});
-    copyrightYearTextBox->SetValue(wxString{file->CopyrightYear().ToString()});
-    introLengthTextBox->SetValue(wxString{ file->IntroLength().ToString()});
-    loopLengthTextBox->SetValue(wxString{ file->LoopLength().ToString() });
-    endLengthTextBox->SetValue(wxString{ file->EndLength().ToString() });
-    mutedVoicesTextBox->SetValue(wxString{ file->MutedVoices().ToString() });
-    loopTimesTextBox->SetValue(wxString{ file->LoopTimes().ToString() });
-    preampLevelTextBox->SetValue(wxString{ file->LoopTimes().ToString() });
+    UpdateHeaderLabels();
+    UpdateTagTextBoxes();
 }
 
 void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer)

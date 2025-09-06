@@ -21,6 +21,7 @@
 #include <memory>
 #include <wx/wx.h>
 #include <wx/listctrl.h>
+#include <wx/filename.h>
 #include <LibCppSpc.h>
 #include "WidgetID.h"
 
@@ -105,6 +106,7 @@ private:
     wxTextCtrl* preampLevelTextBox;
     
     std::vector<std::shared_ptr<Spc::File>> files;
+    std::vector<std::shared_ptr<Spc::File>> selectedFiles;
 
     void CreateMenuBar();
 
@@ -125,6 +127,14 @@ private:
     void CreatePanelLayout();
 
     void BindEvents();
+
+    void UpdateHeaderLabels();
+
+    void UpdateTagTextBoxes();
+
+    void SetLabel(wxStaticText* label, std::vector<wxString>& values);
+
+    void SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values);
 
     void OnExit(wxCommandEvent& event);
 
