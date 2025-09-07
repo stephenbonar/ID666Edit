@@ -1,6 +1,6 @@
 #include "MainWindow.h"
  
-MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit")
+MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit v1.0 Alpha")
 {
     panel = new wxPanel(this);
     CreateStatusBar();

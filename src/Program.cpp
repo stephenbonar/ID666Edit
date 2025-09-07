@@ -18,7 +18,7 @@
 
 void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v0.9" << std::endl;
+    std::cout << "ID666Edit v1.0 Alpha" << std::endl;
     std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
 }
 
