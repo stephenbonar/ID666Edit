@@ -19,7 +19,7 @@ set(INCLUDES
 
 add_executable(id666editc main.cpp Program.cpp)
 
-add_executable(ID666Edit ID666Edit.cpp MainWindow.cpp)
+add_executable(ID666Edit ID666Edit.cpp MainWindow.cpp FileNameToTagWindow.cpp)
 
 target_include_directories(id666editc PUBLIC ${INCLUDES})
 

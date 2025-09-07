@@ -24,6 +24,7 @@
 #include <wx/filename.h>
 #include <LibCppSpc.h>
 #include "WidgetID.h"
+#include "FileNameToTagWindow.h"
 
 class MainWindow : public wxFrame
 {
@@ -143,6 +144,10 @@ private:
     void OnOpen(wxCommandEvent& event);
 
     void OnSave(wxCommandEvent& event);
+
+    void OnFileNameToTag(wxCommandEvent& event);
+
+    void OnTagToFileName(wxCommandEvent& event);
 
     void OnSelected(wxListEvent& event);
 };

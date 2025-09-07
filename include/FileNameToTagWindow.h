@@ -1,4 +1,4 @@
-// WidgetID.h - Defines the WidgetID enum.
+// FileNameToTagWindow.h - Declares the FileNameToTagWindow class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,15 +14,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef WIDGET_ID_H
-#define WIDGET_ID_H
+#ifndef FILE_NAME_TO_TAG_WINDOW_H
+#define FILE_NAME_TO_TAG_WINDOW_H
 
-enum WidgetID
+#include <vector>
+#include <memory>
+#include <wx/wx.h>
+#include <LibCppSpc.h>
+
+class FileNameToTagWindow : public wxDialog
 {
-    Open = 1,
-    Save = 2,
-    FileNameToTag = 3,
-    TagToFileName = 4
+public:
+    FileNameToTagWindow(
+        wxWindow* parent, 
+        std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
+private:
+        wxTextCtrl* patternTextCtrl;
+        std::vector<std::shared_ptr<Spc::File>>& selectedFiles;
+
+        void OnOk(wxCommandEvent& event);
 };
 
 #endif

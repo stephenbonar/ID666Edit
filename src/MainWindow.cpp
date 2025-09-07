@@ -20,17 +20,23 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit")
 void MainWindow::CreateMenuBar()
 {
     wxMenu *fileMenu = new wxMenu;
-    fileMenu->Append(wxID_EXIT);
-    fileMenu->Append(WidgetID::Open, "&Open...\tCtrlO",
-        "Open .spc files");
-    fileMenu->Append(WidgetID::Save, "&Save...\tCtrlO",
-        "Saves changes to the .spc files");
+    fileMenu->Append(WidgetID::Open, "&Open...\tCtrl+O", "Open .spc files");
+    fileMenu->Append(WidgetID::Save, "&Save...\tCtrl+S", 
+                     "Saves changes to the .spc files");
+
+    wxMenu *editMenu = new wxMenu;
+    editMenu->Append(WidgetID::FileNameToTag, "File Name to Tag...\tCtrl+F", 
+                     "Set tag values from file name using a pattern");
+    editMenu->Append(WidgetID::TagToFileName, "Tag to File Name...\tCtrl+T", 
+                     "Set file name from tag values using a pattern");
 
     wxMenu *helpMenu = new wxMenu;
-    helpMenu->Append(wxID_ABOUT);
+    helpMenu->Append(wxID_ABOUT, "&About\tF1", 
+                     "Show information about the application");
 
     wxMenuBar *menuBar = new wxMenuBar;
     menuBar->Append(fileMenu, "&File");
+    menuBar->Append(editMenu, "&Edit");
     menuBar->Append(helpMenu, "&Help");
 
     SetMenuBar(menuBar);
@@ -144,19 +150,6 @@ void MainWindow::CreateFileListView()
     };
 
     fileListView->AppendColumn("Filename");
-
-    // Bind an event to adjust the column width when the view is resized.
-    fileListView->Bind(wxEVT_SIZE, [this](wxSizeEvent& event) {
-        // Get the current width of the view.
-        int listViewWidth = fileListView->GetClientSize().GetWidth();
-
-        // Set the column width to fill the entire width of the view.
-        fileListView->SetColumnWidth(0, listViewWidth);
-
-        // Allow the event to propagate.
-        event.Skip();
-    });
-
     fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, &MainWindow::OnSelected, this);
 }
 
@@ -220,6 +213,10 @@ void MainWindow::CreatePanelLayout()
     rightColumnSizer->AddSpacer(statusBarHeight);
 
     SetSizerAndFit(windowSizer);
+
+    // Ensure the file list view column fills the entire width.
+    int listViewWidth = fileListView->GetSize().GetWidth();
+    fileListView->SetColumnWidth(0, listViewWidth);
 }
 
 void MainWindow::BindEvents()
@@ -228,6 +225,10 @@ void MainWindow::BindEvents()
     Bind(wxEVT_MENU, &MainWindow::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MainWindow::OnOpen, this, WidgetID::Open);
     Bind(wxEVT_MENU, &MainWindow::OnSave, this, WidgetID::Save);
+    Bind(wxEVT_MENU, &MainWindow::OnFileNameToTag, this, 
+         WidgetID::FileNameToTag);
+    Bind(wxEVT_MENU, &MainWindow::OnTagToFileName, this, 
+         WidgetID::TagToFileName);
 }
 
 void MainWindow::UpdateHeaderLabels()
@@ -485,6 +486,91 @@ void MainWindow::OnOpen(wxCommandEvent& event)
 }
 
 void MainWindow::OnSave(wxCommandEvent& event)
+{
+    for (std::shared_ptr<Spc::File> file : selectedFiles)
+    {
+        if (songTitleTextBox->GetValue() != "<multiple values>")
+            file->SetSongTitle(songTitleTextBox->GetValue().ToStdString());
+
+        if (gameTitleTextBox->GetValue() != "<multiple values>")
+            file->SetGameTitle(gameTitleTextBox->GetValue().ToStdString());
+
+        if (dumperNameTextBox->GetValue() != "<multiple values>")
+            file->SetDumperName(dumperNameTextBox->GetValue().ToStdString());
+
+        if (commentsTextBox->GetValue() != "<multiple values>")
+            file->SetComments(commentsTextBox->GetValue().ToStdString());
+
+        if (dateDumpedTextBox->GetValue() != "<multiple values>")
+            file->SetDateDumped(dateDumpedTextBox->GetValue().ToStdString());
+
+        if (songLengthTextBox->GetValue() != "<multiple values>")
+            file->SetSongLength(songLengthTextBox->GetValue().ToStdString());
+
+        if (fadeLengthTextBox->GetValue() != "<multiple values>")
+            file->SetFadeLength(fadeLengthTextBox->GetValue().ToStdString());
+
+        if (songArtistTextBox->GetValue() != "<multiple values>")
+            file->SetSongArtist(songArtistTextBox->GetValue().ToStdString());
+
+        if (defaultChannelStateTextBox->GetValue() != "<multiple values>")
+            file->SetDefaultChannelState(
+                defaultChannelStateTextBox->GetValue().ToStdString());
+
+        if (emulatorUsedTextBox->GetValue() != "<multiple values>")
+            file->SetEmulatorUsed(
+                emulatorUsedTextBox->GetValue().ToStdString());
+
+        if (ostTitleTextBox->GetValue() != "<multiple values>")
+            file->SetOstTitle(ostTitleTextBox->GetValue().ToStdString());
+
+        if (ostDiscTextBox->GetValue() != "<multiple values>")
+            file->SetOstDisc(ostDiscTextBox->GetValue().ToStdString());
+
+        if (ostTrackTextBox->GetValue() != "<multiple values>")
+            file->SetOstTrack(ostTrackTextBox->GetValue().ToStdString());
+
+        if (publisherNameTextBox->GetValue() != "<multiple values>")
+            file->SetPublisherName(
+                publisherNameTextBox->GetValue().ToStdString());
+
+        if (copyrightYearTextBox->GetValue() != "<multiple values>")
+            file->SetCopyrightYear(
+                copyrightYearTextBox->GetValue().ToStdString());
+
+        if (introLengthTextBox->GetValue() != "<multiple values>")
+            file->SetIntroLength(introLengthTextBox->GetValue().ToStdString());
+
+        if (loopLengthTextBox->GetValue() != "<multiple values>")
+            file->SetLoopLength(loopLengthTextBox->GetValue().ToStdString());
+
+        if (endLengthTextBox->GetValue() != "<multiple values>")
+            file->SetEndLength(endLengthTextBox->GetValue().ToStdString());
+
+        if (mutedVoicesTextBox->GetValue() != "<multiple values>")
+            file->SetMutedVoices(mutedVoicesTextBox->GetValue().ToStdString());
+
+        if (loopTimesTextBox->GetValue() != "<multiple values>")
+            file->SetLoopTimes(loopTimesTextBox->GetValue().ToStdString());
+
+        if (preampLevelTextBox->GetValue() != "<multiple values>")
+            file->SetPreampLevel(preampLevelTextBox->GetValue().ToStdString());
+
+        file->Save();
+    }
+}
+
+void MainWindow::OnFileNameToTag(wxCommandEvent& event)
+{
+    FileNameToTagWindow dialog{ this, selectedFiles };
+
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        UpdateTagTextBoxes();
+    }
+}
+    
+void MainWindow::OnTagToFileName(wxCommandEvent& event)
 {
 
 }
