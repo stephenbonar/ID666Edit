@@ -406,7 +406,7 @@ void Program::PrintField(Spc::BinaryField field)
 
 int Program::PrintSpcFile(Spc::File& file)
 {
-    PrintSectionHeader(file.FileName(), 79);
+    PrintSectionHeader(file.Name(), 79);
     PrintField(file.SongTitle());
     PrintField(file.GameTitle());
     PrintField(file.DumperName());
@@ -434,7 +434,7 @@ int Program::PrintSpcFile(Spc::File& file)
 
 int Program::PrintSpcFileDetailed(Spc::File& file)
 {
-    PrintSectionHeader(file.FileName(), 79);
+    PrintSectionHeader(file.Name(), 79);
     std::cout << std::endl;
     PrintHeader(file);
     PrintTag(file);
@@ -514,7 +514,7 @@ void Program::PrintExtendedTag(Spc::File& file)
 
 int Program::PrintSpecifiedItems(Spc::File& file)
 {
-    PrintSectionHeader(file.FileName(), 79);
+    PrintSectionHeader(file.Name(), 79);
 
     if (headerPrintParam->IsSpecified())
         PrintHeader(file);
@@ -592,7 +592,7 @@ int Program::PrintSpecifiedItems(Spc::File& file)
 
 int Program::EditSpecifiedItems(Spc::File& file)
 {
-    PrintSectionHeader(file.FileName(), 79);
+    PrintSectionHeader(file.Name(), 79);
 
     if (songEditParam->IsSpecified())
     {

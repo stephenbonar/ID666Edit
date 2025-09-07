@@ -1,4 +1,4 @@
-// WidgetID.h - Defines the WidgetID enum.
+// IncrementTrackWindow.h - Declares the IncrementTrackWindow class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,16 +14,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef WIDGET_ID_H
-#define WIDGET_ID_H
+#ifndef INCREMENT_TRACK_WINDOW_H
+#define INCREMENT_TRACK_WINDOW_H
 
-enum WidgetID
+#include <vector>
+#include <memory>
+#include <wx/wx.h>
+#include <LibCppSpc.h>
+
+class IncrementTrackWindow : public wxDialog
 {
-    Open = 1,
-    Save = 2,
-    FileNameToTag = 3,
-    TagToFileName = 4,
-    IncrementTrack = 5
+public:
+    IncrementTrackWindow(
+        wxWindow* parent, 
+        std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
+private:
+        wxTextCtrl* startTrackTextCtrl;
+        std::vector<std::shared_ptr<Spc::File>>& selectedFiles;
+
+        void OnOk(wxCommandEvent& event);
 };
 
 #endif

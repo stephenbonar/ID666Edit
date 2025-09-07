@@ -1,4 +1,4 @@
-// FileNameToTagWindow.cpp - Defines the FileNameToTagWindow class.
+// TagToFileNameWindow.cpp - Defines the TagToFileNameWindow class.
 //
 // Copyright (C) 2025 Stephen Bonar
 //
@@ -14,13 +14,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "FileNameToTagWindow.h"
+#include "TagToFileNameWindow.h"
 
-FileNameToTagWindow::FileNameToTagWindow(
+TagToFileNameWindow::TagToFileNameWindow(
     wxWindow* parent,
     std::vector<std::shared_ptr<Spc::File>>& selectedFiles) : 
         selectedFiles{ selectedFiles },
-        wxDialog(parent, wxID_ANY, "Filename to Tag", 
+        wxDialog(parent, wxID_ANY, "Tag to Filename", 
                  wxDefaultPosition, wxSize(400, 300))
 {
     // Create a vertical box sizer to hold the dialog contents
@@ -29,7 +29,7 @@ FileNameToTagWindow::FileNameToTagWindow(
     // Add a static text label
     wxStaticText* instructionLabel = new wxStaticText
     {
-        this, wxID_ANY, "Enter the pattern to extract tag values from file names:"
+        this, wxID_ANY, "Enter the pattern to save tag values to the filenames"
     };
     mainSizer->Add(instructionLabel, 0, wxALL | wxEXPAND, 10);
 
@@ -46,20 +46,20 @@ FileNameToTagWindow::FileNameToTagWindow(
     mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER);
 
     // Bind the OK button click event to a handler
-    okButton->Bind(wxEVT_BUTTON, &FileNameToTagWindow::OnOk, this);
+    okButton->Bind(wxEVT_BUTTON, &TagToFileNameWindow::OnOk, this);
 
     // Set the sizer for the dialog
     SetSizer(mainSizer);
     mainSizer->Fit(this);
 }
 
-void FileNameToTagWindow::OnOk(wxCommandEvent& event)
+void TagToFileNameWindow::OnOk(wxCommandEvent& event)
 {
     wxString pattern = patternTextCtrl->GetValue();
 
     for (std::shared_ptr<Spc::File> file : selectedFiles)
     {
-        file->FileNameToTag(pattern.ToStdString());
+        file->TagToFileName(pattern.ToStdString());
         file->Save();
     }
 

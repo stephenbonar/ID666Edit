@@ -25,6 +25,8 @@
 #include <LibCppSpc.h>
 #include "WidgetID.h"
 #include "FileNameToTagWindow.h"
+#include "TagToFileNameWindow.h"
+#include "IncrementTrackWindow.h"
 
 class MainWindow : public wxFrame
 {
@@ -148,6 +150,8 @@ private:
     void OnFileNameToTag(wxCommandEvent& event);
 
     void OnTagToFileName(wxCommandEvent& event);
+
+    void OnIncrementTrack(wxCommandEvent& event);
 
     void OnSelected(wxListEvent& event);
 };

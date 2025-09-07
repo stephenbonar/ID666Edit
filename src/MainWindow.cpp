@@ -25,10 +25,14 @@ void MainWindow::CreateMenuBar()
                      "Saves changes to the .spc files");
 
     wxMenu *editMenu = new wxMenu;
-    editMenu->Append(WidgetID::FileNameToTag, "File Name to Tag...\tCtrl+F", 
-                     "Set tag values from file name using a pattern");
-    editMenu->Append(WidgetID::TagToFileName, "Tag to File Name...\tCtrl+T", 
-                     "Set file name from tag values using a pattern");
+    editMenu->Append(WidgetID::FileNameToTag, "Filename to Tag...\tCtrl+F", 
+                     "Set tag values from filename using a pattern");
+    editMenu->Append(WidgetID::TagToFileName, "Tag to Filename...\tCtrl+T", 
+                     "Set filename from tag values using a pattern");
+    editMenu->AppendSeparator();
+    editMenu->Append(WidgetID::IncrementTrack, 
+                     "Increment Track Numbers...\tCtrl+I", 
+                     "Increment OST track numbers by a specified amount");
 
     wxMenu *helpMenu = new wxMenu;
     helpMenu->Append(wxID_ABOUT, "&About\tF1", 
@@ -229,6 +233,8 @@ void MainWindow::BindEvents()
          WidgetID::FileNameToTag);
     Bind(wxEVT_MENU, &MainWindow::OnTagToFileName, this, 
          WidgetID::TagToFileName);
+    Bind(wxEVT_MENU, &MainWindow::OnIncrementTrack, this, 
+         WidgetID::IncrementTrack);
 }
 
 void MainWindow::UpdateHeaderLabels()
@@ -572,7 +578,27 @@ void MainWindow::OnFileNameToTag(wxCommandEvent& event)
     
 void MainWindow::OnTagToFileName(wxCommandEvent& event)
 {
+    TagToFileNameWindow dialog{ this, selectedFiles };
 
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        fileListView->DeleteAllItems();
+
+        for (std::shared_ptr<Spc::File> file : files)
+        {
+            fileListView->InsertItem(0, file->Name());
+        }
+    }
+}
+
+void MainWindow::OnIncrementTrack(wxCommandEvent& event)
+{
+    IncrementTrackWindow dialog{ this, selectedFiles };
+
+    if (dialog.ShowModal() == wxID_OK)
+    {
+        UpdateTagTextBoxes();
+    }
 }
 
 void MainWindow::OnSelected(wxListEvent& event)
