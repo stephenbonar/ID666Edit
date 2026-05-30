@@ -26,6 +26,8 @@ add_executable(ID666Edit
                TagToFileNameWindow.cpp
                IncrementTrackWindow.cpp)
 
+# db1005db3dea2c37a46fb455a9a02e37aa360751
+
 target_include_directories(id666editc PUBLIC ${INCLUDES})
 
 target_include_directories(ID666Edit PUBLIC ${INCLUDES})

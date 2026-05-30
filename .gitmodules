@@ -1,9 +1,9 @@
-[submodule "libs/LibCppCmdLine"]
-	path = libs/LibCppCmdLine
-	url = https://github.com/stephenbonar/LibCppCmdLine/
-[submodule "libs/LibCppSpc"]
-	path = libs/LibCppSpc
+[submodule "lib/LibCppSpc"]
+	path = lib/LibCppSpc
 	url = https://github.com/stephenbonar/LibCppSpc
-[submodule "libs/wxWidgets"]
-	path = libs/wxWidgets
-	url = https://github.com/wxWidgets/wxWidgets/
+[submodule "lib/LibCppCmdLine"]
+	path = lib/LibCppCmdLine
+	url = https://github.com/stephenbonar/LibCppCmdLine
+[submodule "lib/wxWidgets"]
+	path = lib/wxWidgets
+	url = https://github.com/wxWidgets/wxWidgets
