@@ -1,6 +1,6 @@
 // Program.cpp - Defines the Program class.
 //
-// Copyright (C) 2025 Stephen Bonar
+// Copyright (C) 2026 Stephen Bonar
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@
 void Program::PrintVersion()
 {
     std::cout << "ID666Edit v1.0 Alpha" << std::endl;
-    std::cout << "Copyright (C) 2025 Stephen Bonar" << std::endl << std::endl;
+    std::cout << "Copyright (C) 2026 Stephen Bonar" << std::endl << std::endl;
 }
 
 void Program::DefineParameters()
@@ -292,47 +292,16 @@ int Program::SelectMode()
     }
     else if (spcFileParam->IsSpecified())
     {
-        for (std::string value : spcFileParam->Values())
-        {
-            int result = 0;
-            Spc::File file{ value };
-        
-            if (!file.Load())
-            {
-                std::cerr << "ERROR: unable to open file." << std::endl;
-                return 2;
-            }
+        const std::vector<std::string> spcFiles = spcFileParam->Values();
 
-            if (printOption->IsSpecified())
-            {
-                result = PrintSpecifiedItems(file);
-            }
-            else if (editOption->IsSpecified())
-            {
-                result = EditSpecifiedItems(file);
-            }
-            else if (fileNameToTagOption->IsSpecified())
-            {
-                file.FileNameToTag(fileNameToTagOption->Values()[0]);
-            }
-            else if (tagToFileNameOption->IsSpecified())
-            {
-                file.TagToFileName(tagToFileNameOption->Values()[0]);
-            }
-            else if (incrementOption->IsSpecified())
-            {
-                IncrementTrack(file);
-            }
-            else if (!printOption->IsSpecified() && !editOption->IsSpecified())
-            {
-                if (detailedOption->IsSpecified())
-                    result = PrintSpcFileDetailed(file);
-                else
-                    result = PrintSpcFile(file);
-            }
+        for (const std::string& value : spcFiles)
+        {
+            int result = ProcessSpcFile(value);
 
             if (result != 0)
+            {
                 return result;
+            }
         }
 
         std::cout << "* indicates value is stored as extended tag data"
@@ -354,6 +323,56 @@ int Program::SelectMode()
     }
 }
 
+int Program::ProcessSpcFile(const std::string& path)
+{
+    int result = 0;
+    Spc::File file{ path };
+
+    try
+    {
+        file.Load();
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "ERROR: unable to open file: " << e.what() << std::endl;
+        return 2;
+    }
+
+    if (printOption->IsSpecified())
+    {
+        result = PrintSpecifiedItems(file);
+    }
+    else if (editOption->IsSpecified())
+    {
+        result = EditSpecifiedItems(file);
+    }
+    else if (fileNameToTagOption->IsSpecified())
+    {
+        file.FileNameToTag(fileNameToTagOption->Values()[0]);
+    }
+    else if (tagToFileNameOption->IsSpecified())
+    {
+        file.TagToFileName(tagToFileNameOption->Values()[0]);
+    }
+    else if (incrementOption->IsSpecified())
+    {
+        IncrementTrack(file);
+    }
+    else if (!printOption->IsSpecified() && !editOption->IsSpecified())
+    {
+        if (detailedOption->IsSpecified())
+        {
+            result = PrintSpcFileDetailed(file);
+        }
+        else
+        {
+            result = PrintSpcFile(file);
+        }
+    }
+
+    return result;
+}
+
 void Program::PrintSectionHeader(std::string title)
 {
     PrintSectionHeader(title, title.length());
@@ -364,7 +383,9 @@ void Program::PrintSectionHeader(std::string title, int length)
     std::cout << title << std::endl;
 
     for (int i = 0; i < length; ++i)
+    {
         std::cout << '-';
+    }
 
     std::cout << std::endl;
 }
@@ -406,35 +427,14 @@ void Program::PrintField(Spc::BinaryField field)
 
 int Program::PrintSpcFile(Spc::File& file)
 {
-    PrintSectionHeader(file.Name(), 79);
-    PrintField(file.SongTitle());
-    PrintField(file.GameTitle());
-    PrintField(file.DumperName());
-    PrintField(file.Comments());
-    PrintField(file.DateDumped());
-    PrintField(file.SongLength());
-    PrintField(file.FadeLength());
-    PrintField(file.SongArtist());
-    PrintField(file.DefaultChannelState());
-    PrintField(file.EmulatorUsed());
-    PrintField(file.OstTitle());
-    PrintField(file.OstDisc());
-    PrintField(file.OstTrack());
-    PrintField(file.PublisherName());
-    PrintField(file.CopyrightYear());
-    PrintField(file.IntroLength());
-    PrintField(file.LoopLength());
-    PrintField(file.EndLength());
-    PrintField(file.MutedVoices());
-    PrintField(file.LoopTimes());
-    PrintField(file.PreampLevel());
-    std::cout << std::endl;
+    PrintSectionHeader(file.Path(), 79);
+    PrintTag(file);
     return 0;
 }
 
 int Program::PrintSpcFileDetailed(Spc::File& file)
 {
-    PrintSectionHeader(file.Name(), 79);
+    PrintSectionHeader(file.Path(), 79);
     std::cout << std::endl;
     PrintHeader(file);
     PrintTag(file);
@@ -451,139 +451,128 @@ void Program::PrintHeader(Spc::File& file)
 void Program::PrintTag(Spc::File& file)
 {
     PrintSectionHeader("ID666 Tag");
+    Spc::Header header = file.Header();
+    Spc::Id666::Tag tag = file.Tag();
 
-    if (file.HeaderContainsTag())
+    if (header.containsTag.ToUInt32() == Spc::headerContainsTag)
     {
         std::cout << Spc::FormatValue("Header Contains Tag", "True") 
                   << std::endl;
-
-        if (file.TagType() == Spc::TagType::Binary)
-            PrintBinaryTag(file);
+        
+        if (tag.ExtendedData() != nullptr)
+        {
+            std::cout << Spc::FormatValue("Has Extended Tag", "True")
+                      << std::endl;
+        }
         else
-            PrintTextTag(file);
+        {
+            std::cout << Spc::FormatValue("Has Extended Tag", "False")
+                      << std::endl;
+        }
+
+        PrintField(tag.SongTitle());
+        PrintField(tag.GameTitle());
+        PrintField(tag.DumperName());
+        PrintField(tag.Comments());
+        PrintField(tag.DateDumped());
+        PrintField(tag.SongLength());
+        PrintField(tag.FadeLength());
+        PrintField(tag.SongArtist());
+        PrintField(tag.DefaultDisabledChannels());
+        PrintField(tag.EmulatorUsed());
+        PrintField(tag.OstTitle());
+        PrintField(tag.OstDisc());
+        PrintField(tag.OstTrack());
+        PrintField(tag.PublisherName());
+        PrintField(tag.CopyrightYear());
+        PrintField(tag.IntroLength());
+        PrintField(tag.LoopLength());
+        PrintField(tag.EndLength());
+        PrintField(tag.MutedVoices());
+        PrintField(tag.LoopTimes());
+        PrintField(tag.PreampLevel());
     }
     else
     {
         std::cout << Spc::FormatValue("Header Contains Tag", "False") 
                   << std::endl;
     }
-
-    if (file.HasExtendedTag())
-    {
-        PrintExtendedTag(file);
-    }
-    else
-    {
-        std::cout << Spc::FormatValue("Has Extended Tag", "False")
-                  << std::endl;
-    }
-}
-
-void Program::PrintTextTag(Spc::File& file)
-{
-    if (file.TagType() == Spc::TagType::Text)
-        std::cout << Spc::FormatValue("Tag Type", "Text") << std::endl;
-    else
-        std::cout << Spc::FormatValue("Tag Type", "Text (Mixed)") << std::endl;
-
-    Spc::TextTag tag = file.TextTag();
-    std::cout << tag.ToString() << std::endl;
-}
-
-void Program::PrintBinaryTag(Spc::File& file)
-{
-    std::cout << Spc::FormatValue("Tag Type", "Binary") << std::endl;
-    Spc::BinaryTag tag = file.BinaryTag();
-    std::cout << tag.ToString() << std::endl;
-}
-
-void Program::PrintExtendedTag(Spc::File& file)
-{
-    PrintSectionHeader("Extended ID666 Tag");
-    std::cout << Spc::FormatValue("Has Extended Tag", "True") << std::endl;
-    Binary::ChunkHeader extendedTagHeader = file.ExtendedTagHeader();
-    Spc::ExtendedTag tag = file.ExtendedTag();
-    std::cout << Spc::FormatValue("IFF Chunk ID", 
-                                  extendedTagHeader.id.ToString());
-    std::cout << std::endl;
-    std::cout << Spc::FormatValue("IFF Chunk Size",
-                                  extendedTagHeader.dataSize.ToString());
-    std::cout << std::endl;
-    std::cout << tag.ToString() << std::endl;
 }
 
 int Program::PrintSpecifiedItems(Spc::File& file)
 {
-    PrintSectionHeader(file.Name(), 79);
+    PrintSectionHeader(file.Path(), 79);
 
     if (headerPrintParam->IsSpecified())
         PrintHeader(file);
+
+    Spc::Id666::Tag tag = file.Tag();
 
     if (tagPrintParam->IsSpecified())
         PrintTag(file);
 
     if (songPrintParam->IsSpecified())
-        PrintField(file.SongTitle());
+        PrintField(tag.SongTitle());
 
     if (gamePrintParam->IsSpecified())
-        PrintField(file.GameTitle());
+        PrintField(tag.GameTitle());
 
     if (dumperPrintParam->IsSpecified())
-        PrintField(file.DumperName());
+        PrintField(tag.DumperName());
 
     if (commentsPrintParam->IsSpecified())
-        PrintField(file.Comments());
+        PrintField(tag.Comments());
     
     if (datePrintParam->IsSpecified())
-        PrintField(file.DateDumped());
+        PrintField(tag.DateDumped());
 
     if (songLengthPrintParam->IsSpecified())
-        PrintField(file.SongLength());
+        PrintField(tag.SongLength());
 
     if (fadeLengthPrintParam->IsSpecified())
-        PrintField(file.FadeLength());
+        PrintField(tag.FadeLength());
 
     if (artistPrintParam->IsSpecified())
-        PrintField(file.SongArtist());
+        PrintField(tag.SongArtist());
 
     if (channelPrintParam->IsSpecified())
-        PrintField(file.DefaultChannelState());
+        PrintField(tag.DefaultDisabledChannels());
 
     if (emulatorPrintParam->IsSpecified())
-        PrintField(file.EmulatorUsed());
+        PrintField(tag.EmulatorUsed());
 
     if (titlePrintParam->IsSpecified())
-        PrintField(file.OstTitle());
+        PrintField(tag.OstTitle());
 
     if (discPrintParam->IsSpecified())
-        PrintField(file.OstDisc());
+        PrintField(tag.OstDisc());
 
     if (trackPrintParam->IsSpecified())
-        PrintField(file.OstTrack());
+        PrintField(tag.OstTrack());
 
     if (publisherPrintParam->IsSpecified())
-        PrintField(file.PublisherName());
+        PrintField(tag.PublisherName());
 
     if (copyrightPrintParam->IsSpecified())
-        PrintField(file.CopyrightYear());
+        PrintField(tag.CopyrightYear());
 
     if (introLengthPrintParam->IsSpecified())
-        PrintField(file.IntroLength());
+        PrintField(tag.IntroLength());
 
     if (loopLengthPrintParam->IsSpecified())
-        PrintField(file.LoopLength());
+        PrintField(tag.LoopLength());
 
     if (endLengthPrintParam->IsSpecified())
-        PrintField(file.EndLength());
+        PrintField(tag.EndLength());
 
     if (mutedPrintParam->IsSpecified())
-        PrintField(file.MutedVoices());
+        PrintField(tag.MutedVoices());
 
     if (loopTimesPrintParam->IsSpecified())
-        PrintField(file.LoopTimes());
+        PrintField(tag.LoopTimes());
 
     if (preampPrintParam->IsSpecified())
-        PrintField(file.PreampLevel());
+        PrintField(tag.PreampLevel());
 
     std::cout << std::endl;
 
@@ -592,133 +581,137 @@ int Program::PrintSpecifiedItems(Spc::File& file)
 
 int Program::EditSpecifiedItems(Spc::File& file)
 {
-    PrintSectionHeader(file.Name(), 79);
+    PrintSectionHeader(file.Path(), 79);
+
+    Spc::Id666::Tag tag = file.Tag();
 
     if (songEditParam->IsSpecified())
     {
-        file.SetSongTitle(songEditParam->Value());
-        PrintField(file.SongTitle());
+        tag.SetSongTitle(songEditParam->Value());
+        PrintField(tag.SongTitle());
     }
 
     if (gameEditParam->IsSpecified())
     {
-        file.SetGameTitle(gameEditParam->Value());
-        PrintField(file.GameTitle());
+        tag.SetGameTitle(gameEditParam->Value());
+        PrintField(tag.GameTitle());
     }
 
     if (dumperEditParam->IsSpecified())
     {
-        file.SetDumperName(dumperEditParam->Value());
-        PrintField(file.DumperName());
+        tag.SetDumperName(dumperEditParam->Value());
+        PrintField(tag.DumperName());
     }
 
     if (commentsEditParam->IsSpecified())
     {
-        file.SetComments(commentsEditParam->Value());
-        PrintField(file.Comments());
+        tag.SetComments(commentsEditParam->Value());
+        PrintField(tag.Comments());
     }
 
     if (dateEditParam->IsSpecified())
     {
-        file.SetDateDumped(dateEditParam->Value());
-        PrintField(file.DateDumped());
+        tag.SetDateDumped(dateEditParam->Value());
+        PrintField(tag.DateDumped());
     }
 
     if (songLengthEditParam->IsSpecified())
     {
-        file.SetSongLength(songLengthEditParam->Value());
-        PrintField(file.SongLength());
+        tag.SetSongLength(songLengthEditParam->Value());
+        PrintField(tag.SongLength());
     }
 
     if (fadeLengthEditParam->IsSpecified())
     {
-        file.SetFadeLength(fadeLengthEditParam->Value());
-        PrintField(file.FadeLength());
+        tag.SetFadeLength(fadeLengthEditParam->Value());
+        PrintField(tag.FadeLength());
     }
 
     if (artistEditParam->IsSpecified())
     {
-        file.SetSongArtist(artistEditParam->Value());
-        PrintField(file.SongArtist());
+        tag.SetSongArtist(artistEditParam->Value());
+        PrintField(tag.SongArtist());
     }
 
     if (channelEditParam->IsSpecified())
     {
-        file.SetDefaultChannelState(channelEditParam->Value());
-        PrintField(file.DefaultChannelState());
+        tag.SetDefaultDisabledChannels(channelEditParam->Value());
+        PrintField(tag.DefaultDisabledChannels());
     }
 
     if (emulatorEditParam->IsSpecified())
     {
-        file.SetEmulatorUsed(emulatorEditParam->Value());
-        PrintField(file.EmulatorUsed());
+        tag.SetEmulatorUsed(emulatorEditParam->Value());
+        PrintField(tag.EmulatorUsed());
     }
 
     if (titleEditParam->IsSpecified())
     {
-        file.SetOstTitle(titleEditParam->Value());
-        PrintField(file.OstTitle());
+        tag.SetOstTitle(titleEditParam->Value());
+        PrintField(tag.OstTitle());
     }
 
     if (discEditParam->IsSpecified())
     {
-        file.SetOstDisc(discEditParam->Value());
-        PrintField(file.OstDisc());
+        tag.SetOstDisc(discEditParam->Value());
+        PrintField(tag.OstDisc());
     }
 
     if (trackEditParam->IsSpecified())
     {
-        file.SetOstTrack(trackEditParam->Value());
-        PrintField(file.OstTrack());
+        tag.SetOstTrack(trackEditParam->Value());
+        PrintField(tag.OstTrack());
     }
 
     if (publisherEditParam->IsSpecified())
     {
-        file.SetPublisherName(publisherEditParam->Value());
-        PrintField(file.PublisherName());
+        tag.SetPublisherName(publisherEditParam->Value());
+        PrintField(tag.PublisherName());
     }
 
     if (copyrightEditParam->IsSpecified())
     {
-        file.SetCopyrightYear(copyrightEditParam->Value());
-        PrintField(file.CopyrightYear());
+        tag.SetCopyrightYear(copyrightEditParam->Value());
+        PrintField(tag.CopyrightYear());
     }
 
     if (introLengthEditParam->IsSpecified())
     {
-        file.SetIntroLength(introLengthEditParam->Value());
-        PrintField(file.IntroLength());
+        tag.SetIntroLength(introLengthEditParam->Value());
+        PrintField(tag.IntroLength());
     }
 
     if (loopLengthEditParam->IsSpecified())
     {
-        file.SetLoopLength(loopLengthEditParam->Value());
-        PrintField(file.LoopLength());
+        tag.SetLoopLength(loopLengthEditParam->Value());
+        PrintField(tag.LoopLength());
     }
 
     if (endLengthEditParam->IsSpecified())
     {
-        file.SetEndLength(endLengthEditParam->Value());
-        PrintField(file.EndLength());
+        tag.SetEndLength(endLengthEditParam->Value());
+        PrintField(tag.EndLength());
     }
 
     if (mutedEditParam->IsSpecified())
     {
-        file.SetMutedVoices(mutedEditParam->Value());
-        PrintField(file.MutedVoices());
+        tag.SetMutedVoices(mutedEditParam->Value());
+        PrintField(tag.MutedVoices());
     }
 
     if (loopTimesEditParam->IsSpecified())
     {
-        file.SetLoopTimes(loopTimesEditParam->Value());
-        PrintField(file.LoopTimes());
+        tag.SetLoopTimes(loopTimesEditParam->Value());
+        PrintField(tag.LoopTimes());
     }
 
     if (preampEditParam->IsSpecified())
     {
-        file.SetPreampLevel(preampEditParam->Value());
-        PrintField(file.PreampLevel());
+        tag.SetPreampLevel(preampEditParam->Value());
+        PrintField(tag.PreampLevel());
     }
+
+    file.SetTag(tag);
         
     file.Save();
 
@@ -729,10 +722,12 @@ int Program::EditSpecifiedItems(Spc::File& file)
 
 int Program::IncrementTrack(Spc::File& file)
 {
-    uint8_t track = file.OstTrack().Value();
+    Spc::Id666::Tag tag = file.Tag();
+    uint8_t track = tag.OstTrack().ToUInt32();
     int incrementAmount = std::stoi(incrementOption->Values()[0]);
     track += incrementAmount;
-    file.SetOstTrack(std::to_string(track));
+    tag.SetOstTrack(std::to_string(track));
+    file.SetTag(tag);
     file.Save();
     return 0;
 }

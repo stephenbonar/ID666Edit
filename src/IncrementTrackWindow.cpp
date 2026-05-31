@@ -56,8 +56,10 @@ void IncrementTrackWindow::OnOk(wxCommandEvent& event)
 
     for (size_t i = 0; i < selectedFiles.size(); ++i)
     {
-        increment += selectedFiles[i]->OstTrack().Value();
-        selectedFiles[i]->SetOstTrack(std::to_string(increment));
+        Spc::Id666::Tag tag = selectedFiles[i]->Tag();
+        increment += tag.OstTrack().ToInt32();
+        tag.SetOstTrack(std::to_string(increment));
+        selectedFiles[i]->SetTag(tag);
         selectedFiles[i]->Save();
     }
 

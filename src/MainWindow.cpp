@@ -253,21 +253,22 @@ void MainWindow::UpdateHeaderLabels()
     for (std::shared_ptr<Spc::File> file : selectedFiles)
     {
         Spc::Header header = file->Header();
-        idValues.push_back(wxString{ header.ID.ToString() });
+        Spc::Id666::Tag tag = file->Tag();
+        idValues.push_back(wxString{ header.id.ToString() });
 
-        if (file->HeaderContainsTag())
+        if (header.containsTag.ToUInt32() == Spc::headerContainsTag)
         {
             headerContainsTagValues.push_back("True");
 
-            switch (file->TagType())
+            switch (tag.DetermineType())
             {
-                case Spc::TagType::Text:
+                case Spc::Id666::TagType::Text:
                     tagTypeValues.push_back("Text");
                     break;
-                case Spc::TagType::Binary:
+                case Spc::Id666::TagType::Binary:
                     tagTypeValues.push_back("Binary");
                     break;
-                case Spc::TagType::TextMixed:
+                case Spc::Id666::TagType::TextMixed:
                     tagTypeValues.push_back("Mixed");
                     break;
                 default:
@@ -327,28 +328,30 @@ void MainWindow::UpdateTagTextBoxes()
 
     for (std::shared_ptr<Spc::File> file : selectedFiles)
     {
-        songTitleValues.push_back(file->SongTitle().ToString());
-        gameTitleValues.push_back(file->GameTitle().ToString());
-        dumperNameValues.push_back(file->DumperName().ToString());
-        commentsValues.push_back(file->Comments().ToString());
-        dateDumpedValues.push_back(file->DateDumped().ToString());
-        songLengthValues.push_back(file->SongLength().ToString());
-        fadeLengthValues.push_back(file->FadeLength().ToString());
-        songArtistValues.push_back(file->SongArtist().ToString());
+        Spc::Id666::Tag tag = file->Tag();
+
+        songTitleValues.push_back(tag.SongTitle().ToString());
+        gameTitleValues.push_back(tag.GameTitle().ToString());
+        dumperNameValues.push_back(tag.DumperName().ToString());
+        commentsValues.push_back(tag.Comments().ToString());
+        dateDumpedValues.push_back(tag.DateDumped().ToString());
+        songLengthValues.push_back(tag.SongLength().ToString());
+        fadeLengthValues.push_back(tag.FadeLength().ToString());
+        songArtistValues.push_back(tag.SongArtist().ToString());
         defaultChannelStateValues.push_back(
-            file->DefaultChannelState().ToString());
-        emulatorUsedValues.push_back(file->EmulatorUsed().ToString());
-        ostTitleValues.push_back(file->OstTitle().ToString());
-        ostDiscValues.push_back(file->OstDisc().ToString());
-        ostTrackValues.push_back(file->OstTrack().ToString());
-        publisherNameValues.push_back(file->PublisherName().ToString());
-        copyrightYearValues.push_back(file->CopyrightYear().ToString());
-        introLengthValues.push_back(file->IntroLength().ToString());
-        loopLengthValues.push_back(file->LoopLength().ToString());
-        endLengthValues.push_back(file->EndLength().ToString());
-        mutedVoicesValues.push_back(file->MutedVoices().ToString());
-        loopTimesValues.push_back(file->LoopTimes().ToString());
-        preampLevelValues.push_back(file->PreampLevel().ToString());
+            tag.DefaultDisabledChannels().ToString());
+        emulatorUsedValues.push_back(tag.EmulatorUsed().ToString());
+        ostTitleValues.push_back(tag.OstTitle().ToString());
+        ostDiscValues.push_back(tag.OstDisc().ToString());
+        ostTrackValues.push_back(tag.OstTrack().ToString());
+        publisherNameValues.push_back(tag.PublisherName().ToString());
+        copyrightYearValues.push_back(tag.CopyrightYear().ToString());
+        introLengthValues.push_back(tag.IntroLength().ToString());
+        loopLengthValues.push_back(tag.LoopLength().ToString());
+        endLengthValues.push_back(tag.EndLength().ToString());
+        mutedVoicesValues.push_back(tag.MutedVoices().ToString());
+        loopTimesValues.push_back(tag.LoopTimes().ToString());
+        preampLevelValues.push_back(tag.PreampLevel().ToString());
     }
 
     SetTextBox(songTitleTextBox, songTitleValues);
@@ -495,73 +498,118 @@ void MainWindow::OnSave(wxCommandEvent& event)
 {
     for (std::shared_ptr<Spc::File> file : selectedFiles)
     {
+        Spc::Id666::Tag tag = file->Tag();
+
         if (songTitleTextBox->GetValue() != "<multiple values>")
-            file->SetSongTitle(songTitleTextBox->GetValue().ToStdString());
+        {
+            tag.SetSongTitle(songTitleTextBox->GetValue().ToStdString());
+        }
 
         if (gameTitleTextBox->GetValue() != "<multiple values>")
-            file->SetGameTitle(gameTitleTextBox->GetValue().ToStdString());
+        {
+            tag.SetGameTitle(gameTitleTextBox->GetValue().ToStdString());
+        }
 
         if (dumperNameTextBox->GetValue() != "<multiple values>")
-            file->SetDumperName(dumperNameTextBox->GetValue().ToStdString());
+        {
+            tag.SetDumperName(dumperNameTextBox->GetValue().ToStdString());
+        }
 
         if (commentsTextBox->GetValue() != "<multiple values>")
-            file->SetComments(commentsTextBox->GetValue().ToStdString());
+        {
+            tag.SetComments(commentsTextBox->GetValue().ToStdString());
+        }
 
         if (dateDumpedTextBox->GetValue() != "<multiple values>")
-            file->SetDateDumped(dateDumpedTextBox->GetValue().ToStdString());
+        {
+            tag.SetDateDumped(dateDumpedTextBox->GetValue().ToStdString());
+        }
 
         if (songLengthTextBox->GetValue() != "<multiple values>")
-            file->SetSongLength(songLengthTextBox->GetValue().ToStdString());
+        {
+            tag.SetSongLength(songLengthTextBox->GetValue().ToStdString());
+        }
 
         if (fadeLengthTextBox->GetValue() != "<multiple values>")
-            file->SetFadeLength(fadeLengthTextBox->GetValue().ToStdString());
+        {
+            tag.SetFadeLength(fadeLengthTextBox->GetValue().ToStdString());
+        }
 
         if (songArtistTextBox->GetValue() != "<multiple values>")
-            file->SetSongArtist(songArtistTextBox->GetValue().ToStdString());
+        {
+            tag.SetSongArtist(songArtistTextBox->GetValue().ToStdString());
+        }
 
         if (defaultChannelStateTextBox->GetValue() != "<multiple values>")
-            file->SetDefaultChannelState(
+        {
+            tag.SetDefaultDisabledChannels(
                 defaultChannelStateTextBox->GetValue().ToStdString());
+        }
 
         if (emulatorUsedTextBox->GetValue() != "<multiple values>")
-            file->SetEmulatorUsed(
+        {
+            tag.SetEmulatorUsed(
                 emulatorUsedTextBox->GetValue().ToStdString());
+        }
 
         if (ostTitleTextBox->GetValue() != "<multiple values>")
-            file->SetOstTitle(ostTitleTextBox->GetValue().ToStdString());
+        {
+            tag.SetOstTitle(ostTitleTextBox->GetValue().ToStdString());
+        }
 
         if (ostDiscTextBox->GetValue() != "<multiple values>")
-            file->SetOstDisc(ostDiscTextBox->GetValue().ToStdString());
+        {
+            tag.SetOstDisc(ostDiscTextBox->GetValue().ToStdString());
+        }
 
         if (ostTrackTextBox->GetValue() != "<multiple values>")
-            file->SetOstTrack(ostTrackTextBox->GetValue().ToStdString());
+        {
+            tag.SetOstTrack(ostTrackTextBox->GetValue().ToStdString());
+        }
 
         if (publisherNameTextBox->GetValue() != "<multiple values>")
-            file->SetPublisherName(
+        {
+            tag.SetPublisherName(
                 publisherNameTextBox->GetValue().ToStdString());
+        }
 
         if (copyrightYearTextBox->GetValue() != "<multiple values>")
-            file->SetCopyrightYear(
+        {
+            tag.SetCopyrightYear(
                 copyrightYearTextBox->GetValue().ToStdString());
+        }
 
         if (introLengthTextBox->GetValue() != "<multiple values>")
-            file->SetIntroLength(introLengthTextBox->GetValue().ToStdString());
+        {
+            tag.SetIntroLength(introLengthTextBox->GetValue().ToStdString());
+        }
 
         if (loopLengthTextBox->GetValue() != "<multiple values>")
-            file->SetLoopLength(loopLengthTextBox->GetValue().ToStdString());
+        {
+            tag.SetLoopLength(loopLengthTextBox->GetValue().ToStdString());
+        }
 
         if (endLengthTextBox->GetValue() != "<multiple values>")
-            file->SetEndLength(endLengthTextBox->GetValue().ToStdString());
+        {
+            tag.SetEndLength(endLengthTextBox->GetValue().ToStdString());
+        }
 
         if (mutedVoicesTextBox->GetValue() != "<multiple values>")
-            file->SetMutedVoices(mutedVoicesTextBox->GetValue().ToStdString());
+        {
+            tag.SetMutedVoices(mutedVoicesTextBox->GetValue().ToStdString());
+        }
 
         if (loopTimesTextBox->GetValue() != "<multiple values>")
-            file->SetLoopTimes(loopTimesTextBox->GetValue().ToStdString());
+        {
+            tag.SetLoopTimes(loopTimesTextBox->GetValue().ToStdString());
+        }
 
         if (preampLevelTextBox->GetValue() != "<multiple values>")
-            file->SetPreampLevel(preampLevelTextBox->GetValue().ToStdString());
+        {
+            tag.SetPreampLevel(preampLevelTextBox->GetValue().ToStdString());
+        }
 
+        file->SetTag(tag);
         file->Save();
     }
 }
@@ -586,7 +634,7 @@ void MainWindow::OnTagToFileName(wxCommandEvent& event)
 
         for (std::shared_ptr<Spc::File> file : files)
         {
-            fileListView->InsertItem(0, file->Name());
+            fileListView->InsertItem(0, file->Path());
         }
     }
 }

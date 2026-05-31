@@ -32,10 +32,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(wxBUILD_SHARED OFF)
 
-add_subdirectory(libs/LibCppSpc)
+add_subdirectory(lib/LibCppSpc)
 
-add_subdirectory(libs/LibCppCmdLine)
+add_subdirectory(lib/LibCppCmdLine)
 
-add_subdirectory(libs/wxWidgets)
+add_subdirectory(lib/wxWidgets)
 
 add_subdirectory(src)

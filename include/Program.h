@@ -109,6 +109,11 @@ private:
     /// @return The status code returned by the selected mode upon completion.
     int SelectMode();
 
+    /// @brief Processes one SPC file using the mode selected by args.
+    /// @param path The path to the SPC file to process.
+    /// @return The status code returned by the selected operation.
+    int ProcessSpcFile(const std::string& path);
+
     void PrintSectionHeader(std::string title);
 
     void PrintSectionHeader(std::string title, int length);
