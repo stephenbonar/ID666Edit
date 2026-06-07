@@ -16,14 +16,28 @@
 
 cmake_minimum_required(VERSION 3.10.0)
 
+# On Windows, force a consistent static CRT model for all targets,
+# including C-based third-party deps (png/zlib/expat) and C++ code.
+# CMP0091/CMAKE_MSVC_RUNTIME_LIBRARY must be set before project().
+if (WIN32 AND POLICY CMP0091)
+    cmake_policy(SET CMP0091 NEW)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+
 project(ID666Edit VERSION 1.0.0 LANGUAGES C CXX)
 
-# By default, GoogleTest expects to statically link to the C++ runtime on the
-# MSVC compiler. So if we run on Windows, we need to set our compiler flags
-# to statically link the rest of the project to the runtime to match.
-if (WIN32)
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+# Fallback for older CMake versions that don't support CMP0091.
+if (MSVC AND NOT POLICY CMP0091)
+    foreach(_cfg DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
+        string(TOUPPER "${_cfg}" _cfg_upper)
+        if (_cfg STREQUAL "DEBUG")
+            set(CMAKE_C_FLAGS_${_cfg_upper} "${CMAKE_C_FLAGS_${_cfg_upper}} /MTd")
+            set(CMAKE_CXX_FLAGS_${_cfg_upper} "${CMAKE_CXX_FLAGS_${_cfg_upper}} /MTd")
+        else()
+            set(CMAKE_C_FLAGS_${_cfg_upper} "${CMAKE_C_FLAGS_${_cfg_upper}} /MT")
+            set(CMAKE_CXX_FLAGS_${_cfg_upper} "${CMAKE_CXX_FLAGS_${_cfg_upper}} /MT")
+        endif()
+    endforeach()
 endif()
 
 # Specify the C++ standard.
@@ -31,6 +45,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(wxBUILD_SHARED OFF)
+set(wxBUILD_USE_STATIC_RUNTIME ON)
 
 add_subdirectory(lib/LibCppSpc)
 

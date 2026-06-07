@@ -19,14 +19,21 @@ set(INCLUDES
 
 add_executable(id666editc main.cpp Program.cpp)
 
-add_executable(ID666Edit 
-               ID666Edit.cpp 
-               MainWindow.cpp 
-               FileNameToTagWindow.cpp 
-               TagToFileNameWindow.cpp
-               IncrementTrackWindow.cpp)
-
-# db1005db3dea2c37a46fb455a9a02e37aa360751
+if (WIN32)
+    add_executable(ID666Edit WIN32
+                   ID666Edit.cpp 
+                   MainWindow.cpp 
+                   FileNameToTagWindow.cpp 
+                   TagToFileNameWindow.cpp
+                   IncrementTrackWindow.cpp)
+else()
+    add_executable(ID666Edit
+                   ID666Edit.cpp 
+                   MainWindow.cpp 
+                   FileNameToTagWindow.cpp 
+                   TagToFileNameWindow.cpp
+                   IncrementTrackWindow.cpp)
+endif()
 
 target_include_directories(id666editc PUBLIC ${INCLUDES})
 
