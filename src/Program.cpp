@@ -461,13 +461,39 @@ void Program::PrintTag(Spc::File& file)
         
         if (tag.ExtendedData() != nullptr)
         {
-            std::cout << Spc::FormatValue("Has Extended Tag", "True")
-                      << std::endl;
+            if (tag.ExtendedData()->SpcFields().size() > 0)
+            {
+                std::cout << Spc::FormatValue("Has Extended Tag", "True")
+                          << std::endl;
+            }
+            else
+            {
+                std::cout << Spc::FormatValue("Has Extended Tag", "False")
+                          << std::endl;
+            }
         }
         else
         {
             std::cout << Spc::FormatValue("Has Extended Tag", "False")
                       << std::endl;
+        }
+
+        switch (tag.DetermineType())
+        {
+            case Spc::Id666::TagType::Text:
+                std::cout << Spc::FormatValue("Tag Type", "Text") << std::endl;
+                break;
+            case Spc::Id666::TagType::Binary:
+                std::cout << Spc::FormatValue("Tag Type", "Binary") 
+                          << std::endl;
+                break;
+            case Spc::Id666::TagType::TextMixed:
+                std::cout << Spc::FormatValue("Tag Type", "Text (Mixed)") 
+                          << std::endl;
+                break;
+            default:
+                std::cout << Spc::FormatValue("Tag Type", "Unknown") 
+                          << std::endl;
         }
 
         PrintField(tag.SongTitle());
