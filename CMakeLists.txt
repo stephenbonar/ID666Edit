@@ -44,13 +44,18 @@ endif()
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-set(wxBUILD_SHARED OFF)
-set(wxBUILD_USE_STATIC_RUNTIME ON)
+# Option to enable/disable building the GUI (wxWidgets-based) target.
+# Default ON so GUI builds unless the user passes -DBUILD_GUI=OFF.
+option(BUILD_GUI "Build the GUI application (requires wxWidgets)" ON)
 
 add_subdirectory(lib/LibCppSpc)
 
 add_subdirectory(lib/LibCppCmdLine)
 
-add_subdirectory(lib/wxWidgets)
+if(BUILD_GUI)
+    set(wxBUILD_SHARED OFF)
+    set(wxBUILD_USE_STATIC_RUNTIME ON)
+    add_subdirectory(lib/wxWidgets)
+endif()
 
 add_subdirectory(src)

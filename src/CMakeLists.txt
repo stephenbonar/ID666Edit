@@ -19,26 +19,28 @@ set(INCLUDES
 
 add_executable(id666editc main.cpp Program.cpp)
 
-if (WIN32)
-    add_executable(ID666Edit WIN32
-                   ID666Edit.cpp 
-                   MainWindow.cpp 
-                   FileNameToTagWindow.cpp 
-                   TagToFileNameWindow.cpp
-                   IncrementTrackWindow.cpp)
-else()
-    add_executable(ID666Edit
-                   ID666Edit.cpp 
-                   MainWindow.cpp 
-                   FileNameToTagWindow.cpp 
-                   TagToFileNameWindow.cpp
-                   IncrementTrackWindow.cpp)
+if(BUILD_GUI)
+    if (WIN32)
+        add_executable(ID666Edit WIN32
+                       ID666Edit.cpp 
+                       MainWindow.cpp 
+                       FileNameToTagWindow.cpp 
+                       TagToFileNameWindow.cpp
+                       IncrementTrackWindow.cpp)
+    else()
+        add_executable(ID666Edit
+                       ID666Edit.cpp 
+                       MainWindow.cpp 
+                       FileNameToTagWindow.cpp 
+                       TagToFileNameWindow.cpp
+                       IncrementTrackWindow.cpp)
+    endif()
+
+    target_include_directories(ID666Edit PUBLIC ${INCLUDES})
+
+    target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
 endif()
 
 target_include_directories(id666editc PUBLIC ${INCLUDES})
 
-target_include_directories(ID666Edit PUBLIC ${INCLUDES})
-
 target_link_libraries(id666editc LibCppCmdLine LibCppSpc)
-
-target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
