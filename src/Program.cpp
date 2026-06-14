@@ -646,9 +646,10 @@ int Program::PrintSpcFile(Spc::File& file)
 
 int Program::PrintSpcFileDetailed(Spc::File& file)
 {
+    Spc::Header header = file.Header();
     PrintHeading(file.Path());
     std::cout << std::endl;
-    PrintFileHeader(file.Header());
+    PrintFileHeader(header);
     PrintTag(file);
     return 0;
 }
