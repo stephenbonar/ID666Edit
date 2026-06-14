@@ -370,24 +370,32 @@ int Program::ProcessSpcFile(const std::string& path)
         }
     }
 
+    std::cout << std::endl;
+
     return result;
 }
 
-void Program::PrintSectionHeader(std::string title)
+void Program::PrintLine(int length)
 {
-    PrintSectionHeader(title, title.length());
-}
-
-void Program::PrintSectionHeader(std::string title, int length)
-{
-    std::cout << title << std::endl;
-
     for (int i = 0; i < length; ++i)
     {
         std::cout << '-';
     }
 
     std::cout << std::endl;
+}
+
+void Program::PrintHeading(std::string title)
+{
+    PrintLine(79);
+    std::cout << title << std::endl;
+    PrintLine(79);
+}
+
+void Program::PrintSubHeading(std::string title)
+{
+    std::cout << title << std::endl;
+    PrintLine(79);
 }
 
 void Program::PrintField(Spc::Field* field)
@@ -427,30 +435,31 @@ void Program::PrintField(Spc::BinaryField field)
 
 int Program::PrintSpcFile(Spc::File& file)
 {
-    PrintSectionHeader(file.Path(), 79);
+    PrintHeading(file.Path());
+    std::cout << std::endl;
     PrintTag(file);
     return 0;
 }
 
 int Program::PrintSpcFileDetailed(Spc::File& file)
 {
-    PrintSectionHeader(file.Path(), 79);
+    PrintHeading(file.Path());
     std::cout << std::endl;
-    PrintHeader(file);
+    PrintFileHeader(file);
     PrintTag(file);
     return 0;
 }
 
-void Program::PrintHeader(Spc::File& file)
+void Program::PrintFileHeader(Spc::File& file)
 {
     Spc::Header header = file.Header();
-    PrintSectionHeader("SPC File Header");
+    PrintSubHeading("SPC File Header");
     std::cout << header.ToString() << std::endl;
 }
 
 void Program::PrintTag(Spc::File& file)
 {
-    PrintSectionHeader("ID666 Tag");
+    PrintSubHeading("ID666 Tag");
     Spc::Header header = file.Header();
     Spc::Id666::Tag tag = file.Tag();
 
@@ -458,25 +467,6 @@ void Program::PrintTag(Spc::File& file)
     {
         std::cout << Spc::FormatValue("Header Contains Tag", "True") 
                   << std::endl;
-        
-        if (tag.ExtendedData() != nullptr)
-        {
-            if (tag.ExtendedData()->SpcFields().size() > 0)
-            {
-                std::cout << Spc::FormatValue("Has Extended Tag", "True")
-                          << std::endl;
-            }
-            else
-            {
-                std::cout << Spc::FormatValue("Has Extended Tag", "False")
-                          << std::endl;
-            }
-        }
-        else
-        {
-            std::cout << Spc::FormatValue("Has Extended Tag", "False")
-                      << std::endl;
-        }
 
         switch (tag.DetermineType())
         {
@@ -494,6 +484,25 @@ void Program::PrintTag(Spc::File& file)
             default:
                 std::cout << Spc::FormatValue("Tag Type", "Unknown") 
                           << std::endl;
+        }
+
+        if (tag.ExtendedData() != nullptr)
+        {
+            if (tag.ExtendedData()->SpcFields().size() > 0)
+            {
+                std::cout << Spc::FormatValue("Has Extended Tag Data", "True")
+                          << std::endl;
+            }
+            else
+            {
+                std::cout << Spc::FormatValue("Has Extended Tag Data", "False")
+                          << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << Spc::FormatValue("Has Extended Tag Data", "False")
+                      << std::endl;
         }
 
         PrintField(tag.SongTitle());
@@ -527,10 +536,10 @@ void Program::PrintTag(Spc::File& file)
 
 int Program::PrintSpecifiedItems(Spc::File& file)
 {
-    PrintSectionHeader(file.Path(), 79);
+    PrintHeading(file.Path());
 
     if (headerPrintParam->IsSpecified())
-        PrintHeader(file);
+        PrintFileHeader(file);
 
     Spc::Id666::Tag tag = file.Tag();
 
@@ -607,7 +616,7 @@ int Program::PrintSpecifiedItems(Spc::File& file)
 
 int Program::EditSpecifiedItems(Spc::File& file)
 {
-    PrintSectionHeader(file.Path(), 79);
+    PrintHeading(file.Path());
 
     Spc::Id666::Tag tag = file.Tag();
 

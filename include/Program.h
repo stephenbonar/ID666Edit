@@ -114,9 +114,11 @@ private:
     /// @return The status code returned by the selected operation.
     int ProcessSpcFile(const std::string& path);
 
-    void PrintSectionHeader(std::string title);
+    void PrintLine(int length);
 
-    void PrintSectionHeader(std::string title, int length);
+    void PrintHeading(std::string title);
+
+    void PrintSubHeading(std::string title);
 
     void PrintField(Spc::Field* field);
 
@@ -140,7 +142,7 @@ private:
 
     /// @brief Prints the SPC file header.
     /// @param file The file stream to print the header from.
-    void PrintHeader(Spc::File& file);
+    void PrintFileHeader(Spc::File& file);
 
     /// @brief Prints all tag information, including the extended tag info.
     /// @param stream The file stream to print the tag from.
