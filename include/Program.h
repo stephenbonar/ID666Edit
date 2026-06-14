@@ -39,13 +39,18 @@ private:
     std::unique_ptr<CmdLine::MultiPosParam> spcFileParam;
     std::unique_ptr<CmdLine::ValueOption> printOption;
     std::unique_ptr<CmdLine::ValueOption> editOption;
+    std::unique_ptr<CmdLine::ValueOption> whereOption;
     std::unique_ptr<CmdLine::ValueOption> fileNameToTagOption;
     std::unique_ptr<CmdLine::ValueOption> tagToFileNameOption;
     std::unique_ptr<CmdLine::ValueOption> incrementOption;
     std::unique_ptr<CmdLine::Option> detailedOption;
     std::unique_ptr<CmdLine::Option> versionOption;
+    std::unique_ptr<CmdLine::OptionParam> idPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> hasTagPrintParam;
     std::unique_ptr<CmdLine::OptionParam> tagPrintParam;
     std::unique_ptr<CmdLine::OptionParam> headerPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> tagTypePrintParam;
+    std::unique_ptr<CmdLine::OptionParam> hasExtendedPrintParam;
     std::unique_ptr<CmdLine::OptionParam> songPrintParam;
     std::unique_ptr<CmdLine::OptionParam> gamePrintParam;
     std::unique_ptr<CmdLine::OptionParam> dumperPrintParam;
@@ -88,10 +93,43 @@ private:
     std::unique_ptr<CmdLine::OptionParam> mutedEditParam;
     std::unique_ptr<CmdLine::OptionParam> loopTimesEditParam;
     std::unique_ptr<CmdLine::OptionParam> preampEditParam;
+    std::unique_ptr<CmdLine::OptionParam> idWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> hasTagWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> tagWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> headerWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> tagTypeWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> hasExtendedWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> songWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> gameWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> dumperWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> commentsWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> dateWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> songLengthWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> fadeLengthWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> artistWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> channelWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> emulatorWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> titleWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> discWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> trackWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> publisherWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> copyrightWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> introLengthWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> loopLengthWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> endLengthWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> mutedWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> loopTimesWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> preampWhereParam;
     std::unique_ptr<CmdLine::Parser> parser;
 
     /// @brief Prints information about the program to the screen.
     void PrintVersion();
+
+    void DefinePosParams();
+
+    void DefineOptions();
+
+    void DefineOptionParams();
 
     /// @brief Defines the command line parameters the program supports.
     ///
@@ -99,7 +137,7 @@ private:
     /// interpret the command line arguments passed to the program. Once
     /// defined, the program can use the CmdLine::Parser to parse the arguments
     /// and automatically generate usage information for the program.
-    void DefineParameters();
+    void DefineParams();
 
     /// @brief Initializes the CmdLine::Parser.
     /// @param arguments The command line arguments to load into the parser.
@@ -108,6 +146,10 @@ private:
     /// @brief Selects the program's mode of operation based on the arguments.
     /// @return The status code returned by the selected mode upon completion.
     int SelectMode();
+
+    bool MatchWhereParam(CmdLine::OptionParam* param, std::string value);
+
+    bool MatchWhereParams(Spc::File& file);
 
     /// @brief Processes one SPC file using the mode selected by args.
     /// @param path The path to the SPC file to process.
@@ -141,12 +183,18 @@ private:
     int PrintSpcFileDetailed(Spc::File& file);
 
     /// @brief Prints the SPC file header.
-    /// @param file The file stream to print the header from.
-    void PrintFileHeader(Spc::File& file);
+    /// @param header The header to print.
+    void PrintFileHeader(Spc::Header& header);
 
     /// @brief Prints all tag information, including the extended tag info.
     /// @param stream The file stream to print the tag from.
     void PrintTag(Spc::File& file);
+
+    void PrintHasTag(Spc::Header& header);
+
+    void PrintTagType(Spc::Id666::Tag& tag);
+
+    void PrintHasExtended(Spc::Id666::Tag& tag);
 
     /// @brief Prints the text formattted ID666 tag.
     /// @param file The file stream to use for printing.
