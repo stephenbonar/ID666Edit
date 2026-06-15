@@ -666,11 +666,12 @@ void Program::PrintTag(Spc::File& file)
     Spc::Header header = file.Header();
     Spc::Id666::Tag tag = file.Tag();
 
-    if (header.containsTag.ToUInt32() == Spc::headerContainsTag)
+    PrintHasTag(header);
+    PrintTagType(tag);
+    PrintHasExtended(tag);
+
+    if (header.ContainsTag())
     {
-        PrintHasTag(header);
-        PrintTagType(tag);
-        PrintHasExtended(tag);
         PrintField(tag.SongTitle());
         PrintField(tag.GameTitle());
         PrintField(tag.DumperName());
