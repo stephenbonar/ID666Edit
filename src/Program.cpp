@@ -230,9 +230,9 @@ void Program::DefineOptionParams()
     whereOption->Add(artistWhereParam.get());
 
     CmdLine::OptionParam::Definition channelDef;
-    channelDef.name = "channel";
+    channelDef.name = "channels";
     channelDef.description = 
-        "Default channel state (0 = enabled, 1 = disabled)";
+        "Default disabled channels (0 = enabled, 1 = disabled)";
     channelPrintParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     channelEditParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     channelWhereParam = std::make_unique<CmdLine::OptionParam>(channelDef);
