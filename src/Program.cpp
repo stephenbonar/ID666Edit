@@ -650,6 +650,7 @@ int Program::PrintSpcFileDetailed(Spc::File& file)
     PrintHeading(file.Path());
     std::cout << std::endl;
     PrintFileHeader(header);
+    std::cout << std::endl;
     PrintTag(file);
     return 0;
 }
@@ -657,7 +658,7 @@ int Program::PrintSpcFileDetailed(Spc::File& file)
 void Program::PrintFileHeader(Spc::Header& header)
 {
     PrintSubHeading("SPC File Header");
-    std::cout << header.ToString() << std::endl;
+    std::cout << header.ToString();
 }
 
 void Program::PrintTag(Spc::File& file)
@@ -749,7 +750,7 @@ void Program::PrintHasExtended(Spc::Id666::Tag& tag)
     else
     {
         std::cout << Spc::FormatValue("Has Extended Tag Data", "False")
-                    << std::endl;
+                  << std::endl;
     }
 }
 
@@ -759,6 +760,7 @@ int Program::PrintSpecifiedItems(Spc::File& file)
     Spc::Id666::Tag tag = file.Tag();
 
     PrintHeading(file.Path());
+    std::cout << std::endl;
 
     if (headerPrintParam->IsSpecified())
         PrintFileHeader(header);
@@ -841,7 +843,7 @@ int Program::PrintSpecifiedItems(Spc::File& file)
     if (preampPrintParam->IsSpecified())
         PrintField(tag.PreampLevel());
 
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     return 0;
 }
@@ -849,6 +851,7 @@ int Program::PrintSpecifiedItems(Spc::File& file)
 int Program::EditSpecifiedItems(Spc::File& file)
 {
     PrintHeading(file.Path());
+    std::cout << std::endl;
 
     Spc::Id666::Tag tag = file.Tag();
 
@@ -982,7 +985,7 @@ int Program::EditSpecifiedItems(Spc::File& file)
         
     file.Save();
 
-    std::cout << std::endl;
+    //std::cout << std::endl;
         
     return 0;
 }
