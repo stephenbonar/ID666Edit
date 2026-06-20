@@ -18,7 +18,7 @@
 
 void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v1.0 Alpha" << std::endl;
+    std::cout << "ID666Edit v1.0 Beta" << std::endl;
     std::cout << "Copyright (C) 2026 Stephen Bonar" << std::endl << std::endl;
 }
 
@@ -410,8 +410,12 @@ int Program::SelectMode()
             }
         }
 
-        std::cout << "* indicates value is stored as extended tag data"
-                  << std::endl;
+        if (!tagToFileNameOption->IsSpecified() &&
+            !fileNameToTagOption->IsSpecified())
+        {
+            std::cout << "* indicates value is stored as extended tag data"
+                      << std::endl;
+        }
 
         return 0;
     }
@@ -552,10 +556,12 @@ int Program::ProcessSpcFile(const std::string& path)
     else if (fileNameToTagOption->IsSpecified())
     {
         file.FileNameToTag(fileNameToTagOption->Values()[0]);
+        return result;
     }
     else if (tagToFileNameOption->IsSpecified())
     {
         file.TagToFileName(tagToFileNameOption->Values()[0]);
+        return result;
     }
     else if (incrementOption->IsSpecified())
     {
@@ -855,135 +861,142 @@ int Program::EditSpecifiedItems(Spc::File& file)
 
     Spc::Id666::Tag tag = file.Tag();
 
-    if (songEditParam->IsSpecified())
+    try
     {
-        tag.SetSongTitle(songEditParam->Value());
-        PrintField(tag.SongTitle());
-    }
+        if (songEditParam->IsSpecified())
+        {
+            tag.SetSongTitle(songEditParam->Value());
+            PrintField(tag.SongTitle());
+        }
 
-    if (gameEditParam->IsSpecified())
+        if (gameEditParam->IsSpecified())
+        {
+            tag.SetGameTitle(gameEditParam->Value());
+            PrintField(tag.GameTitle());
+        }
+
+        if (dumperEditParam->IsSpecified())
+        {
+            tag.SetDumperName(dumperEditParam->Value());
+            PrintField(tag.DumperName());
+        }
+
+        if (commentsEditParam->IsSpecified())
+        {
+            tag.SetComments(commentsEditParam->Value());
+            PrintField(tag.Comments());
+        }
+
+        if (dateEditParam->IsSpecified())
+        {
+            tag.SetDateDumped(dateEditParam->Value());
+            PrintField(tag.DateDumped());
+        }
+
+        if (songLengthEditParam->IsSpecified())
+        {
+            tag.SetSongLength(songLengthEditParam->Value());
+            PrintField(tag.SongLength());
+        }
+
+        if (fadeLengthEditParam->IsSpecified())
+        {
+            tag.SetFadeLength(fadeLengthEditParam->Value());
+            PrintField(tag.FadeLength());
+        }
+
+        if (artistEditParam->IsSpecified())
+        {
+            tag.SetSongArtist(artistEditParam->Value());
+            PrintField(tag.SongArtist());
+        }
+
+        if (channelEditParam->IsSpecified())
+        {
+            tag.SetDefaultDisabledChannels(channelEditParam->Value());
+            PrintField(tag.DefaultDisabledChannels());
+        }
+
+        if (emulatorEditParam->IsSpecified())
+        {
+            tag.SetEmulatorUsed(emulatorEditParam->Value());
+            PrintField(tag.EmulatorUsed());
+        }
+
+        if (titleEditParam->IsSpecified())
+        {
+            tag.SetOstTitle(titleEditParam->Value());
+            PrintField(tag.OstTitle());
+        }
+
+        if (discEditParam->IsSpecified())
+        {
+            tag.SetOstDisc(discEditParam->Value());
+            PrintField(tag.OstDisc());
+        }
+
+        if (trackEditParam->IsSpecified())
+        {
+            tag.SetOstTrack(trackEditParam->Value());
+            PrintField(tag.OstTrack());
+        }
+
+        if (publisherEditParam->IsSpecified())
+        {
+            tag.SetPublisherName(publisherEditParam->Value());
+            PrintField(tag.PublisherName());
+        }
+
+        if (copyrightEditParam->IsSpecified())
+        {
+            tag.SetCopyrightYear(copyrightEditParam->Value());
+            PrintField(tag.CopyrightYear());
+        }
+
+        if (introLengthEditParam->IsSpecified())
+        {
+            tag.SetIntroLength(introLengthEditParam->Value());
+            PrintField(tag.IntroLength());
+        }
+
+        if (loopLengthEditParam->IsSpecified())
+        {
+            tag.SetLoopLength(loopLengthEditParam->Value());
+            PrintField(tag.LoopLength());
+        }
+
+        if (endLengthEditParam->IsSpecified())
+        {
+            tag.SetEndLength(endLengthEditParam->Value());
+            PrintField(tag.EndLength());
+        }
+
+        if (mutedEditParam->IsSpecified())
+        {
+            tag.SetMutedVoices(mutedEditParam->Value());
+            PrintField(tag.MutedVoices());
+        }
+
+        if (loopTimesEditParam->IsSpecified())
+        {
+            tag.SetLoopTimes(loopTimesEditParam->Value());
+            PrintField(tag.LoopTimes());
+        }
+
+        if (preampEditParam->IsSpecified())
+        {
+            tag.SetPreampLevel(preampEditParam->Value());
+            PrintField(tag.PreampLevel());
+        }
+
+        file.SetTag(tag);
+        file.Save();
+    }
+    catch (const std::exception& e)
     {
-        tag.SetGameTitle(gameEditParam->Value());
-        PrintField(tag.GameTitle());
+        std::cerr << "ERROR: unable to edit tag: " << e.what() << std::endl;
+        return 1;
     }
-
-    if (dumperEditParam->IsSpecified())
-    {
-        tag.SetDumperName(dumperEditParam->Value());
-        PrintField(tag.DumperName());
-    }
-
-    if (commentsEditParam->IsSpecified())
-    {
-        tag.SetComments(commentsEditParam->Value());
-        PrintField(tag.Comments());
-    }
-
-    if (dateEditParam->IsSpecified())
-    {
-        tag.SetDateDumped(dateEditParam->Value());
-        PrintField(tag.DateDumped());
-    }
-
-    if (songLengthEditParam->IsSpecified())
-    {
-        tag.SetSongLength(songLengthEditParam->Value());
-        PrintField(tag.SongLength());
-    }
-
-    if (fadeLengthEditParam->IsSpecified())
-    {
-        tag.SetFadeLength(fadeLengthEditParam->Value());
-        PrintField(tag.FadeLength());
-    }
-
-    if (artistEditParam->IsSpecified())
-    {
-        tag.SetSongArtist(artistEditParam->Value());
-        PrintField(tag.SongArtist());
-    }
-
-    if (channelEditParam->IsSpecified())
-    {
-        tag.SetDefaultDisabledChannels(channelEditParam->Value());
-        PrintField(tag.DefaultDisabledChannels());
-    }
-
-    if (emulatorEditParam->IsSpecified())
-    {
-        tag.SetEmulatorUsed(emulatorEditParam->Value());
-        PrintField(tag.EmulatorUsed());
-    }
-
-    if (titleEditParam->IsSpecified())
-    {
-        tag.SetOstTitle(titleEditParam->Value());
-        PrintField(tag.OstTitle());
-    }
-
-    if (discEditParam->IsSpecified())
-    {
-        tag.SetOstDisc(discEditParam->Value());
-        PrintField(tag.OstDisc());
-    }
-
-    if (trackEditParam->IsSpecified())
-    {
-        tag.SetOstTrack(trackEditParam->Value());
-        PrintField(tag.OstTrack());
-    }
-
-    if (publisherEditParam->IsSpecified())
-    {
-        tag.SetPublisherName(publisherEditParam->Value());
-        PrintField(tag.PublisherName());
-    }
-
-    if (copyrightEditParam->IsSpecified())
-    {
-        tag.SetCopyrightYear(copyrightEditParam->Value());
-        PrintField(tag.CopyrightYear());
-    }
-
-    if (introLengthEditParam->IsSpecified())
-    {
-        tag.SetIntroLength(introLengthEditParam->Value());
-        PrintField(tag.IntroLength());
-    }
-
-    if (loopLengthEditParam->IsSpecified())
-    {
-        tag.SetLoopLength(loopLengthEditParam->Value());
-        PrintField(tag.LoopLength());
-    }
-
-    if (endLengthEditParam->IsSpecified())
-    {
-        tag.SetEndLength(endLengthEditParam->Value());
-        PrintField(tag.EndLength());
-    }
-
-    if (mutedEditParam->IsSpecified())
-    {
-        tag.SetMutedVoices(mutedEditParam->Value());
-        PrintField(tag.MutedVoices());
-    }
-
-    if (loopTimesEditParam->IsSpecified())
-    {
-        tag.SetLoopTimes(loopTimesEditParam->Value());
-        PrintField(tag.LoopTimes());
-    }
-
-    if (preampEditParam->IsSpecified())
-    {
-        tag.SetPreampLevel(preampEditParam->Value());
-        PrintField(tag.PreampLevel());
-    }
-
-    file.SetTag(tag);
-        
-    file.Save();
 
     //std::cout << std::endl;
         
@@ -993,10 +1006,11 @@ int Program::EditSpecifiedItems(Spc::File& file)
 int Program::IncrementTrack(Spc::File& file)
 {
     Spc::Id666::Tag tag = file.Tag();
-    uint8_t track = tag.OstTrack().ToUInt32();
+    uint32_t track = tag.OstTrack().ToUInt32();
     int incrementAmount = std::stoi(incrementOption->Values()[0]);
     track += incrementAmount;
     tag.SetOstTrack(std::to_string(track));
+    PrintField(tag.OstTrack());
     file.SetTag(tag);
     file.Save();
     return 0;

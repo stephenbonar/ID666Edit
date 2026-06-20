@@ -16,7 +16,7 @@
 
 #include "MainWindow.h"
  
-MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit v1.0 Alpha")
+MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit v1.0 Beta")
 {
     panel = new wxPanel(this);
     CreateStatusBar();
@@ -475,7 +475,7 @@ void MainWindow::OnExit(wxCommandEvent& event)
 
 void MainWindow::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("v0.9.0", "About ID666Edit", wxOK | wxICON_INFORMATION);
+    wxMessageBox("v1.0.0", "About ID666Edit", wxOK | wxICON_INFORMATION);
 }
 
 void MainWindow::OnOpen(wxCommandEvent& event)
@@ -516,117 +516,125 @@ void MainWindow::OnSave(wxCommandEvent& event)
     {
         Spc::Id666::Tag tag = file->Tag();
 
-        if (songTitleTextBox->GetValue() != "<multiple values>")
+        try
         {
-            tag.SetSongTitle(songTitleTextBox->GetValue().ToStdString());
-        }
+            if (songTitleTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetSongTitle(songTitleTextBox->GetValue().ToStdString());
+            }
 
-        if (gameTitleTextBox->GetValue() != "<multiple values>")
+            if (gameTitleTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetGameTitle(gameTitleTextBox->GetValue().ToStdString());
+            }
+
+            if (dumperNameTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetDumperName(dumperNameTextBox->GetValue().ToStdString());
+            }
+
+            if (commentsTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetComments(commentsTextBox->GetValue().ToStdString());
+            }
+
+            if (dateDumpedTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetDateDumped(dateDumpedTextBox->GetValue().ToStdString());
+            }
+
+            if (songLengthTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetSongLength(songLengthTextBox->GetValue().ToStdString());
+            }
+
+            if (fadeLengthTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetFadeLength(fadeLengthTextBox->GetValue().ToStdString());
+            }
+
+            if (songArtistTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetSongArtist(songArtistTextBox->GetValue().ToStdString());
+            }
+
+            if (defaultChannelStateTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetDefaultDisabledChannels(
+                    defaultChannelStateTextBox->GetValue().ToStdString());
+            }
+
+            if (emulatorUsedTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetEmulatorUsed(
+                    emulatorUsedTextBox->GetValue().ToStdString());
+            }
+
+            if (ostTitleTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetOstTitle(ostTitleTextBox->GetValue().ToStdString());
+            }
+
+            if (ostDiscTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetOstDisc(ostDiscTextBox->GetValue().ToStdString());
+            }
+
+            if (ostTrackTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetOstTrack(ostTrackTextBox->GetValue().ToStdString());
+            }
+
+            if (publisherNameTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetPublisherName(
+                    publisherNameTextBox->GetValue().ToStdString());
+            }
+
+            if (copyrightYearTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetCopyrightYear(
+                    copyrightYearTextBox->GetValue().ToStdString());
+            }
+
+            if (introLengthTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetIntroLength(introLengthTextBox->GetValue().ToStdString());
+            }
+
+            if (loopLengthTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetLoopLength(loopLengthTextBox->GetValue().ToStdString());
+            }
+
+            if (endLengthTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetEndLength(endLengthTextBox->GetValue().ToStdString());
+            }
+
+            if (mutedVoicesTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetMutedVoices(mutedVoicesTextBox->GetValue().ToStdString());
+            }
+
+            if (loopTimesTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetLoopTimes(loopTimesTextBox->GetValue().ToStdString());
+            }
+
+            if (preampLevelTextBox->GetValue() != "<multiple values>")
+            {
+                tag.SetPreampLevel(preampLevelTextBox->GetValue().ToStdString());
+            }
+
+            file->SetTag(tag);
+            file->Save();
+        }
+        catch (const std::exception& ex)
         {
-            tag.SetGameTitle(gameTitleTextBox->GetValue().ToStdString());
+            wxMessageBox(ex.what(), "Error Saving File", wxOK | wxICON_ERROR);
+            continue;
         }
-
-        if (dumperNameTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetDumperName(dumperNameTextBox->GetValue().ToStdString());
-        }
-
-        if (commentsTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetComments(commentsTextBox->GetValue().ToStdString());
-        }
-
-        if (dateDumpedTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetDateDumped(dateDumpedTextBox->GetValue().ToStdString());
-        }
-
-        if (songLengthTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetSongLength(songLengthTextBox->GetValue().ToStdString());
-        }
-
-        if (fadeLengthTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetFadeLength(fadeLengthTextBox->GetValue().ToStdString());
-        }
-
-        if (songArtistTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetSongArtist(songArtistTextBox->GetValue().ToStdString());
-        }
-
-        if (defaultChannelStateTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetDefaultDisabledChannels(
-                defaultChannelStateTextBox->GetValue().ToStdString());
-        }
-
-        if (emulatorUsedTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetEmulatorUsed(
-                emulatorUsedTextBox->GetValue().ToStdString());
-        }
-
-        if (ostTitleTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetOstTitle(ostTitleTextBox->GetValue().ToStdString());
-        }
-
-        if (ostDiscTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetOstDisc(ostDiscTextBox->GetValue().ToStdString());
-        }
-
-        if (ostTrackTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetOstTrack(ostTrackTextBox->GetValue().ToStdString());
-        }
-
-        if (publisherNameTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetPublisherName(
-                publisherNameTextBox->GetValue().ToStdString());
-        }
-
-        if (copyrightYearTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetCopyrightYear(
-                copyrightYearTextBox->GetValue().ToStdString());
-        }
-
-        if (introLengthTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetIntroLength(introLengthTextBox->GetValue().ToStdString());
-        }
-
-        if (loopLengthTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetLoopLength(loopLengthTextBox->GetValue().ToStdString());
-        }
-
-        if (endLengthTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetEndLength(endLengthTextBox->GetValue().ToStdString());
-        }
-
-        if (mutedVoicesTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetMutedVoices(mutedVoicesTextBox->GetValue().ToStdString());
-        }
-
-        if (loopTimesTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetLoopTimes(loopTimesTextBox->GetValue().ToStdString());
-        }
-
-        if (preampLevelTextBox->GetValue() != "<multiple values>")
-        {
-            tag.SetPreampLevel(preampLevelTextBox->GetValue().ToStdString());
-        }
-
-        file->SetTag(tag);
-        file->Save();
     }
 }
 

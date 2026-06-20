@@ -1,6 +1,6 @@
 # CMakeLists.txt - Builds the ID666Edit application.
 #
-# Copyright (C) 2025 Stephen Bonar
+# Copyright (C) 2026 Stephen Bonar
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,7 +17,37 @@
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include)
 
+if(WIN32)
+    set(WINDOWS_COMPANY_NAME "Stephen Bonar")
+    set(WINDOWS_COPYRIGHT "Copyright (C) 2026 Stephen Bonar")
+    set(WINDOWS_PRODUCT_NAME "ID666Edit")
+
+    function(add_windows_resource_metadata target file_description)
+        set(WINDOWS_FILE_DESCRIPTION "${file_description}")
+        set(WINDOWS_INTERNAL_NAME "${target}")
+        set(WINDOWS_ORIGINAL_FILENAME "${target}.exe")
+
+        configure_file(
+            ${CMAKE_CURRENT_SOURCE_DIR}/WindowsVersionInfo.rc.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${target}_WindowsVersionInfo.rc
+            @ONLY
+        )
+
+        target_sources(${target} PRIVATE
+            ${CMAKE_CURRENT_BINARY_DIR}/${target}_WindowsVersionInfo.rc
+        )
+
+        if(MSVC)
+            target_link_options(${target} PRIVATE /MANIFEST:NO)
+        endif()
+    endfunction()
+endif()
+
 add_executable(id666editc main.cpp Program.cpp)
+
+if(WIN32)
+    add_windows_resource_metadata(id666editc "ID666Edit CLI")
+endif()
 
 if(BUILD_GUI)
     if (WIN32)
@@ -39,6 +69,10 @@ if(BUILD_GUI)
     target_include_directories(ID666Edit PUBLIC ${INCLUDES})
 
     target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
+
+    if(WIN32)
+        add_windows_resource_metadata(ID666Edit "ID666Edit SPC Tag Editor")
+    endif()
 endif()
 
 target_include_directories(id666editc PUBLIC ${INCLUDES})

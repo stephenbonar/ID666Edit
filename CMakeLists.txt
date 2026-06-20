@@ -14,30 +14,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-cmake_minimum_required(VERSION 3.10.0)
+# Only support CMake 3.15 or higher as this supports the CMP0091 policy for 
+# controlling the MSVC runtime library linkage.
+cmake_minimum_required(VERSION 3.15.0)
 
 # On Windows, force a consistent static CRT model for all targets,
 # including C-based third-party deps (png/zlib/expat) and C++ code.
 # CMP0091/CMAKE_MSVC_RUNTIME_LIBRARY must be set before project().
-if (WIN32 AND POLICY CMP0091)
+if (WIN32)
     cmake_policy(SET CMP0091 NEW)
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 
+# Define the project information. 
 project(ID666Edit VERSION 1.0.0 LANGUAGES C CXX)
 
-# Fallback for older CMake versions that don't support CMP0091.
-if (MSVC AND NOT POLICY CMP0091)
-    foreach(_cfg DEBUG RELEASE RELWITHDEBINFO MINSIZEREL)
-        string(TOUPPER "${_cfg}" _cfg_upper)
-        if (_cfg STREQUAL "DEBUG")
-            set(CMAKE_C_FLAGS_${_cfg_upper} "${CMAKE_C_FLAGS_${_cfg_upper}} /MTd")
-            set(CMAKE_CXX_FLAGS_${_cfg_upper} "${CMAKE_CXX_FLAGS_${_cfg_upper}} /MTd")
-        else()
-            set(CMAKE_C_FLAGS_${_cfg_upper} "${CMAKE_C_FLAGS_${_cfg_upper}} /MT")
-            set(CMAKE_CXX_FLAGS_${_cfg_upper} "${CMAKE_CXX_FLAGS_${_cfg_upper}} /MT")
-        endif()
-    endforeach()
+# On Windows, tell CMake to enable the resource compiler so we can embed
+# version info and DPI awareness into the executable. 
+if(WIN32)
+    enable_language(RC)
 endif()
 
 # Specify the C++ standard.
