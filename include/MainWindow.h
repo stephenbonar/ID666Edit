@@ -27,11 +27,12 @@
 #include "FileNameToTagWindow.h"
 #include "TagToFileNameWindow.h"
 #include "IncrementTrackWindow.h"
+#include "Version.h"
 
 class MainWindow : public wxFrame
 {
 public:
-    MainWindow();
+    MainWindow(wxString version);
 private:
     wxPanel* panel;
     wxBoxSizer* leftColumnSizer;
@@ -107,6 +108,7 @@ private:
     wxTextCtrl* mutedVoicesTextBox;
     wxTextCtrl* loopTimesTextBox;
     wxTextCtrl* preampLevelTextBox;
+    wxString version;
     
     std::vector<std::shared_ptr<Spc::File>> files;
     std::vector<std::shared_ptr<Spc::File>> selectedFiles;

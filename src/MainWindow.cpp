@@ -16,7 +16,8 @@
 
 #include "MainWindow.h"
  
-MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "ID666Edit v1.0 Beta")
+MainWindow::MainWindow(wxString version) : 
+    wxFrame(nullptr, wxID_ANY, version), version{ version }
 {
     panel = new wxPanel(this);
     CreateStatusBar();
@@ -475,7 +476,17 @@ void MainWindow::OnExit(wxCommandEvent& event)
 
 void MainWindow::OnAbout(wxCommandEvent& event)
 {
-    wxMessageBox("v1.0.0", "About ID666Edit", wxOK | wxICON_INFORMATION);
+    wxString aboutMessage;
+    aboutMessage << version << "\n"
+                 << PROGRAM_COPYRIGHT << "\n\n"
+                 << "Licensed under the Apache License 2.0.\n\n"
+                 << "This program includes:\n\n"
+                 << "LibCppBinary - Apache License 2.0\n"
+                 << "LibCppSpc - Apache License 2.0\n"
+                 << "wxWidgets - wxWindows Library Licence\n\n"
+                 << "See the licenses directory for full license texts.";
+
+    wxMessageBox(aboutMessage, "About", wxOK | wxICON_INFORMATION, this);
 }
 
 void MainWindow::OnOpen(wxCommandEvent& event)

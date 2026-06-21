@@ -15,11 +15,13 @@
 // limitations under the License.
 
 #include "Program.h"
+#include "Version.h"
 
 void Program::PrintVersion()
 {
-    std::cout << "ID666Edit v1.0 Beta" << std::endl;
-    std::cout << "Copyright (C) 2026 Stephen Bonar" << std::endl << std::endl;
+    std::cout << PROGRAM_NAME << " v" << PROGRAM_VERSION << " " 
+              << PROGRAM_RELEASE << std::endl << PROGRAM_COPYRIGHT 
+              << std::endl << std::endl;
 }
 
 void Program::DefinePosParams()

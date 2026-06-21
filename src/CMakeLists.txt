@@ -14,13 +14,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+configure_file(${PROJECT_SOURCE_DIR}/include/Version.h.in
+               ${CMAKE_BINARY_DIR}/Version.h
+               @ONLY)
+
 set(INCLUDES 
-    ${PROJECT_SOURCE_DIR}/include)
+    ${PROJECT_SOURCE_DIR}/include
+    ${CMAKE_BINARY_DIR})
 
 if(WIN32)
-    set(WINDOWS_COMPANY_NAME "Stephen Bonar")
-    set(WINDOWS_COPYRIGHT "Copyright (C) 2026 Stephen Bonar")
-    set(WINDOWS_PRODUCT_NAME "ID666Edit")
+    #set(WINDOWS_COMPANY_NAME "Stephen Bonar")
+    #set(WINDOWS_COPYRIGHT "Copyright (C) 2026 Stephen Bonar")
+    #set(WINDOWS_PRODUCT_NAME "ID666Edit")
 
     function(add_windows_resource_metadata target file_description)
         set(WINDOWS_FILE_DESCRIPTION "${file_description}")
@@ -28,13 +33,13 @@ if(WIN32)
         set(WINDOWS_ORIGINAL_FILENAME "${target}.exe")
 
         configure_file(
-            ${CMAKE_CURRENT_SOURCE_DIR}/WindowsVersionInfo.rc.in
-            ${CMAKE_CURRENT_BINARY_DIR}/${target}_WindowsVersionInfo.rc
+            ${PROJECT_SOURCE_DIR}/resources/windows/ID666Edit.rc.in
+            ${CMAKE_BINARY_DIR}/${target}.rc
             @ONLY
         )
 
         target_sources(${target} PRIVATE
-            ${CMAKE_CURRENT_BINARY_DIR}/${target}_WindowsVersionInfo.rc
+            ${CMAKE_BINARY_DIR}/${target}.rc
         )
 
         if(MSVC)

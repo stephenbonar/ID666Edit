@@ -29,6 +29,12 @@ endif()
 # Define the project information. 
 project(ID666Edit VERSION 1.0.0 LANGUAGES C CXX)
 
+# Define additional metadata about the program. This will be displayed in the
+# program and configured into the program manifests.
+set(PROGRAM_AUTHOR "Stephen Bonar")
+set(PROGRAM_COPYRIGHT "Copyright (C) 2026 Stephen Bonar")
+set(PROGRAM_RELEASE "Beta")
+
 # On Windows, tell CMake to enable the resource compiler so we can embed
 # version info and DPI awareness into the executable. 
 if(WIN32)

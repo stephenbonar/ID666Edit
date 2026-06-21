@@ -22,13 +22,13 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "CompanyName", "@WINDOWS_COMPANY_NAME@\0"
+            VALUE "CompanyName", "@PROGRAM_AUTHOR@\0"
             VALUE "FileDescription", "@WINDOWS_FILE_DESCRIPTION@\0"
             VALUE "FileVersion", VER_FILEVERSION_STR
             VALUE "InternalName", "@WINDOWS_INTERNAL_NAME@\0"
-            VALUE "LegalCopyright", "@WINDOWS_COPYRIGHT@\0"
+            VALUE "LegalCopyright", "@PROGRAM_COPYRIGHT@\0"
             VALUE "OriginalFilename", "@WINDOWS_ORIGINAL_FILENAME@\0"
-            VALUE "ProductName", "@WINDOWS_PRODUCT_NAME@\0"
+            VALUE "ProductName", "@PROJECT_NAME@\0"
             VALUE "ProductVersion", VER_PRODUCTVERSION_STR
         END
     END
@@ -38,4 +38,4 @@ BEGIN
     END
 END
 
-1 RT_MANIFEST "@CMAKE_CURRENT_SOURCE_DIR@/WindowsDpiAware.manifest"
+1 RT_MANIFEST "@PROJECT_SOURCE_DIR@/resources/windows/ID666Edit.manifest"

@@ -1,4 +1,4 @@
-// ID666Edit.cpp - Defines the main GUI program class, ID666Edit.
+// Version.h - Defines the version information constants for the program.
 //
 // Copyright (C) 2026 Stephen Bonar
 //
@@ -14,19 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "ID666Edit.h"
-#include "Version.h"
-
-bool ID666Edit::OnInit()
-{
-    wxString versionString = wxString::Format("%s v%s %s",
-                                              PROGRAM_NAME, 
-                                              PROGRAM_VERSION, 
-                                              PROGRAM_RELEASE);
-    MainWindow *window = new MainWindow(versionString);
-    window->Show();
-    return true;
-}
-
-// Defines the appropriate entry point for the current platform.
-wxIMPLEMENT_APP(ID666Edit);
+#define PROGRAM_NAME "@PROJECT_NAME@"
+#define PROGRAM_VERSION "@PROJECT_VERSION@"
+#define PROGRAM_AUTHOR "@PROGRAM_AUTHOR@"
+#define PROGRAM_COPYRIGHT "@PROGRAM_COPYRIGHT@"
+#define PROGRAM_RELEASE "@PROGRAM_RELEASE@"
