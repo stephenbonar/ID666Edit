@@ -19,6 +19,7 @@
 MainWindow::MainWindow(wxString version) : 
     wxFrame(nullptr, wxID_ANY, version), version{ version }
 {
+    SetIcon(wxICON(IDI_MAIN));
     panel = new wxPanel(this);
     CreateStatusBar();
     CreateMenuBar();

@@ -38,4 +38,6 @@ BEGIN
     END
 END
 
+IDI_MAIN ICON "@PROJECT_SOURCE_DIR@/resources/icons/ID666Edit.ico"
+
 1 RT_MANIFEST "@PROJECT_SOURCE_DIR@/resources/windows/ID666Edit.manifest"
