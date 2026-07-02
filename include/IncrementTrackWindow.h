@@ -22,9 +22,13 @@
 #include <wx/wx.h>
 #include <LibCppSpc.h>
 
+/// @brief A dialog window for incrementing the track number in ID666 tag data.
 class IncrementTrackWindow : public wxDialog
 {
 public:
+    /// @brief Constructs an IncrementTrackWindow.
+    /// @param parent The parent window.
+    /// @param selectedFiles A reference to the vector of selected files.
     IncrementTrackWindow(
         wxWindow* parent, 
         std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
@@ -32,6 +36,8 @@ private:
         wxTextCtrl* startTrackTextCtrl;
         std::vector<std::shared_ptr<Spc::File>>& selectedFiles;
 
+        /// @brief Click handler for the "OK" button.
+        /// @param event The command event.
         void OnOk(wxCommandEvent& event);
 };
 

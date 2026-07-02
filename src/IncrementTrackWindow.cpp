@@ -19,12 +19,18 @@
 IncrementTrackWindow::IncrementTrackWindow(
     wxWindow* parent, 
     std::vector<std::shared_ptr<Spc::File>>& selectedFiles) 
-    : wxDialog(parent, wxID_ANY, "Increment Track Numbers", wxDefaultPosition, wxSize(300, 150)),
-      selectedFiles(selectedFiles)
+        : wxDialog(parent, wxID_ANY, "Increment Tr ack Numbers", 
+                   wxDefaultPosition, wxSize(300, 150)),
+          selectedFiles(selectedFiles)
 {
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    wxStaticText* instructionText = new wxStaticText(this, wxID_ANY, "Enter increment amount");
+    wxString text;
+    text << "Increment the track numbers by the specified amount.\n"
+         << "For instance, if you enter 2, each track number will be\n"
+         << "increased by 2.\n";
+
+    wxStaticText* instructionText = new wxStaticText(this, wxID_ANY, text);
     mainSizer->Add(instructionText, 0, wxALL | wxEXPAND, 10);
 
     startTrackTextCtrl = new wxTextCtrl(this, wxID_ANY);
@@ -50,7 +56,8 @@ void IncrementTrackWindow::OnOk(wxCommandEvent& event)
 
     if (!startTrackTextCtrl->GetValue().ToLong(&increment) || increment <= 0)
     {
-        wxMessageBox("Please enter a valid positive integer for the increment amount.", "Invalid Input", wxOK | wxICON_ERROR);
+        wxMessageBox("Please enter a valid positive integer", "Invalid Input",
+                     wxOK | wxICON_ERROR);
         return;
     }
 

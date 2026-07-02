@@ -22,9 +22,13 @@
 #include <wx/wx.h>
 #include <LibCppSpc.h>
 
+/// @brief A dialog window for converting file names to ID666 tag data.
 class FileNameToTagWindow : public wxDialog
 {
 public:
+    /// @brief Constructs a FileNameToTagWindow.
+    /// @param parent The parent window.
+    /// @param selectedFiles A reference to the vector of selected files.
     FileNameToTagWindow(
         wxWindow* parent, 
         std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
@@ -32,6 +36,8 @@ private:
         wxTextCtrl* patternTextCtrl;
         std::vector<std::shared_ptr<Spc::File>>& selectedFiles;
 
+        /// @brief Click handler for the "OK" button. 
+        /// @param event The command event.
         void OnOk(wxCommandEvent& event);
 };
 

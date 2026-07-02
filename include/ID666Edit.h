@@ -20,9 +20,12 @@
 #include <wx/wx.h>
 #include "MainWindow.h"
 
+/// @brief The main GUI program class for ID666Edit.
 class ID666Edit : public wxApp
 {
 public:
+    /// @brief Initializes the application.
+    /// @return True if initialization was successful, false otherwise.
     bool OnInit() override;
 };
 

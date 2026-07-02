@@ -23,21 +23,25 @@ TagToFileNameWindow::TagToFileNameWindow(
         wxDialog(parent, wxID_ANY, "Tag to Filename", 
                  wxDefaultPosition, wxSize(400, 300))
 {
-    // Create a vertical box sizer to hold the dialog contents
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
-    // Add a static text label
-    wxStaticText* instructionLabel = new wxStaticText
-    {
-        this, wxID_ANY, "Enter the pattern to save tag values to the filenames"
-    };
+    wxString text;
+    text << "Enter a filename pattern to populate the filename.\n\n"
+         << "Example: %track% - %song%.spc\n\n"
+         << "This will create a copy of the file with the new filename.\n\n"
+         << "Available placeholders:\n"
+         << "%song% - The song title\n"
+         << "%game% - The game title\n"
+         << "%artist% - The song artist\n"
+         << "%disc% - The disc number\n"
+         << "%track% - The track number\n";
+
+    wxStaticText* instructionLabel = new wxStaticText{ this, wxID_ANY, text };
     mainSizer->Add(instructionLabel, 0, wxALL | wxEXPAND, 10);
 
-    // Add a text control for entering the pattern
-    patternTextCtrl = new wxTextCtrl(this, wxID_ANY); // Store the text control as a member
+    patternTextCtrl = new wxTextCtrl(this, wxID_ANY);
     mainSizer->Add(patternTextCtrl, 0, wxALL | wxEXPAND, 10);
 
-    // Add OK and Cancel buttons
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* okButton = new wxButton(this, wxID_OK, "OK");
     wxButton* cancelButton = new wxButton(this, wxID_CANCEL, "Cancel");
@@ -45,10 +49,8 @@ TagToFileNameWindow::TagToFileNameWindow(
     buttonSizer->Add(cancelButton, 0, wxALL, 5);
     mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER);
 
-    // Bind the OK button click event to a handler
     okButton->Bind(wxEVT_BUTTON, &TagToFileNameWindow::OnOk, this);
 
-    // Set the sizer for the dialog
     SetSizer(mainSizer);
     mainSizer->Fit(this);
 }
@@ -63,6 +65,5 @@ void TagToFileNameWindow::OnOk(wxCommandEvent& event)
         file->Save();
     }
 
-    // Close the dialog with wxID_OK
     EndModal(wxID_OK);
 }
