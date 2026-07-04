@@ -15,6 +15,9 @@
 // limitations under the License.
 
 #include "MainWindow.h"
+
+constexpr int labelWidth{ 150 };
+constexpr int valueWidth{ 250 };
  
 MainWindow::MainWindow(wxString version) : 
     wxFrame(nullptr, wxID_ANY, version), version{ version }
@@ -28,7 +31,7 @@ MainWindow::MainWindow(wxString version) :
     CreateValueText();
     CreateTextBoxes();
     CreateFileListView();
-    CreateHeaderLayout();
+    //CreateHeaderLayout();
     CreateTagLayout();
     CreatePanelLayout();
     BindEvents();
@@ -37,12 +40,14 @@ MainWindow::MainWindow(wxString version) :
 
 void MainWindow::CreateMenuBar()
 {
-    wxMenu *fileMenu = new wxMenu;
+    fileMenu = new wxMenu;
     fileMenu->Append(WidgetID::Open, "&Open...\tCtrl+O", "Open .spc files");
     fileMenu->Append(WidgetID::Save, "&Save...\tCtrl+S", 
                      "Saves changes to the .spc files");
+    fileMenu->AppendSeparator();
+    fileMenu->Append(wxID_EXIT, "E&xit\tAlt+F4", "Exit the application");
 
-    wxMenu *editMenu = new wxMenu;
+    editMenu = new wxMenu;
     editMenu->Append(WidgetID::FileNameToTag, "Filename to Tag...\tCtrl+F", 
                      "Set tag values from filename using a pattern");
     editMenu->Append(WidgetID::TagToFileName, "Tag to Filename...\tCtrl+T", 
@@ -52,14 +57,15 @@ void MainWindow::CreateMenuBar()
                      "Increment Track Numbers...\tCtrl+I", 
                      "Increment OST track numbers by a specified amount");
 
-    wxMenu *helpMenu = new wxMenu;
+    helpMenu = new wxMenu;
     helpMenu->Append(wxID_ABOUT, "&About\tF1", 
                      "Show information about the application");
 
-    wxMenuBar *menuBar = new wxMenuBar;
+    menuBar = new wxMenuBar;
     menuBar->Append(fileMenu, "&File");
     menuBar->Append(editMenu, "&Edit");
     menuBar->Append(helpMenu, "&Help");
+    menuBar->Enable(WidgetID::Save, false);
 
     SetMenuBar(menuBar);
 }
@@ -68,11 +74,11 @@ void MainWindow::CreateSizers()
 {
     leftColumnSizer = new wxBoxSizer{ wxVERTICAL };
     rightColumnSizer = new wxBoxSizer{ wxVERTICAL };
-    headerColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
-    headerColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
+    //headerColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
+    //headerColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
     tagColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
     tagColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
-    headerSizer = new wxStaticBoxSizer{  wxHORIZONTAL, panel, "Header" };
+    //headerSizer = new wxStaticBoxSizer{  wxHORIZONTAL, panel, "Header" };
     tagSizer = new wxStaticBoxSizer{ wxHORIZONTAL, panel, "Tag" };
     panelSizer = new wxBoxSizer{ wxHORIZONTAL };
     windowSizer = new wxBoxSizer{ wxVERTICAL };
@@ -80,16 +86,16 @@ void MainWindow::CreateSizers()
 
 void MainWindow::CreateLabelText()
 {
-    idLabel = new wxStaticText{ panel, wxID_ANY, "ID:" };
-    containsTagLabel = new wxStaticText{ panel, wxID_ANY, "Contains Tag:" };
+    //idLabel = new wxStaticText{ panel, wxID_ANY, "ID:" };
+    //containsTagLabel = new wxStaticText{ panel, wxID_ANY, "Contains Tag:" };
     tagTypeLabel = new wxStaticText{ panel, wxID_ANY, "Tag Type:" };
-    versionMinorLabel = new wxStaticText{ panel, wxID_ANY, "Version Minor:" };
-    pcRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PC Register:" };
-    aRegisterLabel = new wxStaticText{ panel, wxID_ANY, "A Register:" };
-    xRegisterLabel = new wxStaticText{ panel, wxID_ANY, "X Register:" };
-    yRegisterLabel = new wxStaticText{ panel, wxID_ANY, "Y Register:" };
-    pswRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PSW Register:" };
-    spRegisterLabel = new wxStaticText{ panel, wxID_ANY, "SP Register:" };
+    //versionMinorLabel = new wxStaticText{ panel, wxID_ANY, "Version Minor:" };
+    //pcRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PC Register:" };
+    //aRegisterLabel = new wxStaticText{ panel, wxID_ANY, "A Register:" };
+    //xRegisterLabel = new wxStaticText{ panel, wxID_ANY, "X Register:" };
+    //yRegisterLabel = new wxStaticText{ panel, wxID_ANY, "Y Register:" };
+    //pswRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PSW Register:" };
+    //spRegisterLabel = new wxStaticText{ panel, wxID_ANY, "SP Register:" };
     songTitleLabel = new wxStaticText{ panel, wxID_ANY, "Song Title" };
     gameTitleLabel = new wxStaticText{ panel, wxID_ANY, "Game Title" };
     dumperNameLabel = new wxStaticText{ panel, wxID_ANY, "Dumper Name" };
@@ -127,16 +133,16 @@ void MainWindow::CreateLabelText()
 
 void MainWindow::CreateValueText()
 {
-    id = new wxStaticText{ panel, wxID_ANY, "-" };
-    containsTag = new wxStaticText{ panel, wxID_ANY, "-" };
+    //id = new wxStaticText{ panel, wxID_ANY, "-" };
+    //containsTag = new wxStaticText{ panel, wxID_ANY, "-" };
     tagType = new wxStaticText{ panel, wxID_ANY, "-" };
-    versionMinor = new wxStaticText{ panel, wxID_ANY, "-" };
-    pcRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    aRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    xRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    yRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    pswRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    spRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    //versionMinor = new wxStaticText{ panel, wxID_ANY, "-" };
+    //pcRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    //aRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    //xRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    //yRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    //pswRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    //spRegister = new wxStaticText{ panel, wxID_ANY, "-" };
 }
 
 void MainWindow::CreateTextBoxes()
@@ -175,6 +181,7 @@ void MainWindow::CreateFileListView()
     fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, &MainWindow::OnSelected, this);
 }
 
+/*
 void MainWindow::CreateHeaderLayout()
 {
     AddToSizer(idLabel, id, headerColumn1Sizer);
@@ -189,10 +196,11 @@ void MainWindow::CreateHeaderLayout()
     AddToSizer(spRegisterLabel, spRegister, headerColumn2Sizer);
     headerSizer->Add(headerColumn1Sizer, 0, wxALL | wxEXPAND);
     headerSizer->Add(headerColumn2Sizer, 0, wxALL | wxEXPAND);
-}
+}*/
 
 void MainWindow::CreateTagLayout()
 {
+    AddToSizer(tagTypeLabel, tagType, tagColumn1Sizer);
     AddToSizer(songTitleLabel, songTitleTextBox, tagColumn1Sizer);
     AddToSizer(gameTitleLabel, gameTitleTextBox, tagColumn1Sizer);
     AddToSizer(dumperNameLabel, dumperNameTextBox, tagColumn1Sizer);
@@ -222,7 +230,7 @@ void MainWindow::CreateTagLayout()
 void MainWindow::CreatePanelLayout()
 {
     leftColumnSizer->Add(fileListView, 1, wxALL | wxEXPAND);
-    rightColumnSizer->Add(headerSizer, 0, wxALL | wxEXPAND, 5);
+    //rightColumnSizer->Add(headerSizer, 0, wxALL | wxEXPAND, 5);
     rightColumnSizer->Add(tagSizer, 0, wxALL | wxEXPAND, 5);
     panelSizer->Add(leftColumnSizer, 1, wxALL | wxEXPAND);
     panelSizer->Add(rightColumnSizer, 3, wxALL | wxEXPAND);
@@ -255,7 +263,8 @@ void MainWindow::BindEvents()
          WidgetID::IncrementTrack);
 }
 
-void MainWindow::UpdateHeaderLabels()
+/*
+void MainWindow::UpdateHeaderSection()
 {
     std::vector<wxString> idValues;
     std::vector<wxString> headerContainsTagValues;
@@ -274,29 +283,17 @@ void MainWindow::UpdateHeaderLabels()
         Spc::Id666::Tag tag = file->Tag();
         idValues.push_back(wxString{ header.id.ToString() });
 
-        if (header.containsTag.ToUInt32() == Spc::headerContainsTag)
-        {
-            headerContainsTagValues.push_back("True");
+        wxString tagType = DetermineTagType(header, tag);
 
-            switch (tag.DetermineType())
-            {
-                case Spc::Id666::TagType::Text:
-                    tagTypeValues.push_back("Text");
-                    break;
-                case Spc::Id666::TagType::Binary:
-                    tagTypeValues.push_back("Binary");
-                    break;
-                case Spc::Id666::TagType::TextMixed:
-                    tagTypeValues.push_back("Mixed");
-                    break;
-                default:
-                    tagTypeValues.push_back("-");
-            }
-        }
-        else
+        if (tagType == "-")
         {
             headerContainsTagValues.push_back("False");
             tagTypeValues.push_back("-");
+        }
+        else
+        {
+            headerContainsTagValues.push_back("True");
+            tagTypeValues.push_back(tagType);
         }
 
         versionMinorValues.push_back(header.versionMinor.ToString());
@@ -308,19 +305,20 @@ void MainWindow::UpdateHeaderLabels()
         spRegisterValues.push_back(header.spRegister.ToString());
     }
 
-    SetLabel(id, idValues);
-    SetLabel(containsTag, headerContainsTagValues);
-    SetLabel(tagType, tagTypeValues);
-    SetLabel(versionMinor, versionMinorValues);
-    SetLabel(pcRegister, pcRegisterValues);
-    SetLabel(aRegister, aRegisterValues);
-    SetLabel(xRegister, xRegisterValues);
-    SetLabel(yRegister, yRegisterValues);
-    SetLabel(pswRegister, pswRegisterValues);
-    SetLabel(spRegister, spRegisterValues);
+    SetStaticText(id, idValues);
+    SetStaticText(containsTag, headerContainsTagValues);
+    SetStaticText(tagType, tagTypeValues);
+    SetStaticText(versionMinor, versionMinorValues);
+    SetStaticText(pcRegister, pcRegisterValues);
+    SetStaticText(aRegister, aRegisterValues);
+    SetStaticText(xRegister, xRegisterValues);
+    SetStaticText(yRegister, yRegisterValues);
+    SetStaticText(pswRegister, pswRegisterValues);
+    SetStaticText(spRegister, spRegisterValues);
 }
+*/
 
-void MainWindow::UpdateTagTextBoxes()
+void MainWindow::UpdateTagSection()
 {
     std::vector<wxString> songTitleValues;
     std::vector<wxString> gameTitleValues;
@@ -348,28 +346,28 @@ void MainWindow::UpdateTagTextBoxes()
     {
         Spc::Id666::Tag tag = file->Tag();
 
-        songTitleValues.push_back(tag.SongTitle().ToString());
-        gameTitleValues.push_back(tag.GameTitle().ToString());
-        dumperNameValues.push_back(tag.DumperName().ToString());
-        commentsValues.push_back(tag.Comments().ToString());
-        dateDumpedValues.push_back(tag.DateDumped().ToString());
-        songLengthValues.push_back(tag.SongLength().ToString());
-        fadeLengthValues.push_back(tag.FadeLength().ToString());
-        songArtistValues.push_back(tag.SongArtist().ToString());
+        songTitleValues.push_back(DetermineFieldValue(&tag.SongTitle()));
+        gameTitleValues.push_back(DetermineFieldValue(&tag.GameTitle()));
+        dumperNameValues.push_back(DetermineFieldValue(&tag.DumperName()));
+        commentsValues.push_back(DetermineFieldValue(&tag.Comments()));
+        dateDumpedValues.push_back(DetermineFieldValue(&tag.DateDumped()));
+        songLengthValues.push_back(DetermineFieldValue(&tag.SongLength()));
+        fadeLengthValues.push_back(DetermineFieldValue(&tag.FadeLength()));
+        songArtistValues.push_back(DetermineFieldValue(&tag.SongArtist()));
         defaultChannelStateValues.push_back(
-            tag.DefaultDisabledChannels().ToString());
-        emulatorUsedValues.push_back(tag.EmulatorUsed().ToString());
-        ostTitleValues.push_back(tag.OstTitle().ToString());
-        ostDiscValues.push_back(tag.OstDisc().ToString());
-        ostTrackValues.push_back(tag.OstTrack().ToString());
-        publisherNameValues.push_back(tag.PublisherName().ToString());
-        copyrightYearValues.push_back(tag.CopyrightYear().ToString());
-        introLengthValues.push_back(tag.IntroLength().ToString());
-        loopLengthValues.push_back(tag.LoopLength().ToString());
-        endLengthValues.push_back(tag.EndLength().ToString());
-        mutedVoicesValues.push_back(tag.MutedVoices().ToString());
-        loopTimesValues.push_back(tag.LoopTimes().ToString());
-        preampLevelValues.push_back(tag.PreampLevel().ToString());
+            DetermineFieldValue(&tag.DefaultDisabledChannels()));
+        emulatorUsedValues.push_back(DetermineFieldValue(&tag.EmulatorUsed()));
+        ostTitleValues.push_back(DetermineFieldValue(&tag.OstTitle()));
+        ostDiscValues.push_back(DetermineFieldValue(&tag.OstDisc()));
+        ostTrackValues.push_back(DetermineFieldValue(&tag.OstTrack()));
+        publisherNameValues.push_back(DetermineFieldValue(&tag.PublisherName()));
+        copyrightYearValues.push_back(DetermineFieldValue(&tag.CopyrightYear()));
+        introLengthValues.push_back(DetermineFieldValue(&tag.IntroLength()));
+        loopLengthValues.push_back(DetermineFieldValue(&tag.LoopLength()));
+        endLengthValues.push_back(DetermineFieldValue(&tag.EndLength()));
+        mutedVoicesValues.push_back(DetermineFieldValue(&tag.MutedVoices()));
+        loopTimesValues.push_back(DetermineFieldValue(&tag.LoopTimes()));
+        preampLevelValues.push_back(DetermineFieldValue(&tag.PreampLevel()));
     }
 
     SetTextBox(songTitleTextBox, songTitleValues);
@@ -395,15 +393,59 @@ void MainWindow::UpdateTagTextBoxes()
     SetTextBox(preampLevelTextBox, preampLevelValues);
 }
 
-void MainWindow::SetLabel(wxStaticText* label, std::vector<wxString>& values)
+void MainWindow::UpdateStatusBar()
+{
+    wxString statusText;
+
+    if (selectedFiles.empty())
+    {
+        statusText = "Ready";
+    }
+    else
+    {
+        std::vector<wxString> versionMinorValues;
+        std::vector<wxString> headerContainsTagValues;
+        std::vector<wxString> tagTypeValues;
+
+        for (std::shared_ptr<Spc::File>& file : selectedFiles)
+        {
+            Spc::Header header = file->Header();
+            Spc::Id666::Tag tag = file->Tag();
+            wxString tagType = DetermineTagType(header, tag);
+
+            versionMinorValues.push_back(header.versionMinor.ToString());
+
+            if (tagType == "-")
+            {
+                headerContainsTagValues.push_back("False");
+                tagTypeValues.push_back("-");
+            }
+            else
+            {
+                headerContainsTagValues.push_back("True");
+                tagTypeValues.push_back(tagType);
+            }
+        }
+
+        statusText = "";
+        statusText << "SPC Format Version: v0." 
+                   << DetermineValue(versionMinorValues) 
+                   << " | Contains Tag: " 
+                   << DetermineValue(headerContainsTagValues)
+                   << " | Tag Type: " << DetermineValue(tagTypeValues);
+        SetStatusText(statusText);
+    }
+}
+
+wxString MainWindow::DetermineValue(const std::vector<wxString>& values)
 {
     if (values.empty())
     {
-        label->SetLabel("-");
+        return "";
     }
     else if (values.size() == 1)
     {
-        label->SetLabel(values.at(0));
+        return values.at(0);
     }
     else
     {
@@ -421,12 +463,25 @@ void MainWindow::SetLabel(wxStaticText* label, std::vector<wxString>& values)
 
         if (allSame)
         {
-            label->SetLabel(firstValue);
+            return firstValue;
         }
         else
         {
-            label->SetLabel("<multiple values>");
+            return "<multiple values>";
         }
+    }
+}
+
+void MainWindow::SetStaticText(wxStaticText* text, 
+                               std::vector<wxString>& values)
+{
+    if (values.empty())
+    {
+        text->SetLabel("-");
+    }
+    else
+    {
+        text->SetLabel(DetermineValue(values));
     }
 }
 
@@ -434,38 +489,19 @@ void MainWindow::SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values)
 {
     if (values.empty())
     {
-        // If the vector is empty, clear the text box
         textBox->Clear();
-    }
-    else if (values.size() == 1)
-    {
-        // If there is only one value, set it in the text box
-        textBox->SetValue(values.at(0));
     }
     else
     {
-        // Check if all values are the same.
-        bool allSame = true;
-        const wxString& firstValue = values.at(0);
+        wxString value = DetermineValue(values);
 
-        for (const wxString& value : values)
+        if (value == "-")
         {
-            if (value != firstValue)
-            {
-                allSame = false;
-                break;
-            }
-        }
-
-        if (allSame)
-        {
-            // If all values are the same, set the first value
-            textBox->SetValue(firstValue);
+            textBox->Clear();
         }
         else
         {
-            // If values differ, set "<multiple values>"
-            textBox->SetValue("<multiple values>");
+            textBox->SetValue(value);
         }
     }
 }
@@ -652,11 +688,11 @@ void MainWindow::OnSave(wxCommandEvent& event)
 
 void MainWindow::OnFileNameToTag(wxCommandEvent& event)
 {
-    FileNameToTagWindow dialog{ this, selectedFiles };
+    FileNameToTagDialog dialog{ this, selectedFiles };
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        UpdateTagTextBoxes();
+        UpdateTagSection();
     }
 }
     
@@ -681,7 +717,7 @@ void MainWindow::OnIncrementTrack(wxCommandEvent& event)
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        UpdateTagTextBoxes();
+        UpdateTagSection();
     }
 }
 
@@ -699,31 +735,8 @@ void MainWindow::OnSelected(wxListEvent& event)
         selectedFiles.push_back(files.at(itemIndex));
     }
 
-    UpdateHeaderLabels();
-    UpdateTagTextBoxes();
-}
-
-void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer)
-{
-    // Set consistent label and value widths to ensure visual alignment.
-    label->SetMinSize(wxSize{ 150, -1 });
-    value->SetMinSize(wxSize{ 225, -1 });
-
-    wxBoxSizer* valueSizer = new wxBoxSizer{ wxHORIZONTAL };
-    valueSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    valueSizer->Add(value, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    sizer->Add(valueSizer, 0, wxALL | wxEXPAND);
-}
-
-void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer)
-{
-    // Set a consistent label width when adding to the sizer to ensure the
-    // corresponding text boxes are all aligned. 
-    label->SetMinSize(wxSize{ 150, -1 });
-    textBox->SetMinSize(wxSize{ 225, -1 });
-
-    wxBoxSizer* textBoxSizer = new wxBoxSizer{ wxHORIZONTAL };
-    textBoxSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    textBoxSizer->Add(textBox, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    sizer->Add(textBoxSizer, 0, wxALL | wxEXPAND);
+    menuBar->Enable(WidgetID::Save, !selectedFiles.empty());
+    //UpdateHeaderSection();
+    UpdateTagSection();
+    UpdateStatusBar();
 }

@@ -1,4 +1,4 @@
-// FileNameToTagWindow.cpp - Defines the FileNameToTagWindow class.
+// FileNameToTagDialog.cpp - Defines the FileNameToTagDialog class.
 //
 // Copyright (C) 2026 Stephen Bonar
 //
@@ -14,9 +14,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include "FileNameToTagWindow.h"
+#include "FileNameToTagDialog.h"
 
-FileNameToTagWindow::FileNameToTagWindow(
+FileNameToTagDialog::FileNameToTagDialog(
     wxWindow* parent,
     std::vector<std::shared_ptr<Spc::File>>& selectedFiles) : 
         selectedFiles{ selectedFiles },
@@ -49,13 +49,13 @@ FileNameToTagWindow::FileNameToTagWindow(
     buttonSizer->Add(cancelButton, 0, wxALL, 5);
     mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER);
 
-    okButton->Bind(wxEVT_BUTTON, &FileNameToTagWindow::OnOk, this);
+    okButton->Bind(wxEVT_BUTTON, &FileNameToTagDialog::OnOk, this);
 
     SetSizer(mainSizer);
     mainSizer->Fit(this);
 }
 
-void FileNameToTagWindow::OnOk(wxCommandEvent& event)
+void FileNameToTagDialog::OnOk(wxCommandEvent& event)
 {
     wxString pattern = patternTextCtrl->GetValue();
 

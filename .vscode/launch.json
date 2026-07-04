@@ -9,7 +9,7 @@
             "type": "cppvsdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/src/Debug/id666editc.exe",
-            "args": ["-f", "%track% - %song%.spc", "01 - Presentiment.spc"],
+            "args": ["-p", "track", "binary.spc"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/Debug/",
             "environment": [],

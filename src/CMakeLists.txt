@@ -58,15 +58,19 @@ if(BUILD_GUI)
     if (WIN32)
         add_executable(ID666Edit WIN32
                        ID666Edit.cpp 
+                       Common.cpp
                        MainWindow.cpp 
-                       FileNameToTagWindow.cpp 
+                       FileNameToTagDialog.cpp 
+                       PropertiesDialog.cpp
                        TagToFileNameWindow.cpp
                        IncrementTrackWindow.cpp)
     else()
         add_executable(ID666Edit
-                       ID666Edit.cpp 
+                       ID666Edit.cpp
+                       Common.cpp
                        MainWindow.cpp 
-                       FileNameToTagWindow.cpp 
+                       FileNameToTagDialog.cpp
+                       PropertiesDialog.cpp
                        TagToFileNameWindow.cpp
                        IncrementTrackWindow.cpp)
     endif()

@@ -24,38 +24,34 @@
 #include <wx/filename.h>
 #include <LibCppSpc.h>
 #include "WidgetID.h"
-#include "FileNameToTagWindow.h"
+#include "FileNameToTagDialog.h"
 #include "TagToFileNameWindow.h"
 #include "IncrementTrackWindow.h"
 #include "Version.h"
+#include "Common.h"
 
+/// @brief The main window of the application.
 class MainWindow : public wxFrame
 {
 public:
+    /// @brief Constructs the main window.
+    /// @param version The version string to display in the window.
     MainWindow(wxString version);
 private:
+    wxMenuBar* menuBar;
+    wxMenu* fileMenu;
+    wxMenu* editMenu;
+    wxMenu* helpMenu;
     wxPanel* panel;
     wxBoxSizer* leftColumnSizer;
     wxBoxSizer* rightColumnSizer;
-    wxBoxSizer* headerColumn1Sizer;
-    wxBoxSizer* headerColumn2Sizer;
     wxBoxSizer* tagColumn1Sizer;
     wxBoxSizer* tagColumn2Sizer;
-    wxStaticBoxSizer* headerSizer;
     wxStaticBoxSizer* tagSizer;
     wxBoxSizer* panelSizer;
     wxBoxSizer* windowSizer;
     wxListView* fileListView;
-    wxStaticText* idLabel;
-    wxStaticText* containsTagLabel;
     wxStaticText* tagTypeLabel;
-    wxStaticText* versionMinorLabel;
-    wxStaticText* pcRegisterLabel;
-    wxStaticText* aRegisterLabel;
-    wxStaticText* xRegisterLabel;
-    wxStaticText* yRegisterLabel;
-    wxStaticText* pswRegisterLabel;
-    wxStaticText* spRegisterLabel;
     wxStaticText* songTitleLabel;
     wxStaticText* gameTitleLabel;
     wxStaticText* dumperNameLabel;
@@ -77,16 +73,7 @@ private:
     wxStaticText* mutedVoicesLabel;
     wxStaticText* loopTimesLabel;
     wxStaticText* preampLevelLabel;
-    wxStaticText* id;
-    wxStaticText* containsTag;
     wxStaticText* tagType;
-    wxStaticText* versionMinor;
-    wxStaticText* pcRegister;
-    wxStaticText* aRegister;
-    wxStaticText* xRegister;
-    wxStaticText* yRegister;
-    wxStaticText* pswRegister;
-    wxStaticText* spRegister;
     wxTextCtrl* songTitleTextBox;
     wxTextCtrl* gameTitleTextBox;
     wxTextCtrl* dumperNameTextBox;
@@ -113,53 +100,101 @@ private:
     std::vector<std::shared_ptr<Spc::File>> files;
     std::vector<std::shared_ptr<Spc::File>> selectedFiles;
 
+    /// @brief Creates the menu bar for the main window.
     void CreateMenuBar();
 
+    /// @brief Creates the sizers for the main window layout.
     void CreateSizers();
 
+    /// @brief Creates the static text objects that act as labels.
     void CreateLabelText();
 
+    /// @brief Creates the static text objects that display values.
     void CreateValueText();
 
+    /// @brief Creates the text boxes for user input.
     void CreateTextBoxes();
 
+    /// @brief Creates the list view for selecting open files.
     void CreateFileListView();
 
-    void CreateHeaderLayout();
+    /// @brief Creates the layout for the header section.
+    //void CreateHeaderLayout();
 
+    /// @brief Creates the layout for the tag section.
     void CreateTagLayout();
 
+    /// @brief Creates the layout for the main panel.
     void CreatePanelLayout();
 
+    /// @brief Binds the events to their respective handlers.
     void BindEvents();
 
-    void UpdateHeaderLabels();
+    /// @brief Updates the controls in the header section for selected files.
+    ///
+    /// When the user selects files in the list view, this function updates 
+    /// the header controls to reflect the information of the selected files.
+    /// Values that are consistent across all selected files are displayed, 
+    /// while inconsistent values are indicated with a placeholder.
+    //void UpdateHeaderSection();
 
-    void UpdateTagTextBoxes();
+    /// @brief Updates the controls in the tag section for selected files.
+    ///
+    /// When the user selects files in the list view, this function updates 
+    /// the controls to reflect the tag information of the selected files.
+    /// Values that are consistent across all selected files are displayed, 
+    /// while inconsistent values are indicated with a placeholder.
+    void UpdateTagSection();
 
-    void SetLabel(wxStaticText* label, std::vector<wxString>& values);
+    /// @brief Updates the status bar based on the selected files.
+    ///
+    /// When the user selects files in the list view, this function updates
+    /// the status bar to show information about the selected files.
+    void UpdateStatusBar();
 
+    wxString DetermineValue(const std::vector<wxString>& values);
+
+    /// @brief Sets static text based on the values of selected files.
+    /// @param text The static text to update.
+    /// @param values The values retrieved from the selected files.
+    void SetStaticText(wxStaticText* text, std::vector<wxString>& values);
+
+    /// @brief Sets a text box's text based on the values of selected files.
+    /// @param textBox The text box to update.
+    /// @param values The values retrieved from the selected files.
     void SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values);
 
+    /// @brief Click handler for the "Exit" menu item.
+    /// @param event The event object.
     void OnExit(wxCommandEvent& event);
 
+    /// @brief Click handler for the "About" menu item.
+    /// @param event The event object.
     void OnAbout(wxCommandEvent& event);
 
+    /// @brief Click handler for the "Open" menu item.
+    /// @param event 
     void OnOpen(wxCommandEvent& event);
 
+    /// @brief Click handler for the "Save" menu item.
+    /// @param event The event object.
     void OnSave(wxCommandEvent& event);
 
+    /// @brief Click handler for the "FileName to Tag" menu item.
+    /// @param event The event object.
     void OnFileNameToTag(wxCommandEvent& event);
 
+    /// @brief Click handler for the "Tag to FileName" menu item.
+    /// @param event The event object.
     void OnTagToFileName(wxCommandEvent& event);
 
+    /// @brief Click handler for the "Increment Track" menu item.
+    /// @param event The event object.
     void OnIncrementTrack(wxCommandEvent& event);
 
+    /// @brief Event handler for when a file is selected in the list view.
+    /// @param event The event object.
     void OnSelected(wxListEvent& event);
 };
-
-void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer);
-
-void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer);
 
 #endif

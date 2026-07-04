@@ -1,4 +1,4 @@
-// FileNameToTagWindow.h - Declares the FileNameToTagWindow class.
+// FileNameToTagDialog.h - Declares the FileNameToTagDialog class.
 //
 // Copyright (C) 2026 Stephen Bonar
 //
@@ -14,8 +14,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef FILE_NAME_TO_TAG_WINDOW_H
-#define FILE_NAME_TO_TAG_WINDOW_H
+#ifndef FILE_NAME_TO_TAG_DIALOG_H
+#define FILE_NAME_TO_TAG_DIALOG_H
 
 #include <vector>
 #include <memory>
@@ -23,13 +23,13 @@
 #include <LibCppSpc.h>
 
 /// @brief A dialog window for converting file names to ID666 tag data.
-class FileNameToTagWindow : public wxDialog
+class FileNameToTagDialog : public wxDialog
 {
 public:
-    /// @brief Constructs a FileNameToTagWindow.
+    /// @brief Constructs a FileNameToTagDialog.
     /// @param parent The parent window.
     /// @param selectedFiles A reference to the vector of selected files.
-    FileNameToTagWindow(
+    FileNameToTagDialog(
         wxWindow* parent, 
         std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
 private:
