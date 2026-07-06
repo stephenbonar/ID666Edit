@@ -23,7 +23,8 @@ enum WidgetID
     Save = 2,
     FileNameToTag = 3,
     TagToFileName = 4,
-    IncrementTrack = 5
+    IncrementTrack = 5,
+    Properties = 6
 };
 
 #endif

@@ -29,6 +29,7 @@
 #include "IncrementTrackWindow.h"
 #include "Version.h"
 #include "Common.h"
+#include "PropertiesDialog.h"
 
 /// @brief The main window of the application.
 class MainWindow : public wxFrame
@@ -45,13 +46,24 @@ private:
     wxPanel* panel;
     wxBoxSizer* leftColumnSizer;
     wxBoxSizer* rightColumnSizer;
-    wxBoxSizer* tagColumn1Sizer;
-    wxBoxSizer* tagColumn2Sizer;
-    wxStaticBoxSizer* tagSizer;
     wxBoxSizer* panelSizer;
     wxBoxSizer* windowSizer;
+    wxBoxSizer* ostHorizontalSizer;
+    wxBoxSizer* timingHorizontalSizer1;
+    wxBoxSizer* timingHorizontalSizer2;
+    wxBoxSizer* outputHorizontalSizer;
+    wxBoxSizer* dumpInfoHorizontalSizer;
+    wxBoxSizer* buttonSizer;
+    //wxBoxSizer* tagColumn1Sizer;
+    //wxBoxSizer* tagColumn2Sizer;
+    wxStaticBoxSizer* tagGeneralInfoSizer;
+    wxStaticBoxSizer* tagDumpInfoSizer;
+    wxStaticBoxSizer* tagOstInfoSizer;
+    wxStaticBoxSizer* tagTimingSizer;
+    wxStaticBoxSizer* tagOutputSizer;
+    
     wxListView* fileListView;
-    wxStaticText* tagTypeLabel;
+    //wxStaticText* tagTypeLabel;
     wxStaticText* songTitleLabel;
     wxStaticText* gameTitleLabel;
     wxStaticText* dumperNameLabel;
@@ -73,7 +85,7 @@ private:
     wxStaticText* mutedVoicesLabel;
     wxStaticText* loopTimesLabel;
     wxStaticText* preampLevelLabel;
-    wxStaticText* tagType;
+    //wxTextCtrl* tagTypeTextBox;
     wxTextCtrl* songTitleTextBox;
     wxTextCtrl* gameTitleTextBox;
     wxTextCtrl* dumperNameTextBox;
@@ -95,6 +107,7 @@ private:
     wxTextCtrl* mutedVoicesTextBox;
     wxTextCtrl* loopTimesTextBox;
     wxTextCtrl* preampLevelTextBox;
+    wxButton* propertiesButton;
     wxString version;
     
     std::vector<std::shared_ptr<Spc::File>> files;
@@ -114,6 +127,9 @@ private:
 
     /// @brief Creates the text boxes for user input.
     void CreateTextBoxes();
+
+    /// @brief Creates the buttons for user actions.
+    void CreateButtons();
 
     /// @brief Creates the list view for selecting open files.
     void CreateFileListView();
@@ -152,13 +168,6 @@ private:
     /// the status bar to show information about the selected files.
     void UpdateStatusBar();
 
-    wxString DetermineValue(const std::vector<wxString>& values);
-
-    /// @brief Sets static text based on the values of selected files.
-    /// @param text The static text to update.
-    /// @param values The values retrieved from the selected files.
-    void SetStaticText(wxStaticText* text, std::vector<wxString>& values);
-
     /// @brief Sets a text box's text based on the values of selected files.
     /// @param textBox The text box to update.
     /// @param values The values retrieved from the selected files.
@@ -195,6 +204,10 @@ private:
     /// @brief Event handler for when a file is selected in the list view.
     /// @param event The event object.
     void OnSelected(wxListEvent& event);
+
+    /// @brief Event handler for when the properties button is clicked.
+    /// @param event The event object.
+    void OnProperties(wxCommandEvent& event);
 };
 
 #endif

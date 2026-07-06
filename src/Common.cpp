@@ -16,6 +16,9 @@
 
 #include "Common.h"
 
+constexpr int labelWidth{ 150 };
+constexpr int valueWidth{ 250 };
+
 void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer)
 {
     // Set consistent label and value widths to ensure visual alignment.
@@ -33,12 +36,12 @@ void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer)
     // Set a consistent label width when adding to the sizer to ensure the
     // corresponding text boxes are all aligned. 
     label->SetMinSize(wxSize{ labelWidth, -1 });
-    textBox->SetMinSize(wxSize{ valueWidth, -1 });
+    //textBox->SetMinSize(wxSize{ valueWidth, -1 });
 
     wxBoxSizer* textBoxSizer = new wxBoxSizer{ wxHORIZONTAL };
     textBoxSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    textBoxSizer->Add(textBox, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    sizer->Add(textBoxSizer, 0, wxALL | wxEXPAND);
+    textBoxSizer->Add(textBox, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+    sizer->Add(textBoxSizer, 1, wxALL | wxEXPAND);
 }
 
 wxString DetermineFieldValue(Spc::Field* field)
@@ -72,5 +75,40 @@ wxString DetermineTagType(Spc::Header& header, Spc::Id666::Tag& tag)
     else
     {
         return "-";
+    }
+}
+
+wxString DetermineValue(const std::vector<wxString>& values)
+{
+    if (values.empty())
+    {
+        return "";
+    }
+    else if (values.size() == 1)
+    {
+        return values.at(0);
+    }
+    else
+    {
+        bool allSame = true;
+        const wxString& firstValue = values.at(0);
+
+        for (const wxString& value : values)
+        {
+            if (value != firstValue)
+            {
+                allSame = false;
+                break;
+            }
+        }
+
+        if (allSame)
+        {
+            return firstValue;
+        }
+        else
+        {
+            return "<multiple values>";
+        }
     }
 }

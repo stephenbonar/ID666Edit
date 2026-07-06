@@ -18,6 +18,7 @@
 #define COMMON_H
 
 #include <wx/wx.h>
+#include <LibCppSpc.h>
 
 /// @brief Adds specified label and value static text to the specified sizer.
 ///
@@ -40,6 +41,8 @@ void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer);
 /// @param textBox The text box object representing the value itself.
 /// @param sizer The sizer to which the label and text box will be added.
 void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer);
+
+wxString DetermineValue(const std::vector<wxString>& values);
 
 wxString DetermineFieldValue(Spc::Field* field);
 
