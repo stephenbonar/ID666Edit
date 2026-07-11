@@ -20,18 +20,20 @@ MainWindow::MainWindow(wxString version) :
     wxFrame(nullptr, wxID_ANY, version), version{ version }
 {
 #if defined(_WIN32)
+    // On Windows, we need to set the application icon at runtime from the
+    // resource file compiled into the application.
     SetIcon(wxICON(IDI_MAIN));
 #endif
+
     panel = new wxPanel(this);
     CreateStatusBar();
     CreateMenuBar();
     CreateSizers();
-    CreateLabelText();
-    CreateValueText();
+    CreateLabels();
+    ResizeLabels(labels);
     CreateTextBoxes();
     CreateButtons();
     CreateFileListView();
-    //CreateHeaderLayout();
     CreateTagLayout();
     CreatePanelLayout();
     BindEvents();
@@ -57,6 +59,10 @@ void MainWindow::CreateMenuBar()
                      "Increment Track Numbers...\tCtrl+I", 
                      "Increment OST track numbers by a specified amount");
 
+    viewMenu = new wxMenu;
+    viewMenu->Append(WidgetID::Properties, "Properties...\tCtrl+P", 
+              "Show properties of the selected files");
+
     helpMenu = new wxMenu;
     helpMenu->Append(wxID_ABOUT, "&About\tF1", 
                      "Show information about the application");
@@ -64,8 +70,13 @@ void MainWindow::CreateMenuBar()
     menuBar = new wxMenuBar;
     menuBar->Append(fileMenu, "&File");
     menuBar->Append(editMenu, "&Edit");
+    menuBar->Append(viewMenu, "&View");
     menuBar->Append(helpMenu, "&Help");
     menuBar->Enable(wxID_SAVE, false);
+    menuBar->Enable(WidgetID::Properties, false);
+    menuBar->Enable(WidgetID::FileNameToTag, false);
+    menuBar->Enable(WidgetID::TagToFileName, false);
+    menuBar->Enable(WidgetID::IncrementTrack, false);
 
     SetMenuBar(menuBar);
 }
@@ -74,118 +85,100 @@ void MainWindow::CreateSizers()
 {
     leftColumnSizer = new wxBoxSizer{ wxVERTICAL };
     rightColumnSizer = new wxBoxSizer{ wxVERTICAL };
+    rightColumnTopSizer = new wxBoxSizer{ wxVERTICAL };
+    rightColumnBottomSizer = new wxBoxSizer{ wxVERTICAL };
     ostHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     timingHorizontalSizer1 = new wxBoxSizer{ wxHORIZONTAL };
     timingHorizontalSizer2 = new wxBoxSizer{ wxHORIZONTAL };
     outputHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     dumpInfoHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     buttonSizer = new wxBoxSizer{ wxHORIZONTAL };
-    //headerColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
-    //headerColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
-    //tagColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
-    //tagColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
-    //headerSizer = new wxStaticBoxSizer{  wxHORIZONTAL, panel, "Header" };
     tagGeneralInfoSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "General" };
     tagOstInfoSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Original Soundtrack" };
     tagDumpInfoSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Dump Info" };
     tagTimingSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Timing" };
-    tagOutputSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Output" };
+    tagAudioChannelsSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Audio Channels" };
     panelSizer = new wxBoxSizer{ wxHORIZONTAL };
     windowSizer = new wxBoxSizer{ wxVERTICAL };
 }
 
-void MainWindow::CreateLabelText()
+void MainWindow::CreateLabels()
 {
-    //idLabel = new wxStaticText{ panel, wxID_ANY, "ID:" };
-    //containsTagLabel = new wxStaticText{ panel, wxID_ANY, "Contains Tag:" };
-    //tagTypeLabel = new wxStaticText{ panel, wxID_ANY, "Tag Type:" };
-    //versionMinorLabel = new wxStaticText{ panel, wxID_ANY, "Version Minor:" };
-    //pcRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PC Register:" };
-    //aRegisterLabel = new wxStaticText{ panel, wxID_ANY, "A Register:" };
-    //xRegisterLabel = new wxStaticText{ panel, wxID_ANY, "X Register:" };
-    //yRegisterLabel = new wxStaticText{ panel, wxID_ANY, "Y Register:" };
-    //pswRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PSW Register:" };
-    //spRegisterLabel = new wxStaticText{ panel, wxID_ANY, "SP Register:" };
-    songTitleLabel = new wxStaticText{ panel, wxID_ANY, "Song Title" };
-    gameTitleLabel = new wxStaticText{ panel, wxID_ANY, "Game Title" };
-    dumperNameLabel = new wxStaticText{ panel, wxID_ANY, "Dumper Name" };
-    commentsLabel = new wxStaticText{ panel, wxID_ANY, "Comments" };
-    dateDumpedLabel = new wxStaticText{ panel, wxID_ANY, "Date Dumped" };
-    songLengthLabel = new wxStaticText{ panel, wxID_ANY, "Song Length (sec)" };
-    fadeLengthLabel = new wxStaticText{ panel, wxID_ANY, "Fade Length (ms)" };
-    songArtistLabel = new wxStaticText{ panel, wxID_ANY, "Song Artist" };
-    defaultChannelStateLabel = new wxStaticText
-    { 
-        panel, wxID_ANY, "Default Channel State" 
-    };
-    emulatorUsedLabel = new wxStaticText{ panel, wxID_ANY, "Emulator Used" };
-    ostTitleLabel = new wxStaticText{ panel, wxID_ANY, "OST Title" };
-    ostDiscLabel = new wxStaticText{ panel, wxID_ANY, "OST Disc" };
-    ostTrackLabel = new wxStaticText{ panel, wxID_ANY, "OST Track" };
-    publisherNameLabel = new wxStaticText{ panel, wxID_ANY, "Publisher Name" };
-    copyrightYearLabel = new wxStaticText{ panel, wxID_ANY, "Copyright Year" };
-    introLengthLabel = new wxStaticText
-    {
-        panel, wxID_ANY, "Intro Length (ticks)" 
-    };
-    loopLengthLabel = new wxStaticText
-    {
-        panel, wxID_ANY, "Loop Length (ticks)" 
-    };
-    endLengthLabel = new wxStaticText
-    {
-        panel, wxID_ANY, "End Length (ticks)" 
-    };
-    mutedVoicesLabel = new wxStaticText{ panel, wxID_ANY, "Muted Voices" };
-    loopTimesLabel = new wxStaticText{ panel, wxID_ANY, "Loop Times" };
-    preampLevelLabel = new wxStaticText{ panel, wxID_ANY, "Preamp Level" };
-}
+    wxStaticBox* tagGeneralInfoBox = tagGeneralInfoSizer->GetStaticBox();
+    CreateLabel(songTitleLabel, tagGeneralInfoBox, labels, "Song Title");
+    CreateLabel(gameTitleLabel, tagGeneralInfoBox, labels, "Game Title");
+    CreateLabel(songArtistLabel, tagGeneralInfoBox, labels, "Song Artist");
+    CreateLabel(commentsLabel, tagGeneralInfoBox, labels, "Comments");
 
-void MainWindow::CreateValueText()
-{
-    //id = new wxStaticText{ panel, wxID_ANY, "-" };
-    //containsTag = new wxStaticText{ panel, wxID_ANY, "-" };
-    //tagType = new wxStaticText{ panel, wxID_ANY, "-" };
-    //versionMinor = new wxStaticText{ panel, wxID_ANY, "-" };
-    //pcRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    //aRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    //xRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    //yRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    //pswRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    //spRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    wxStaticBox* tagOstInfoBox = tagOstInfoSizer->GetStaticBox();
+    CreateLabel(ostTitleLabel, tagOstInfoBox, labels, "OST Title");
+    CreateLabel(ostDiscLabel, tagOstInfoBox, labels, "OST Disc");
+    CreateLabel(ostTrackLabel, tagOstInfoBox, labels, "OST Track");
+    CreateLabel(publisherNameLabel, tagOstInfoBox, labels, "Publisher Name");
+    CreateLabel(copyrightYearLabel, tagOstInfoBox, labels, "Copyright Year");
+
+    wxStaticBox* tagDumpInfoBox = tagDumpInfoSizer->GetStaticBox();
+    CreateLabel(dumperNameLabel, tagDumpInfoBox, labels, "Dumper Name");
+    CreateLabel(dateDumpedLabel, tagDumpInfoBox, labels, "Date Dumped");
+    CreateLabel(emulatorUsedLabel, tagDumpInfoBox, labels, "Emulator Used");
+
+    wxStaticBox* tagTimingBox = tagTimingSizer->GetStaticBox();
+    CreateLabel(songLengthLabel, tagTimingBox, labels, "Song Length (sec)");
+    CreateLabel(fadeLengthLabel, tagTimingBox, labels, "Fade Length (ms)");
+    CreateLabel(introLengthLabel, tagTimingBox, labels, "Intro Length (ticks)");
+    CreateLabel(loopLengthLabel, tagTimingBox, labels, "Loop Length (ticks)");
+    CreateLabel(endLengthLabel, tagTimingBox, labels, "End Length (ticks)");
+    CreateLabel(loopTimesLabel, tagTimingBox, labels, "Loop Times");
+
+    wxStaticBox* tagAudioChannelsBox = tagAudioChannelsSizer->GetStaticBox();
+    CreateLabel(defaultDisabledChannelsLabel, tagAudioChannelsBox, 
+                labels, "Disabled by Default");
+    CreateLabel(mutedVoicesLabel, tagAudioChannelsBox, labels, "Muted");
+    CreateLabel(preampLevelLabel, tagAudioChannelsBox, labels, "Preamp Level");
 }
 
 void MainWindow::CreateTextBoxes()
 {
-    //tagTypeTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    //tagTypeTextBox->SetEditable(false);
-    songTitleTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    gameTitleTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    dumperNameTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    commentsTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    dateDumpedTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    songLengthTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    fadeLengthTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    songArtistTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    defaultChannelStateTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    emulatorUsedTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    ostTitleTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    ostDiscTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    ostTrackTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    publisherNameTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    copyrightYearTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    introLengthTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    loopLengthTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    endLengthTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    mutedVoicesTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    loopTimesTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
-    preampLevelTextBox = new wxTextCtrl{ panel, wxID_ANY, "" };
+    wxStaticBox* tagGeneralInfoBox = tagGeneralInfoSizer->GetStaticBox();
+    songTitleTextBox = new wxTextCtrl{ tagGeneralInfoBox, wxID_ANY, "" };
+    gameTitleTextBox = new wxTextCtrl{ tagGeneralInfoBox, wxID_ANY, "" };
+    songArtistTextBox = new wxTextCtrl{ tagGeneralInfoBox, wxID_ANY, "" };
+    commentsTextBox = new wxTextCtrl{ tagGeneralInfoBox, wxID_ANY, "" };
+
+    wxStaticBox* tagOstInfoBox = tagOstInfoSizer->GetStaticBox();
+    ostTitleTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
+    ostDiscTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
+    ostTrackTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
+    publisherNameTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
+    copyrightYearTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
+    
+    wxStaticBox* tagDumpInfoBox = tagDumpInfoSizer->GetStaticBox();
+    dumperNameTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
+    dateDumpedTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
+    emulatorUsedTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
+    
+    wxStaticBox* tagTimingBox = tagTimingSizer->GetStaticBox();
+    songLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    fadeLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    introLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    loopLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    endLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    loopTimesTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    
+    wxStaticBox* tagAudioChannelsBox = tagAudioChannelsSizer->GetStaticBox();
+    defaultDisabledChannelsTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
+    mutedVoicesTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
+    preampLevelTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
 }
 
 void MainWindow::CreateButtons()
 {
     propertiesButton = new wxButton{ panel, WidgetID::Properties, "Properties" };
+    saveButton = new wxButton{ panel, wxID_SAVE, "Save" };
+    propertiesButton->Enable(false);
+    saveButton->Enable(false);
     propertiesButton->Bind(wxEVT_BUTTON, &MainWindow::OnProperties, this);
+    saveButton->Bind(wxEVT_BUTTON, &MainWindow::OnSave, this);
 }
 
 void MainWindow::CreateFileListView()
@@ -196,41 +189,12 @@ void MainWindow::CreateFileListView()
     };
 
     fileListView->AppendColumn("Filename");
-    fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, &MainWindow::OnSelected, this);
+    fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, &MainWindow::OnSelectionChanged, this);
+    fileListView->Bind(wxEVT_LIST_ITEM_DESELECTED, &MainWindow::OnSelectionChanged, this);
 }
-
-/*
-void MainWindow::CreateHeaderLayout()
-{
-    AddToSizer(idLabel, id, headerColumn1Sizer);
-    AddToSizer(containsTagLabel, containsTag, headerColumn1Sizer);
-    AddToSizer(tagTypeLabel, tagType, headerColumn1Sizer);
-    AddToSizer(versionMinorLabel, versionMinor, headerColumn1Sizer);
-    AddToSizer(pcRegisterLabel, pcRegister, headerColumn2Sizer);
-    AddToSizer(aRegisterLabel, aRegister, headerColumn2Sizer);
-    AddToSizer(xRegisterLabel, xRegister, headerColumn2Sizer);
-    AddToSizer(yRegisterLabel, yRegister, headerColumn2Sizer);
-    AddToSizer(pswRegisterLabel, pswRegister, headerColumn2Sizer);
-    AddToSizer(spRegisterLabel, spRegister, headerColumn2Sizer);
-    headerSizer->Add(headerColumn1Sizer, 0, wxALL | wxEXPAND);
-    headerSizer->Add(headerColumn2Sizer, 0, wxALL | wxEXPAND);
-}*/
 
 void MainWindow::CreateTagLayout()
 {
-    /*
-    wxBoxSizer* valueSizer = new wxBoxSizer{ wxHORIZONTAL };
-    valueSizer->Add(songTitleLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    valueSizer->Add(songTitleTextBox, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-
-    wxBoxSizer* valueSizer2 = new wxBoxSizer{ wxHORIZONTAL };
-    valueSizer2->Add(gameTitleLabel, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    valueSizer2->Add(gameTitleTextBox, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    tagSizer->Add(valueSizer, 1, wxEXPAND, 5);
-    tagSizer->Add(valueSizer2, 1, wxEXPAND, 5);
-    */
-
-    //AddToSizer(tagTypeLabel, tagTypeTextBox, tagSizer);
     AddToSizer(songTitleLabel, songTitleTextBox, tagGeneralInfoSizer);
     AddToSizer(gameTitleLabel, gameTitleTextBox, tagGeneralInfoSizer);
     AddToSizer(songArtistLabel, songArtistTextBox, tagGeneralInfoSizer);
@@ -241,7 +205,7 @@ void MainWindow::CreateTagLayout()
     AddToSizer(ostDiscLabel, ostDiscTextBox, ostHorizontalSizer);
     AddToSizer(ostTrackLabel, ostTrackTextBox, ostHorizontalSizer);
     AddToSizer(copyrightYearLabel, copyrightYearTextBox, ostHorizontalSizer);
-    tagOstInfoSizer->Add(ostHorizontalSizer, 1, wxEXPAND, 5);
+    tagOstInfoSizer->Add(ostHorizontalSizer, 0, wxEXPAND, 5);
 
     AddToSizer(songLengthLabel, songLengthTextBox, timingHorizontalSizer1);
     AddToSizer(fadeLengthLabel, fadeLengthTextBox, timingHorizontalSizer1);
@@ -249,71 +213,42 @@ void MainWindow::CreateTagLayout()
     AddToSizer(loopLengthLabel, loopLengthTextBox, timingHorizontalSizer2);
     AddToSizer(loopTimesLabel, loopTimesTextBox, timingHorizontalSizer2);
     AddToSizer(endLengthLabel, endLengthTextBox, timingHorizontalSizer2);
-    tagTimingSizer->Add(timingHorizontalSizer1, 1, wxEXPAND, 5);
-    tagTimingSizer->Add(timingHorizontalSizer2, 1, wxEXPAND, 5);
+    tagTimingSizer->Add(timingHorizontalSizer1, 0, wxEXPAND, 5);
+    tagTimingSizer->Add(timingHorizontalSizer2, 0, wxEXPAND, 5);
     
-    AddToSizer(defaultChannelStateLabel, defaultChannelStateTextBox, 
+    AddToSizer(defaultDisabledChannelsLabel, defaultDisabledChannelsTextBox, 
                outputHorizontalSizer);
     AddToSizer(mutedVoicesLabel, mutedVoicesTextBox, outputHorizontalSizer);
     AddToSizer(preampLevelLabel, preampLevelTextBox, outputHorizontalSizer);
-    tagOutputSizer->Add(outputHorizontalSizer, 1, wxEXPAND, 5);
+    tagAudioChannelsSizer->Add(outputHorizontalSizer, 0, wxEXPAND, 5);
     
     AddToSizer(dumperNameLabel, dumperNameTextBox, dumpInfoHorizontalSizer);
     AddToSizer(dateDumpedLabel, dateDumpedTextBox, dumpInfoHorizontalSizer);
     AddToSizer(emulatorUsedLabel, emulatorUsedTextBox, dumpInfoHorizontalSizer);
-    tagDumpInfoSizer->Add(dumpInfoHorizontalSizer, 1, wxEXPAND, 5);
+    tagDumpInfoSizer->Add(dumpInfoHorizontalSizer, 0, wxEXPAND, 5);
    
     buttonSizer->Add(propertiesButton, 0, wxALL, 5);
-    /*
-    AddToSizer(tagTypeLabel, tagTypeTextBox, tagColumn1Sizer);
-    AddToSizer(songTitleLabel, songTitleTextBox, tagColumn1Sizer);
-    AddToSizer(gameTitleLabel, gameTitleTextBox, tagColumn1Sizer);
-    AddToSizer(dumperNameLabel, dumperNameTextBox, tagColumn1Sizer);
-    AddToSizer(commentsLabel, commentsTextBox, tagColumn1Sizer);
-    AddToSizer(dateDumpedLabel, dateDumpedTextBox, tagColumn1Sizer);
-    AddToSizer(songLengthLabel, songLengthTextBox, tagColumn1Sizer);
-    AddToSizer(fadeLengthLabel, fadeLengthTextBox, tagColumn1Sizer);
-    AddToSizer(songArtistLabel, songArtistTextBox, tagColumn1Sizer);
-    AddToSizer(defaultChannelStateLabel, defaultChannelStateTextBox, 
-               tagColumn1Sizer);
-    AddToSizer(emulatorUsedLabel, emulatorUsedTextBox, tagColumn1Sizer);
-    AddToSizer(ostTitleLabel, ostTitleTextBox, tagColumn2Sizer);
-    AddToSizer(ostDiscLabel, ostDiscTextBox, tagColumn2Sizer);
-    AddToSizer(ostTrackLabel, ostTrackTextBox, tagColumn2Sizer);
-    AddToSizer(publisherNameLabel, publisherNameTextBox, tagColumn2Sizer);
-    AddToSizer(copyrightYearLabel, copyrightYearTextBox, tagColumn2Sizer);
-    AddToSizer(introLengthLabel, introLengthTextBox, tagColumn2Sizer);
-    AddToSizer(loopLengthLabel, loopLengthTextBox, tagColumn2Sizer);
-    AddToSizer(endLengthLabel, endLengthTextBox, tagColumn2Sizer);
-    AddToSizer(mutedVoicesLabel, mutedVoicesTextBox, tagColumn2Sizer);
-    AddToSizer(loopTimesLabel, loopTimesTextBox, tagColumn2Sizer);
-    AddToSizer(preampLevelLabel, preampLevelTextBox, tagColumn2Sizer);
-    tagSizer->Add(tagColumn1Sizer, 0, wxALL | wxEXPAND);
-    tagSizer->Add(tagColumn2Sizer, 0, wxALL | wxEXPAND);
-    */
+    buttonSizer->Add(saveButton, 0, wxALL, 5);
 }
 
 void MainWindow::CreatePanelLayout()
 {
+
     leftColumnSizer->Add(fileListView, 1, wxALL | wxEXPAND);
-    //rightColumnSizer->Add(headerSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnSizer->Add(tagGeneralInfoSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnSizer->Add(tagOstInfoSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnSizer->Add(tagTimingSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnSizer->Add(tagOutputSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnSizer->Add(tagDumpInfoSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnSizer->AddStretchSpacer(1);
-    rightColumnSizer->Add(buttonSizer, 0, wxALL | wxALIGN_RIGHT, 5);
+    rightColumnTopSizer->Add(tagGeneralInfoSizer, 0, wxALL | wxEXPAND, 5);
+    rightColumnTopSizer->Add(tagOstInfoSizer, 0, wxALL | wxEXPAND, 5);
+    rightColumnTopSizer->Add(tagTimingSizer, 0, wxALL | wxEXPAND, 5);
+    rightColumnTopSizer->Add(tagAudioChannelsSizer, 0, wxALL | wxEXPAND, 5);
+    rightColumnTopSizer->Add(tagDumpInfoSizer, 0, wxALL | wxEXPAND, 5);
+    rightColumnTopSizer->AddStretchSpacer(1);
+    rightColumnBottomSizer->Add(buttonSizer, 0, wxALL | wxALIGN_RIGHT, 5);
+    rightColumnSizer->Add(rightColumnTopSizer, 1, wxALL | wxEXPAND);
+    rightColumnSizer->Add(rightColumnBottomSizer, 0, wxALL | wxEXPAND);
 
     panelSizer->Add(leftColumnSizer, 1, wxALL | wxEXPAND);
     panelSizer->Add(rightColumnSizer, 3, wxALL | wxEXPAND);
     panel->SetSizer(panelSizer);
     windowSizer->Add(panel, 1, wxEXPAND | wxALL);
-
-    // Because the status bar isn't included in layout calculations, we need
-    // to add the status bar height to the spacer to avoid veritcal cutoff.
-    int statusBarHeight = GetStatusBar()->GetSize().GetHeight();
-    rightColumnSizer->AddSpacer(statusBarHeight);
 
     SetSizerAndFit(windowSizer);
 
@@ -334,60 +269,26 @@ void MainWindow::BindEvents()
          WidgetID::TagToFileName);
     Bind(wxEVT_MENU, &MainWindow::OnIncrementTrack, this, 
          WidgetID::IncrementTrack);
+    Bind(wxEVT_MENU, &MainWindow::OnProperties, this, 
+         WidgetID::Properties);
 }
 
 /*
-void MainWindow::UpdateHeaderSection()
+void MainWindow::UpdateSelection()
 {
-    std::vector<wxString> idValues;
-    std::vector<wxString> headerContainsTagValues;
-    std::vector<wxString> tagTypeValues;
-    std::vector<wxString> versionMinorValues;
-    std::vector<wxString> pcRegisterValues;
-    std::vector<wxString> aRegisterValues;
-    std::vector<wxString> xRegisterValues;
-    std::vector<wxString> yRegisterValues;
-    std::vector<wxString> pswRegisterValues;
-    std::vector<wxString> spRegisterValues;
+    selectedFiles.clear();
+    long itemIndex{ -1 };
 
-    for (std::shared_ptr<Spc::File> file : selectedFiles)
+    while ((itemIndex = fileListView->GetNextItem(itemIndex, wxLIST_NEXT_ALL, 
+                                                  wxLIST_STATE_SELECTED)) != -1)
     {
-        Spc::Header header = file->Header();
-        Spc::Id666::Tag tag = file->Tag();
-        idValues.push_back(wxString{ header.id.ToString() });
-
-        wxString tagType = DetermineTagType(header, tag);
-
-        if (tagType == "-")
-        {
-            headerContainsTagValues.push_back("False");
-            tagTypeValues.push_back("-");
-        }
-        else
-        {
-            headerContainsTagValues.push_back("True");
-            tagTypeValues.push_back(tagType);
-        }
-
-        versionMinorValues.push_back(header.versionMinor.ToString());
-        pcRegisterValues.push_back(header.pcRegister.ToString());
-        aRegisterValues.push_back(header.aRegister.ToString());
-        xRegisterValues.push_back(header.xRegister.ToString());
-        yRegisterValues.push_back(header.yRegister.ToString());
-        pswRegisterValues.push_back(header.pswRegister.ToString());
-        spRegisterValues.push_back(header.spRegister.ToString());
+        selectedFiles.push_back(files.at(itemIndex));
     }
 
-    SetStaticText(id, idValues);
-    SetStaticText(containsTag, headerContainsTagValues);
-    SetStaticText(tagType, tagTypeValues);
-    SetStaticText(versionMinor, versionMinorValues);
-    SetStaticText(pcRegister, pcRegisterValues);
-    SetStaticText(aRegister, aRegisterValues);
-    SetStaticText(xRegister, xRegisterValues);
-    SetStaticText(yRegister, yRegisterValues);
-    SetStaticText(pswRegister, pswRegisterValues);
-    SetStaticText(spRegister, spRegisterValues);
+    menuBar->Enable(wxID_SAVE, !selectedFiles.empty());
+    propertiesButton->Enable(!selectedFiles.empty());
+    UpdateTagSection();
+    UpdateStatusBar();
 }
 */
 
@@ -402,7 +303,7 @@ void MainWindow::UpdateTagSection()
     std::vector<wxString> songLengthValues;
     std::vector<wxString> fadeLengthValues;
     std::vector<wxString> songArtistValues;
-    std::vector<wxString> defaultChannelStateValues;
+    std::vector<wxString> defaultDisabledChannelsValues;
     std::vector<wxString> emulatorUsedValues;
     std::vector<wxString> ostTitleValues;
     std::vector<wxString> ostDiscValues;
@@ -440,7 +341,7 @@ void MainWindow::UpdateTagSection()
         songLengthValues.push_back(DetermineFieldValue(tag.SongLength()));
         fadeLengthValues.push_back(DetermineFieldValue(tag.FadeLength()));
         songArtistValues.push_back(DetermineFieldValue(tag.SongArtist()));
-        defaultChannelStateValues.push_back(
+        defaultDisabledChannelsValues.push_back(
             DetermineFieldValue(tag.DefaultDisabledChannels()));
         emulatorUsedValues.push_back(DetermineFieldValue(tag.EmulatorUsed()));
         ostTitleValues.push_back(DetermineFieldValue(tag.OstTitle()));
@@ -456,7 +357,6 @@ void MainWindow::UpdateTagSection()
         preampLevelValues.push_back(DetermineFieldValue(tag.PreampLevel()));
     }
 
-    //SetTextBox(tagTypeTextBox, tagTypeValues);
     SetTextBox(songTitleTextBox, songTitleValues);
     SetTextBox(gameTitleTextBox, gameTitleValues);
     SetTextBox(dumperNameTextBox, dumperNameValues);
@@ -465,7 +365,7 @@ void MainWindow::UpdateTagSection()
     SetTextBox(songLengthTextBox, songLengthValues);
     SetTextBox(fadeLengthTextBox, fadeLengthValues);
     SetTextBox(songArtistTextBox, songArtistValues);
-    SetTextBox(defaultChannelStateTextBox, defaultChannelStateValues);
+    SetTextBox(defaultDisabledChannelsTextBox, defaultDisabledChannelsValues);
     SetTextBox(emulatorUsedTextBox, emulatorUsedValues);
     SetTextBox(ostTitleTextBox, ostTitleValues);
     SetTextBox(ostDiscTextBox, ostDiscValues);
@@ -645,10 +545,10 @@ void MainWindow::OnSave(wxCommandEvent& event)
                 tag.SetSongArtist(songArtistTextBox->GetValue().ToStdString());
             }
 
-            if (defaultChannelStateTextBox->GetValue() != "<multiple values>")
+            if (defaultDisabledChannelsTextBox->GetValue() != "<multiple values>")
             {
                 tag.SetDefaultDisabledChannels(
-                    defaultChannelStateTextBox->GetValue().ToStdString());
+                    defaultDisabledChannelsTextBox->GetValue().ToStdString());
             }
 
             if (emulatorUsedTextBox->GetValue() != "<multiple values>")
@@ -760,11 +660,8 @@ void MainWindow::OnIncrementTrack(wxCommandEvent& event)
     }
 }
 
-void MainWindow::OnSelected(wxListEvent& event)
+void MainWindow::OnSelectionChanged(wxListEvent& event)
 {
-    //long selectedIndex = event.GetIndex();
-    //std::shared_ptr<Spc::File> file = files.at(selectedIndex);
-
     selectedFiles.clear();
     long itemIndex{ -1 };
 
@@ -775,7 +672,12 @@ void MainWindow::OnSelected(wxListEvent& event)
     }
 
     menuBar->Enable(wxID_SAVE, !selectedFiles.empty());
-    //UpdateHeaderSection();
+    menuBar->Enable(WidgetID::Properties, !selectedFiles.empty());
+    menuBar->Enable(WidgetID::FileNameToTag, !selectedFiles.empty());
+    menuBar->Enable(WidgetID::TagToFileName, !selectedFiles.empty());
+    menuBar->Enable(WidgetID::IncrementTrack, !selectedFiles.empty());
+    propertiesButton->Enable(!selectedFiles.empty());
+    saveButton->Enable(!selectedFiles.empty());
     UpdateTagSection();
     UpdateStatusBar();
 }

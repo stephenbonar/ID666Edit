@@ -18,13 +18,14 @@
 
 PropertiesDialog::PropertiesDialog(wxWindow* parent, std::vector<std::shared_ptr<Spc::File>> selectedFiles) : 
     wxDialog(parent, wxID_ANY, "Properties", 
-             wxDefaultPosition, wxSize(400, 300)),
+             wxDefaultPosition, wxSize(600, 400)),
     selectedFiles(selectedFiles)
 {
     panel = new wxPanel(this);
     CreateSizers();
     CreateLabelText();
-    CreateValueText();
+    ResizeLabels(labels);
+    CreateTextBoxes();
     CreateHeaderLayout();
     CreatePanelLayout();
     UpdateHeaderSection();
@@ -34,71 +35,78 @@ void PropertiesDialog::CreateSizers()
 {
     windowSizer = new wxBoxSizer{ wxVERTICAL };
     panelSizer = new wxBoxSizer{ wxVERTICAL };
-    headerColumn1Sizer = new wxBoxSizer{ wxVERTICAL };
-    headerColumn2Sizer = new wxBoxSizer{ wxVERTICAL };
-    headerSizer = new wxStaticBoxSizer{  wxHORIZONTAL, panel, "Header" };
+    headerTagSizer = new wxBoxSizer{ wxHORIZONTAL };
+    headerRegisterSizer = new wxBoxSizer{ wxHORIZONTAL };
+    headerSpecialRegisterSizer = new wxBoxSizer{ wxHORIZONTAL };
+    headerSizer = new wxStaticBoxSizer{  wxVERTICAL, panel, "Header" };
 }
 
 void PropertiesDialog::CreateLabelText()
 {
-    idLabel = new wxStaticText{ panel, wxID_ANY, "ID:" };
-    containsTagLabel = new wxStaticText{ panel, wxID_ANY, "Contains Tag:" };
-    tagTypeLabel = new wxStaticText{ panel, wxID_ANY, "Tag Type:" };
-    versionMinorLabel = new wxStaticText{ panel, wxID_ANY, "Version Minor:" };
-    pcRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PC Register:" };
-    aRegisterLabel = new wxStaticText{ panel, wxID_ANY, "A Register:" };
-    xRegisterLabel = new wxStaticText{ panel, wxID_ANY, "X Register:" };
-    yRegisterLabel = new wxStaticText{ panel, wxID_ANY, "Y Register:" };
-    pswRegisterLabel = new wxStaticText{ panel, wxID_ANY, "PSW Register:" };
-    spRegisterLabel = new wxStaticText{ panel, wxID_ANY, "SP Register:" };
+    CreateLabel(idLabel, panel, labels, "ID:");
+    CreateLabel(containsTagLabel, panel, labels, "Contains Tag:");
+    CreateLabel(tagTypeLabel, panel, labels, "Tag Type:");
+    CreateLabel(versionMinorLabel, panel, labels, "Version Minor:");
+    CreateLabel(pcRegisterLabel, panel, labels, "PC Register:");
+    CreateLabel(aRegisterLabel, panel, labels, "A Register:");
+    CreateLabel(xRegisterLabel, panel, labels, "X Register:");
+    CreateLabel(yRegisterLabel, panel, labels, "Y Register:");
+    CreateLabel(pswRegisterLabel, panel, labels, "PSW Register:");
+    CreateLabel(spRegisterLabel, panel, labels, "SP Register:");
 }
 
-void PropertiesDialog::CreateValueText()
+void PropertiesDialog::CreateTextBoxes()
 {
-    id = new wxStaticText{ panel, wxID_ANY, "-" };
-    containsTag = new wxStaticText{ panel, wxID_ANY, "-" };
-    tagType = new wxStaticText{ panel, wxID_ANY, "-" };
-    versionMinor = new wxStaticText{ panel, wxID_ANY, "-" };
-    pcRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    aRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    xRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    yRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    pswRegister = new wxStaticText{ panel, wxID_ANY, "-" };
-    spRegister = new wxStaticText{ panel, wxID_ANY, "-" };
+    idTextBox = new wxTextCtrl(panel, wxID_ANY);
+    containsTagTextBox = new wxTextCtrl(panel, wxID_ANY);
+    tagTypeTextBox = new wxTextCtrl(panel, wxID_ANY);
+    versionMinorTextBox = new wxTextCtrl(panel, wxID_ANY);
+    pcRegisterTextBox = new wxTextCtrl(panel, wxID_ANY);
+    aRegisterTextBox = new wxTextCtrl(panel, wxID_ANY);
+    xRegisterTextBox = new wxTextCtrl(panel, wxID_ANY);
+    yRegisterTextBox = new wxTextCtrl(panel, wxID_ANY);
+    pswRegisterTextBox = new wxTextCtrl(panel, wxID_ANY);
+    spRegisterTextBox = new wxTextCtrl(panel, wxID_ANY);
+
+    idTextBox->Disable();
+    containsTagTextBox->Disable();
+    tagTypeTextBox->Disable();
+    versionMinorTextBox->Disable();
+    pcRegisterTextBox->Disable();
+    aRegisterTextBox->Disable();
+    xRegisterTextBox->Disable();
+    yRegisterTextBox->Disable();
+    pswRegisterTextBox->Disable();
+    spRegisterTextBox->Disable();
 }
 
 void PropertiesDialog::CreateHeaderLayout()
 {
-    AddToSizer(idLabel, id, headerColumn1Sizer);
-    AddToSizer(containsTagLabel, containsTag, headerColumn1Sizer);
-    AddToSizer(tagTypeLabel, tagType, headerColumn1Sizer);
-    AddToSizer(versionMinorLabel, versionMinor, headerColumn1Sizer);
-    AddToSizer(pcRegisterLabel, pcRegister, headerColumn2Sizer);
-    AddToSizer(aRegisterLabel, aRegister, headerColumn2Sizer);
-    AddToSizer(xRegisterLabel, xRegister, headerColumn2Sizer);
-    AddToSizer(yRegisterLabel, yRegister, headerColumn2Sizer);
-    AddToSizer(pswRegisterLabel, pswRegister, headerColumn2Sizer);
-    AddToSizer(spRegisterLabel, spRegister, headerColumn2Sizer);
-    headerSizer->Add(headerColumn1Sizer, 0, wxALL | wxEXPAND);
-    headerSizer->Add(headerColumn2Sizer, 0, wxALL | wxEXPAND);
+    AddToSizer(idLabel, idTextBox, headerSizer);
+
+    AddToSizer(containsTagLabel, containsTagTextBox, headerTagSizer);
+    AddToSizer(tagTypeLabel, tagTypeTextBox, headerTagSizer);
+    AddToSizer(versionMinorLabel, versionMinorTextBox, headerTagSizer);
+    headerSizer->Add(headerTagSizer, 0, wxALL | wxEXPAND);
+
+    AddToSizer(pcRegisterLabel, pcRegisterTextBox, headerSpecialRegisterSizer);
+    AddToSizer(spRegisterLabel, spRegisterTextBox, headerSpecialRegisterSizer);
+    AddToSizer(pswRegisterLabel, pswRegisterTextBox, headerSpecialRegisterSizer);
+    headerSizer->Add(headerSpecialRegisterSizer, 0, wxALL | wxEXPAND);
+    
+    AddToSizer(aRegisterLabel, aRegisterTextBox, headerRegisterSizer);
+    AddToSizer(xRegisterLabel, xRegisterTextBox, headerRegisterSizer);
+    AddToSizer(yRegisterLabel, yRegisterTextBox, headerRegisterSizer);
+    headerSizer->Add(headerRegisterSizer, 0, wxALL | wxEXPAND);
 }
 
 void PropertiesDialog::CreatePanelLayout()
 {
-    panelSizer->Add(headerSizer, 1, wxALL | wxEXPAND);
+    panelSizer->Add(headerSizer, 1, wxALL | wxEXPAND, 5);
     panel->SetSizer(panelSizer);
     windowSizer->Add(panel, 1, wxEXPAND | wxALL);
 
-    // Because the status bar isn't included in layout calculations, we need
-    // to add the status bar height to the spacer to avoid veritcal cutoff.
-    //int statusBarHeight = GetStatusBar()->GetSize().GetHeight();
-    //rightColumnSizer->AddSpacer(statusBarHeight);
-
     SetSizerAndFit(windowSizer);
-
-    // Ensure the file list view column fills the entire width.
-    //int listViewWidth = fileListView->GetSize().GetWidth();
-    //fileListView->SetColumnWidth(0, listViewWidth);
 }
 
 void PropertiesDialog::UpdateHeaderSection()
@@ -142,27 +150,36 @@ void PropertiesDialog::UpdateHeaderSection()
         spRegisterValues.push_back(header.spRegister.ToString());
     }
 
-    SetStaticText(id, idValues);
-    SetStaticText(containsTag, headerContainsTagValues);
-    SetStaticText(tagType, tagTypeValues);
-    SetStaticText(versionMinor, versionMinorValues);
-    SetStaticText(pcRegister, pcRegisterValues);
-    SetStaticText(aRegister, aRegisterValues);
-    SetStaticText(xRegister, xRegisterValues);
-    SetStaticText(yRegister, yRegisterValues);
-    SetStaticText(pswRegister, pswRegisterValues);
-    SetStaticText(spRegister, spRegisterValues);
+    SetTextBox(idTextBox, idValues);
+    SetTextBox(containsTagTextBox, headerContainsTagValues);
+    SetTextBox(tagTypeTextBox, tagTypeValues);
+    SetTextBox(versionMinorTextBox, versionMinorValues);
+    SetTextBox(pcRegisterTextBox, pcRegisterValues);
+    SetTextBox(aRegisterTextBox, aRegisterValues);
+    SetTextBox(xRegisterTextBox, xRegisterValues);
+    SetTextBox(yRegisterTextBox, yRegisterValues);
+    SetTextBox(pswRegisterTextBox, pswRegisterValues);
+    SetTextBox(spRegisterTextBox, spRegisterValues);
 }
 
-void PropertiesDialog::SetStaticText(wxStaticText* text, 
-                               std::vector<wxString>& values)
+void PropertiesDialog::SetTextBox(wxTextCtrl* textBox,
+                                  std::vector<wxString>& values)
 {
     if (values.empty())
     {
-        text->SetLabel("-");
+        textBox->Clear();
     }
     else
     {
-        text->SetLabel(DetermineValue(values));
+        wxString value = DetermineValue(values);
+
+        if (value == "-")
+        {
+            textBox->Clear();
+        }
+        else
+        {
+            textBox->SetValue(value);
+        }
     }
 }

@@ -42,10 +42,13 @@ private:
     wxMenuBar* menuBar;
     wxMenu* fileMenu;
     wxMenu* editMenu;
+    wxMenu* viewMenu;
     wxMenu* helpMenu;
     wxPanel* panel;
     wxBoxSizer* leftColumnSizer;
     wxBoxSizer* rightColumnSizer;
+    wxBoxSizer* rightColumnTopSizer;
+    wxBoxSizer* rightColumnBottomSizer;
     wxBoxSizer* panelSizer;
     wxBoxSizer* windowSizer;
     wxBoxSizer* ostHorizontalSizer;
@@ -54,16 +57,12 @@ private:
     wxBoxSizer* outputHorizontalSizer;
     wxBoxSizer* dumpInfoHorizontalSizer;
     wxBoxSizer* buttonSizer;
-    //wxBoxSizer* tagColumn1Sizer;
-    //wxBoxSizer* tagColumn2Sizer;
     wxStaticBoxSizer* tagGeneralInfoSizer;
     wxStaticBoxSizer* tagDumpInfoSizer;
     wxStaticBoxSizer* tagOstInfoSizer;
     wxStaticBoxSizer* tagTimingSizer;
-    wxStaticBoxSizer* tagOutputSizer;
-    
+    wxStaticBoxSizer* tagAudioChannelsSizer;
     wxListView* fileListView;
-    //wxStaticText* tagTypeLabel;
     wxStaticText* songTitleLabel;
     wxStaticText* gameTitleLabel;
     wxStaticText* dumperNameLabel;
@@ -72,7 +71,7 @@ private:
     wxStaticText* songLengthLabel;
     wxStaticText* fadeLengthLabel;
     wxStaticText* songArtistLabel;
-    wxStaticText* defaultChannelStateLabel;
+    wxStaticText* defaultDisabledChannelsLabel;
     wxStaticText* emulatorUsedLabel;
     wxStaticText* ostTitleLabel;
     wxStaticText* ostDiscLabel;
@@ -85,7 +84,6 @@ private:
     wxStaticText* mutedVoicesLabel;
     wxStaticText* loopTimesLabel;
     wxStaticText* preampLevelLabel;
-    //wxTextCtrl* tagTypeTextBox;
     wxTextCtrl* songTitleTextBox;
     wxTextCtrl* gameTitleTextBox;
     wxTextCtrl* dumperNameTextBox;
@@ -94,7 +92,7 @@ private:
     wxTextCtrl* songLengthTextBox;
     wxTextCtrl* fadeLengthTextBox;
     wxTextCtrl* songArtistTextBox;
-    wxTextCtrl* defaultChannelStateTextBox;
+    wxTextCtrl* defaultDisabledChannelsTextBox;
     wxTextCtrl* emulatorUsedTextBox;
     wxTextCtrl* ostTitleTextBox;
     wxTextCtrl* ostDiscTextBox;
@@ -108,10 +106,12 @@ private:
     wxTextCtrl* loopTimesTextBox;
     wxTextCtrl* preampLevelTextBox;
     wxButton* propertiesButton;
+    wxButton* saveButton;
     wxString version;
     
     std::vector<std::shared_ptr<Spc::File>> files;
     std::vector<std::shared_ptr<Spc::File>> selectedFiles;
+    std::vector<wxStaticText*> labels;
 
     /// @brief Creates the menu bar for the main window.
     void CreateMenuBar();
@@ -120,10 +120,7 @@ private:
     void CreateSizers();
 
     /// @brief Creates the static text objects that act as labels.
-    void CreateLabelText();
-
-    /// @brief Creates the static text objects that display values.
-    void CreateValueText();
+    void CreateLabels();
 
     /// @brief Creates the text boxes for user input.
     void CreateTextBoxes();
@@ -134,9 +131,6 @@ private:
     /// @brief Creates the list view for selecting open files.
     void CreateFileListView();
 
-    /// @brief Creates the layout for the header section.
-    //void CreateHeaderLayout();
-
     /// @brief Creates the layout for the tag section.
     void CreateTagLayout();
 
@@ -145,6 +139,8 @@ private:
 
     /// @brief Binds the events to their respective handlers.
     void BindEvents();
+
+    //void UpdateSelection();
 
     /// @brief Updates the controls in the header section for selected files.
     ///
@@ -201,9 +197,19 @@ private:
     /// @param event The event object.
     void OnIncrementTrack(wxCommandEvent& event);
 
+    /// @brief Event handler for when the selection changes in the list view.
+    /// @param event The event object.
+    void OnSelectionChanged(wxListEvent& event);
+
+    /*
     /// @brief Event handler for when a file is selected in the list view.
     /// @param event The event object.
     void OnSelected(wxListEvent& event);
+
+    /// @brief Event handler for when a file is deselected in the list view.
+    /// @param event The event object.
+    void OnDeselected(wxListEvent& event);
+    */
 
     /// @brief Event handler for when the properties button is clicked.
     /// @param event The event object.

@@ -18,6 +18,7 @@
 #define COMMON_H
 
 #include <wx/wx.h>
+#include <wx/window.h>
 #include <LibCppSpc.h>
 
 /// @brief Adds specified label and value static text to the specified sizer.
@@ -47,5 +48,10 @@ wxString DetermineValue(const std::vector<wxString>& values);
 wxString DetermineFieldValue(const Spc::Field& field);
 
 wxString DetermineTagType(Spc::Header& header, Spc::Id666::Tag& tag);
+
+void CreateLabel(wxStaticText*& label, wxWindow* parent, 
+                 std::vector<wxStaticText*>& labels, wxString text);
+
+void ResizeLabels(std::vector<wxStaticText*>& labels);
 
 #endif

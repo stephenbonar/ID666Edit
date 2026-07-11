@@ -16,18 +16,18 @@
 
 #include "Common.h"
 
-constexpr int labelWidth{ 150 };
+constexpr int labelWidth{ 125 };
 constexpr int valueWidth{ 250 };
 
 void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer)
 {
     // Set consistent label and value widths to ensure visual alignment.
-    label->SetMinSize(wxSize{ labelWidth, -1 });
-    value->SetMinSize(wxSize{ valueWidth, -1 });
+    //label->SetMinSize(wxSize{ labelWidth, -1 });
+    //value->SetMinSize(wxSize{ valueWidth, -1 });
 
     wxBoxSizer* valueSizer = new wxBoxSizer{ wxHORIZONTAL };
     valueSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    valueSizer->Add(value, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
+    valueSizer->Add(value, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
     sizer->Add(valueSizer, 0, wxALL | wxEXPAND);
 }
 
@@ -35,8 +35,7 @@ void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer)
 {
     // Set a consistent label width when adding to the sizer to ensure the
     // corresponding text boxes are all aligned. 
-    label->SetMinSize(wxSize{ labelWidth, -1 });
-    //textBox->SetMinSize(wxSize{ valueWidth, -1 });
+    //label->SetMinSize(wxSize{ labelWidth, -1 });
 
     wxBoxSizer* textBoxSizer = new wxBoxSizer{ wxHORIZONTAL };
     textBoxSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
@@ -110,5 +109,30 @@ wxString DetermineValue(const std::vector<wxString>& values)
         {
             return "<multiple values>";
         }
+    }
+}
+
+void CreateLabel(wxStaticText*& label, wxWindow* parent, 
+                 std::vector<wxStaticText*>& labels, wxString text)
+{
+    label = new wxStaticText{ parent, wxID_ANY, text };
+    labels.push_back(label);
+}
+
+void ResizeLabels(std::vector<wxStaticText*>& labels)
+{
+    int maxWidth = 0;
+
+    for (wxStaticText* label : labels)
+    {
+        int width, height;
+
+        label->GetTextExtent(label->GetLabelText(), &width, &height);
+        maxWidth = std::max(maxWidth, width);
+    }
+
+    for (wxStaticText* label : labels)
+    {
+        label->SetMinSize(wxSize{ maxWidth, -1 });
     }
 }

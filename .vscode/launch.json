@@ -19,7 +19,7 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/ID666Edit.app"
+            "program": "${workspaceFolder}/build/src/ID666Edit.app",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/",

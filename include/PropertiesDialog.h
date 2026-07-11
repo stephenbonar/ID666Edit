@@ -32,8 +32,9 @@ private:
     wxPanel* panel;
     wxBoxSizer* panelSizer;
     wxBoxSizer* windowSizer;
-    wxBoxSizer* headerColumn1Sizer;
-    wxBoxSizer* headerColumn2Sizer;
+    wxBoxSizer* headerTagSizer;
+    wxBoxSizer* headerRegisterSizer;
+    wxBoxSizer* headerSpecialRegisterSizer;
     wxStaticBoxSizer* headerSizer;
     wxStaticText* idLabel;
     wxStaticText* containsTagLabel;
@@ -45,22 +46,23 @@ private:
     wxStaticText* yRegisterLabel;
     wxStaticText* pswRegisterLabel;
     wxStaticText* spRegisterLabel;
-    wxStaticText* id;
-    wxStaticText* containsTag;
-    wxStaticText* tagType;
-    wxStaticText* versionMinor;
-    wxStaticText* pcRegister;
-    wxStaticText* aRegister;
-    wxStaticText* xRegister;
-    wxStaticText* yRegister;
-    wxStaticText* pswRegister;
-    wxStaticText* spRegister;
+    wxTextCtrl* idTextBox;
+    wxTextCtrl* containsTagTextBox;
+    wxTextCtrl* tagTypeTextBox;
+    wxTextCtrl* versionMinorTextBox;
+    wxTextCtrl* pcRegisterTextBox;
+    wxTextCtrl* aRegisterTextBox;
+    wxTextCtrl* xRegisterTextBox;
+    wxTextCtrl* yRegisterTextBox;
+    wxTextCtrl* pswRegisterTextBox;
+    wxTextCtrl* spRegisterTextBox;
+    std::vector<wxStaticText*> labels;
 
     void CreateSizers();
 
     void CreateLabelText();
 
-    void CreateValueText();
+    void CreateTextBoxes();
 
     void CreateHeaderLayout();
 
@@ -74,10 +76,10 @@ private:
     /// while inconsistent values are indicated with a placeholder.
     void UpdateHeaderSection();
 
-    /// @brief Sets static text based on the values of selected files.
-    /// @param text The static text to update.
+    /// @brief Sets text box contents based on the values of selected files.
+    /// @param textBox The text box to update.
     /// @param values The values retrieved from the selected files.
-    void SetStaticText(wxStaticText* text, std::vector<wxString>& values);
+    void SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values);
 };
 
 #endif
