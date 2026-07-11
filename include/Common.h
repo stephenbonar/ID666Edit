@@ -44,7 +44,7 @@ void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer);
 
 wxString DetermineValue(const std::vector<wxString>& values);
 
-wxString DetermineFieldValue(Spc::Field* field);
+wxString DetermineFieldValue(const Spc::Field& field);
 
 wxString DetermineTagType(Spc::Header& header, Spc::Id666::Tag& tag);
 

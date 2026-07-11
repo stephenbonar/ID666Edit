@@ -19,7 +19,9 @@
 MainWindow::MainWindow(wxString version) : 
     wxFrame(nullptr, wxID_ANY, version), version{ version }
 {
+#if defined(_WIN32)
     SetIcon(wxICON(IDI_MAIN));
+#endif
     panel = new wxPanel(this);
     CreateStatusBar();
     CreateMenuBar();
@@ -39,8 +41,8 @@ MainWindow::MainWindow(wxString version) :
 void MainWindow::CreateMenuBar()
 {
     fileMenu = new wxMenu;
-    fileMenu->Append(WidgetID::Open, "&Open...\tCtrl+O", "Open .spc files");
-    fileMenu->Append(WidgetID::Save, "&Save...\tCtrl+S", 
+    fileMenu->Append(wxID_OPEN, "&Open...\tCtrl+O", "Open .spc files");
+    fileMenu->Append(wxID_SAVE, "&Save...\tCtrl+S", 
                      "Saves changes to the .spc files");
     fileMenu->AppendSeparator();
     fileMenu->Append(wxID_EXIT, "E&xit\tAlt+F4", "Exit the application");
@@ -63,7 +65,7 @@ void MainWindow::CreateMenuBar()
     menuBar->Append(fileMenu, "&File");
     menuBar->Append(editMenu, "&Edit");
     menuBar->Append(helpMenu, "&Help");
-    menuBar->Enable(WidgetID::Save, false);
+    menuBar->Enable(wxID_SAVE, false);
 
     SetMenuBar(menuBar);
 }
@@ -324,8 +326,8 @@ void MainWindow::BindEvents()
 {
     Bind(wxEVT_MENU, &MainWindow::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainWindow::OnExit, this, wxID_EXIT);
-    Bind(wxEVT_MENU, &MainWindow::OnOpen, this, WidgetID::Open);
-    Bind(wxEVT_MENU, &MainWindow::OnSave, this, WidgetID::Save);
+    Bind(wxEVT_MENU, &MainWindow::OnOpen, this, wxID_OPEN);
+    Bind(wxEVT_MENU, &MainWindow::OnSave, this, wxID_SAVE);
     Bind(wxEVT_MENU, &MainWindow::OnFileNameToTag, this, 
          WidgetID::FileNameToTag);
     Bind(wxEVT_MENU, &MainWindow::OnTagToFileName, this, 
@@ -430,28 +432,28 @@ void MainWindow::UpdateTagSection()
             tagTypeValues.push_back(tagType);
         }
 
-        songTitleValues.push_back(DetermineFieldValue(&tag.SongTitle()));
-        gameTitleValues.push_back(DetermineFieldValue(&tag.GameTitle()));
-        dumperNameValues.push_back(DetermineFieldValue(&tag.DumperName()));
-        commentsValues.push_back(DetermineFieldValue(&tag.Comments()));
-        dateDumpedValues.push_back(DetermineFieldValue(&tag.DateDumped()));
-        songLengthValues.push_back(DetermineFieldValue(&tag.SongLength()));
-        fadeLengthValues.push_back(DetermineFieldValue(&tag.FadeLength()));
-        songArtistValues.push_back(DetermineFieldValue(&tag.SongArtist()));
+        songTitleValues.push_back(DetermineFieldValue(tag.SongTitle()));
+        gameTitleValues.push_back(DetermineFieldValue(tag.GameTitle()));
+        dumperNameValues.push_back(DetermineFieldValue(tag.DumperName()));
+        commentsValues.push_back(DetermineFieldValue(tag.Comments()));
+        dateDumpedValues.push_back(DetermineFieldValue(tag.DateDumped()));
+        songLengthValues.push_back(DetermineFieldValue(tag.SongLength()));
+        fadeLengthValues.push_back(DetermineFieldValue(tag.FadeLength()));
+        songArtistValues.push_back(DetermineFieldValue(tag.SongArtist()));
         defaultChannelStateValues.push_back(
-            DetermineFieldValue(&tag.DefaultDisabledChannels()));
-        emulatorUsedValues.push_back(DetermineFieldValue(&tag.EmulatorUsed()));
-        ostTitleValues.push_back(DetermineFieldValue(&tag.OstTitle()));
-        ostDiscValues.push_back(DetermineFieldValue(&tag.OstDisc()));
-        ostTrackValues.push_back(DetermineFieldValue(&tag.OstTrack()));
-        publisherNameValues.push_back(DetermineFieldValue(&tag.PublisherName()));
-        copyrightYearValues.push_back(DetermineFieldValue(&tag.CopyrightYear()));
-        introLengthValues.push_back(DetermineFieldValue(&tag.IntroLength()));
-        loopLengthValues.push_back(DetermineFieldValue(&tag.LoopLength()));
-        endLengthValues.push_back(DetermineFieldValue(&tag.EndLength()));
-        mutedVoicesValues.push_back(DetermineFieldValue(&tag.MutedVoices()));
-        loopTimesValues.push_back(DetermineFieldValue(&tag.LoopTimes()));
-        preampLevelValues.push_back(DetermineFieldValue(&tag.PreampLevel()));
+            DetermineFieldValue(tag.DefaultDisabledChannels()));
+        emulatorUsedValues.push_back(DetermineFieldValue(tag.EmulatorUsed()));
+        ostTitleValues.push_back(DetermineFieldValue(tag.OstTitle()));
+        ostDiscValues.push_back(DetermineFieldValue(tag.OstDisc()));
+        ostTrackValues.push_back(DetermineFieldValue(tag.OstTrack()));
+        publisherNameValues.push_back(DetermineFieldValue(tag.PublisherName()));
+        copyrightYearValues.push_back(DetermineFieldValue(tag.CopyrightYear()));
+        introLengthValues.push_back(DetermineFieldValue(tag.IntroLength()));
+        loopLengthValues.push_back(DetermineFieldValue(tag.LoopLength()));
+        endLengthValues.push_back(DetermineFieldValue(tag.EndLength()));
+        mutedVoicesValues.push_back(DetermineFieldValue(tag.MutedVoices()));
+        loopTimesValues.push_back(DetermineFieldValue(tag.LoopTimes()));
+        preampLevelValues.push_back(DetermineFieldValue(tag.PreampLevel()));
     }
 
     //SetTextBox(tagTypeTextBox, tagTypeValues);
@@ -772,7 +774,7 @@ void MainWindow::OnSelected(wxListEvent& event)
         selectedFiles.push_back(files.at(itemIndex));
     }
 
-    menuBar->Enable(WidgetID::Save, !selectedFiles.empty());
+    menuBar->Enable(wxID_SAVE, !selectedFiles.empty());
     //UpdateHeaderSection();
     UpdateTagSection();
     UpdateStatusBar();

@@ -19,8 +19,8 @@
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/src/id666editc",
-            "args": ["01 Presentiment.spc"],
+            "program": "${workspaceFolder}/build/src/ID666Edit.app"
+            "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/build/src/",
             "environment": [],

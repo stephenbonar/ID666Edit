@@ -55,7 +55,16 @@ if(WIN32)
 endif()
 
 if(BUILD_GUI)
-    if (WIN32)
+    if (APPLE)
+        add_executable(ID666Edit MACOSX_BUNDLE
+                       ID666Edit.cpp
+                       Common.cpp
+                       MainWindow.cpp
+                       FileNameToTagDialog.cpp
+                       PropertiesDialog.cpp
+                       TagToFileNameWindow.cpp
+                       IncrementTrackWindow.cpp)
+    elseif (WIN32)
         add_executable(ID666Edit WIN32
                        ID666Edit.cpp 
                        Common.cpp
@@ -78,6 +87,46 @@ if(BUILD_GUI)
     target_include_directories(ID666Edit PUBLIC ${INCLUDES})
 
     target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
+
+    if(APPLE)
+        find_program(ICONUTIL_EXECUTABLE iconutil REQUIRED)
+        find_program(SIPS_EXECUTABLE sips REQUIRED)
+
+        set(MACOS_ICONSET_DIR ${CMAKE_CURRENT_BINARY_DIR}/ID666Edit.iconset)
+        set(MACOS_ICON_OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/ID666Edit.icns)
+
+        add_custom_command(
+            OUTPUT ${MACOS_ICON_OUTPUT}
+            COMMAND ${CMAKE_COMMAND}
+                    -DICONUTIL_EXECUTABLE=${ICONUTIL_EXECUTABLE}
+                    -DSIPS_EXECUTABLE=${SIPS_EXECUTABLE}
+                    -DICONSET_DIR=${MACOS_ICONSET_DIR}
+                    -DOUTPUT_ICNS=${MACOS_ICON_OUTPUT}
+                    -DICON_16=${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit\ Icon\ 16x16.png
+                    -DICON_32=${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit\ Icon\ 32x32.png
+                    -DICON_64=${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit\ Icon\ 64x64.png
+                    -P ${PROJECT_SOURCE_DIR}/cmake/GenerateMacOSIcon.cmake
+            DEPENDS
+                    ${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit\ Icon\ 16x16.png
+                    ${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit\ Icon\ 32x32.png
+                    ${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit\ Icon\ 64x64.png
+                    ${PROJECT_SOURCE_DIR}/cmake/GenerateMacOSIcon.cmake
+            VERBATIM
+        )
+
+        set_source_files_properties(${MACOS_ICON_OUTPUT}
+            PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+        target_sources(ID666Edit PRIVATE ${MACOS_ICON_OUTPUT})
+        set_target_properties(ID666Edit PROPERTIES
+            MACOSX_BUNDLE_BUNDLE_NAME ID666Edit
+            MACOSX_BUNDLE_GUI_IDENTIFIER com.stephenbonar.id666edit
+            MACOSX_BUNDLE_INFO_STRING "ID666Edit SPC Tag Editor"
+            MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+            MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION}
+            MACOSX_BUNDLE_LONG_VERSION_STRING "${PROJECT_VERSION} ${PROGRAM_RELEASE}"
+            MACOSX_BUNDLE_COPYRIGHT "${PROGRAM_COPYRIGHT}"
+            MACOSX_BUNDLE_ICON_FILE ID666Edit.icns)
+    endif()
 
     if(WIN32)
         add_windows_resource_metadata(ID666Edit "ID666Edit SPC Tag Editor")

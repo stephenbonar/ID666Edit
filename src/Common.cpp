@@ -44,11 +44,11 @@ void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer)
     sizer->Add(textBoxSizer, 1, wxALL | wxEXPAND);
 }
 
-wxString DetermineFieldValue(Spc::Field* field)
+wxString DetermineFieldValue(const Spc::Field& field)
 {
-    if (field->IsPresent())
+    if (field.IsPresent())
     {
-        return field->ToString();
+        return field.ToString();
     }
     else
     {
