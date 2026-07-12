@@ -32,12 +32,14 @@ MainWindow::MainWindow(wxString version) :
     CreateLabels();
     ResizeLabels(labels);
     CreateTextBoxes();
+    CreateToolTips();
     CreateButtons();
     CreateFileListView();
     CreateTagLayout();
     CreatePanelLayout();
     BindEvents();
     SetStatusText("Ready");
+    UpdateEnabledControls();
 }
 
 void MainWindow::CreateMenuBar()
@@ -72,11 +74,6 @@ void MainWindow::CreateMenuBar()
     menuBar->Append(editMenu, "&Edit");
     menuBar->Append(viewMenu, "&View");
     menuBar->Append(helpMenu, "&Help");
-    menuBar->Enable(wxID_SAVE, false);
-    menuBar->Enable(WidgetID::Properties, false);
-    menuBar->Enable(WidgetID::FileNameToTag, false);
-    menuBar->Enable(WidgetID::TagToFileName, false);
-    menuBar->Enable(WidgetID::IncrementTrack, false);
 
     SetMenuBar(menuBar);
 }
@@ -117,11 +114,6 @@ void MainWindow::CreateLabels()
     CreateLabel(publisherNameLabel, tagOstInfoBox, labels, "Publisher Name");
     CreateLabel(copyrightYearLabel, tagOstInfoBox, labels, "Copyright Year");
 
-    wxStaticBox* tagDumpInfoBox = tagDumpInfoSizer->GetStaticBox();
-    CreateLabel(dumperNameLabel, tagDumpInfoBox, labels, "Dumper Name");
-    CreateLabel(dateDumpedLabel, tagDumpInfoBox, labels, "Date Dumped");
-    CreateLabel(emulatorUsedLabel, tagDumpInfoBox, labels, "Emulator Used");
-
     wxStaticBox* tagTimingBox = tagTimingSizer->GetStaticBox();
     CreateLabel(songLengthLabel, tagTimingBox, labels, "Song Length (sec)");
     CreateLabel(fadeLengthLabel, tagTimingBox, labels, "Fade Length (ms)");
@@ -135,6 +127,11 @@ void MainWindow::CreateLabels()
                 labels, "Disabled by Default");
     CreateLabel(mutedVoicesLabel, tagAudioChannelsBox, labels, "Muted");
     CreateLabel(preampLevelLabel, tagAudioChannelsBox, labels, "Preamp Level");
+
+    wxStaticBox* tagDumpInfoBox = tagDumpInfoSizer->GetStaticBox();
+    CreateLabel(dumperNameLabel, tagDumpInfoBox, labels, "Dumper Name");
+    CreateLabel(dateDumpedLabel, tagDumpInfoBox, labels, "Date Dumped");
+    CreateLabel(emulatorUsedLabel, tagDumpInfoBox, labels, "Emulator Used");
 }
 
 void MainWindow::CreateTextBoxes()
@@ -152,11 +149,6 @@ void MainWindow::CreateTextBoxes()
     publisherNameTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
     copyrightYearTextBox = new wxTextCtrl{ tagOstInfoBox, wxID_ANY, "" };
     
-    wxStaticBox* tagDumpInfoBox = tagDumpInfoSizer->GetStaticBox();
-    dumperNameTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
-    dateDumpedTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
-    emulatorUsedTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
-    
     wxStaticBox* tagTimingBox = tagTimingSizer->GetStaticBox();
     songLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
     fadeLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
@@ -169,6 +161,54 @@ void MainWindow::CreateTextBoxes()
     defaultDisabledChannelsTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
     mutedVoicesTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
     preampLevelTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
+
+    wxStaticBox* tagDumpInfoBox = tagDumpInfoSizer->GetStaticBox();
+    dumperNameTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
+    dateDumpedTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
+    emulatorUsedTextBox = new wxTextCtrl{ tagDumpInfoBox, wxID_ANY, "" };
+}
+
+void MainWindow::CreateToolTips()
+{
+    songTitleTextBox->SetToolTip("The title of the song");
+    gameTitleTextBox->SetToolTip("The name of the game the song came from");
+    songArtistTextBox->SetToolTip(
+        "The artist(s) who wrote the song for the game");
+    commentsTextBox->SetToolTip("Additional comments about the song");
+
+    ostTitleTextBox->SetToolTip(
+        "The title of the original soundtrack that corresponds with the game");
+    ostDiscTextBox->SetToolTip(
+        "The disc number the song occured on in the original soundtrack");
+    ostTrackTextBox->SetToolTip(
+        "The track number of the song on the original soundtrack");
+    publisherNameTextBox->SetToolTip("The publisher of the game or soundtrack");
+    copyrightYearTextBox->SetToolTip(
+        "The year the game or soundtrack was copyrighted");
+
+    songLengthTextBox->SetToolTip("The length of the song in seconds");
+    fadeLengthTextBox->SetToolTip(
+        "The amount of time the song fades out in milliseconds");
+    introLengthTextBox->SetToolTip(
+        "The length of the song's intro in ticks (1/64000 of a second)");
+    loopLengthTextBox->SetToolTip(
+        "The length of each loop of the song (1/64000 of a second)");
+    endLengthTextBox->SetToolTip(
+        "The length of the song's ending in ticks (1/64000 of a second)");
+    loopTimesTextBox->SetToolTip(
+        "The number of times the song loops before reaching the end");
+
+    defaultDisabledChannelsTextBox->SetToolTip(
+        "Sets which audio channels are disabled on init i.e. 00010000");
+    mutedVoicesTextBox->SetToolTip(
+        "Sets which audio channels are muted entirely i.e. 00010000");
+    preampLevelTextBox->SetToolTip(
+        "Sets the preamp level for the song (32,768 - 624,288)");
+
+    dumperNameTextBox->SetToolTip("The name of the person who dumped the song");
+    dateDumpedTextBox->SetToolTip("The date the song was dumped (DD/MM/YYYY)");
+    emulatorUsedTextBox->SetToolTip(
+        "The name of the emulator used to dump the song");
 }
 
 void MainWindow::CreateButtons()
@@ -271,6 +311,22 @@ void MainWindow::BindEvents()
          WidgetID::IncrementTrack);
     Bind(wxEVT_MENU, &MainWindow::OnProperties, this, 
          WidgetID::Properties);
+}
+
+void MainWindow::UpdateEnabledControls()
+{
+    bool hasSelectedFiles = !selectedFiles.empty();
+    propertiesButton->Enable(hasSelectedFiles);
+    saveButton->Enable(hasSelectedFiles);
+    menuBar->Enable(wxID_SAVE, hasSelectedFiles);
+    menuBar->Enable(WidgetID::FileNameToTag, hasSelectedFiles);
+    menuBar->Enable(WidgetID::TagToFileName, hasSelectedFiles);
+    menuBar->Enable(WidgetID::IncrementTrack, hasSelectedFiles);
+    tagGeneralInfoSizer->GetStaticBox()->Enable(hasSelectedFiles);
+    tagOstInfoSizer->GetStaticBox()->Enable(hasSelectedFiles);
+    tagTimingSizer->GetStaticBox()->Enable(hasSelectedFiles);
+    tagAudioChannelsSizer->GetStaticBox()->Enable(hasSelectedFiles);
+    tagDumpInfoSizer->GetStaticBox()->Enable(hasSelectedFiles);
 }
 
 /*
@@ -671,13 +727,7 @@ void MainWindow::OnSelectionChanged(wxListEvent& event)
         selectedFiles.push_back(files.at(itemIndex));
     }
 
-    menuBar->Enable(wxID_SAVE, !selectedFiles.empty());
-    menuBar->Enable(WidgetID::Properties, !selectedFiles.empty());
-    menuBar->Enable(WidgetID::FileNameToTag, !selectedFiles.empty());
-    menuBar->Enable(WidgetID::TagToFileName, !selectedFiles.empty());
-    menuBar->Enable(WidgetID::IncrementTrack, !selectedFiles.empty());
-    propertiesButton->Enable(!selectedFiles.empty());
-    saveButton->Enable(!selectedFiles.empty());
+    UpdateEnabledControls();
     UpdateTagSection();
     UpdateStatusBar();
 }

@@ -73,6 +73,13 @@ if(BUILD_GUI)
                        PropertiesDialog.cpp
                        TagToFileNameWindow.cpp
                        IncrementTrackWindow.cpp)
+
+        # Suppress warnings about unsafe CRT functions from wxWidgets.
+        target_compile_definitions(ID666Edit PRIVATE _CRT_SECURE_NO_WARNINGS)
+        target_compile_options(ID666Edit PRIVATE
+            /wd4996   # unsafe CRT warnings from wxWidgets
+            /wd4251   # dll-interface warnings from wxWidgets
+)
     else()
         add_executable(ID666Edit
                        ID666Edit.cpp

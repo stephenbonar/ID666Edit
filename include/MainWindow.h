@@ -125,6 +125,9 @@ private:
     /// @brief Creates the text boxes for user input.
     void CreateTextBoxes();
 
+    /// @brief Creates the tool tips for the text boxes.
+    void CreateToolTips();
+
     /// @brief Creates the buttons for user actions.
     void CreateButtons();
 
@@ -140,15 +143,7 @@ private:
     /// @brief Binds the events to their respective handlers.
     void BindEvents();
 
-    //void UpdateSelection();
-
-    /// @brief Updates the controls in the header section for selected files.
-    ///
-    /// When the user selects files in the list view, this function updates 
-    /// the header controls to reflect the information of the selected files.
-    /// Values that are consistent across all selected files are displayed, 
-    /// while inconsistent values are indicated with a placeholder.
-    //void UpdateHeaderSection();
+    void UpdateEnabledControls();
 
     /// @brief Updates the controls in the tag section for selected files.
     ///
