@@ -21,6 +21,7 @@
 #include <memory>
 #include <wx/wx.h>
 #include <LibCppSpc.h>
+#include "Common.h"
 
 /// @brief A dialog window for converting file names to ID666 tag data.
 class FileNameToTagDialog : public wxDialog

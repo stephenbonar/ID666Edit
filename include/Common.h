@@ -21,16 +21,14 @@
 #include <wx/window.h>
 #include <LibCppSpc.h>
 
-/// @brief Adds specified label and value static text to the specified sizer.
-///
-/// Creates a horizontal sizer containing the label and value static text
-/// objects to ensure they are visually aligned, and adds it to the specified
-/// parent sizer.
-///
-/// @param label The static text object representing the value label.
-/// @param value The static text object representing the value itself.
-/// @param sizer The sizer to which the label and value will be added.
-void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer);
+/// @brief A proportion indicating no growth for sizer flags.
+inline constexpr int noGrowthProportion{ 0 };
+
+/// @brief A proportion indicating growth for sizer flags.
+inline constexpr int growthProportion{ 1 };
+
+/// @brief A proportion indicating triple growth for sizer flags.
+inline constexpr int tripleGrowthProportion{ 3 };
 
 /// @brief Adds specified label and text box to the specified sizer.
 ///
@@ -43,15 +41,50 @@ void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer);
 /// @param sizer The sizer to which the label and text box will be added.
 void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer);
 
-wxString DetermineValue(const std::vector<wxString>& values);
+/// @brief Determines the value to retrieve from the specified vector of values.
+///
+/// Use this function to determine the value to display in a text box when
+/// one or more files are selected. If the vector is empty, none of the selected
+/// files have a value and en empty string is returned. If the vector contains
+/// exactly one value, then only one file is selected and that value is
+/// returned as is. If the vector contains multiple values, then multiple files
+/// are selected; if they are all the same, that value is returned, otherwise
+/// as string indicating multiple values is returned.
+///
+/// @param values The vector of values to evaluate.
+/// @return The string to display in the text box.
+wxString GetCommonValue(const std::vector<wxString>& values);
 
-wxString DetermineFieldValue(const Spc::Field& field);
+/// @brief Gets the value of the specified field or a placeholder.
+///
+/// If the specified field is marked as being present in the SPC file, its
+/// value is returned, otherwise a placeholder is returned.
+///
+/// @param field The field to evaluate.
+/// @return The value if the field is present, otherwise a placeholder.
+wxString GetValueOrPlaceholder(const Spc::Field& field);
 
-wxString DetermineTagType(Spc::Header& header, Spc::Id666::Tag& tag);
+/// @brief Gets the type of the tag in the specified header.
+///
+/// @param header The header to evaluate.
+/// @param tag The tag to evaluate.
+/// @return The type of the tag as a string, or "-" if no tag is present.
+wxString GetTagType(const Spc::Header& header, const Spc::Id666::Tag& tag);
 
+/// @brief Creates a static text label and adds it to the specified vector.
+/// @param label A pointer to the static text label to create.
+/// @param parent The parent window for the static text label.
+/// @param labels The vector to which the label will be added.
+/// @param text The text to display in the label.
 void CreateLabel(wxStaticText*& label, wxWindow* parent, 
                  std::vector<wxStaticText*>& labels, wxString text);
 
+/// @brief Resizes the specified static text labels to have a uniform width.
+///
+/// The function calculates the maximum width of the specified labels and sets
+/// all of them to that width, ensuring that they are visually aligned.
+///
+/// @param labels The vector of static text labels to resize.
 void ResizeLabels(std::vector<wxStaticText*>& labels);
 
 #endif

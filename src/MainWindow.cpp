@@ -91,10 +91,16 @@ void MainWindow::CreateSizers()
     dumpInfoHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     buttonSizer = new wxBoxSizer{ wxHORIZONTAL };
     tagGeneralInfoSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "General" };
-    tagOstInfoSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Original Soundtrack" };
+    tagOstInfoSizer = new wxStaticBoxSizer
+    { 
+        wxVERTICAL, panel, "Original Soundtrack" 
+    };
     tagDumpInfoSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Dump Info" };
     tagTimingSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Timing" };
-    tagAudioChannelsSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Audio Channels" };
+    tagAudioChannelsSizer = new wxStaticBoxSizer
+    { 
+        wxVERTICAL, panel, "Audio Channels" 
+    };
     panelSizer = new wxBoxSizer{ wxHORIZONTAL };
     windowSizer = new wxBoxSizer{ wxVERTICAL };
 }
@@ -158,7 +164,10 @@ void MainWindow::CreateTextBoxes()
     loopTimesTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
     
     wxStaticBox* tagAudioChannelsBox = tagAudioChannelsSizer->GetStaticBox();
-    defaultDisabledChannelsTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
+    defaultDisabledChannelsTextBox = new wxTextCtrl
+    { 
+        tagAudioChannelsBox, wxID_ANY, "" 
+    };
     mutedVoicesTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
     preampLevelTextBox = new wxTextCtrl{ tagAudioChannelsBox, wxID_ANY, "" };
 
@@ -213,7 +222,10 @@ void MainWindow::CreateToolTips()
 
 void MainWindow::CreateButtons()
 {
-    propertiesButton = new wxButton{ panel, WidgetID::Properties, "Properties" };
+    propertiesButton = new wxButton
+    { 
+        panel, WidgetID::Properties, "Properties" 
+    };
     saveButton = new wxButton{ panel, wxID_SAVE, "Save" };
     propertiesButton->Enable(false);
     saveButton->Enable(false);
@@ -229,12 +241,20 @@ void MainWindow::CreateFileListView()
     };
 
     fileListView->AppendColumn("Filename");
-    fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, &MainWindow::OnSelectionChanged, this);
-    fileListView->Bind(wxEVT_LIST_ITEM_DESELECTED, &MainWindow::OnSelectionChanged, this);
+    fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, 
+                       &MainWindow::OnSelectionChanged, this);
+    fileListView->Bind(wxEVT_LIST_ITEM_DESELECTED, 
+                       &MainWindow::OnSelectionChanged, this);
 }
 
 void MainWindow::CreateTagLayout()
 {
+    constexpr int buttonBorderSize{ 5 };
+
+    wxSizerFlags horizontalFlags = wxSizerFlags(noGrowthProportion).Expand();
+    wxSizerFlags buttonFlags = wxSizerFlags(noGrowthProportion);
+    buttonFlags.Border(wxALL, buttonBorderSize);
+
     AddToSizer(songTitleLabel, songTitleTextBox, tagGeneralInfoSizer);
     AddToSizer(gameTitleLabel, gameTitleTextBox, tagGeneralInfoSizer);
     AddToSizer(songArtistLabel, songArtistTextBox, tagGeneralInfoSizer);
@@ -245,7 +265,7 @@ void MainWindow::CreateTagLayout()
     AddToSizer(ostDiscLabel, ostDiscTextBox, ostHorizontalSizer);
     AddToSizer(ostTrackLabel, ostTrackTextBox, ostHorizontalSizer);
     AddToSizer(copyrightYearLabel, copyrightYearTextBox, ostHorizontalSizer);
-    tagOstInfoSizer->Add(ostHorizontalSizer, 0, wxEXPAND, 5);
+    tagOstInfoSizer->Add(ostHorizontalSizer, horizontalFlags);
 
     AddToSizer(songLengthLabel, songLengthTextBox, timingHorizontalSizer1);
     AddToSizer(fadeLengthLabel, fadeLengthTextBox, timingHorizontalSizer1);
@@ -253,48 +273,63 @@ void MainWindow::CreateTagLayout()
     AddToSizer(loopLengthLabel, loopLengthTextBox, timingHorizontalSizer2);
     AddToSizer(loopTimesLabel, loopTimesTextBox, timingHorizontalSizer2);
     AddToSizer(endLengthLabel, endLengthTextBox, timingHorizontalSizer2);
-    tagTimingSizer->Add(timingHorizontalSizer1, 0, wxEXPAND, 5);
-    tagTimingSizer->Add(timingHorizontalSizer2, 0, wxEXPAND, 5);
+    tagTimingSizer->Add(timingHorizontalSizer1, horizontalFlags);
+    tagTimingSizer->Add(timingHorizontalSizer2, horizontalFlags);
     
     AddToSizer(defaultDisabledChannelsLabel, defaultDisabledChannelsTextBox, 
                outputHorizontalSizer);
     AddToSizer(mutedVoicesLabel, mutedVoicesTextBox, outputHorizontalSizer);
     AddToSizer(preampLevelLabel, preampLevelTextBox, outputHorizontalSizer);
-    tagAudioChannelsSizer->Add(outputHorizontalSizer, 0, wxEXPAND, 5);
+    tagAudioChannelsSizer->Add(outputHorizontalSizer, horizontalFlags);
     
     AddToSizer(dumperNameLabel, dumperNameTextBox, dumpInfoHorizontalSizer);
     AddToSizer(dateDumpedLabel, dateDumpedTextBox, dumpInfoHorizontalSizer);
     AddToSizer(emulatorUsedLabel, emulatorUsedTextBox, dumpInfoHorizontalSizer);
-    tagDumpInfoSizer->Add(dumpInfoHorizontalSizer, 0, wxEXPAND, 5);
+    tagDumpInfoSizer->Add(dumpInfoHorizontalSizer, horizontalFlags);
    
-    buttonSizer->Add(propertiesButton, 0, wxALL, 5);
-    buttonSizer->Add(saveButton, 0, wxALL, 5);
+    buttonSizer->Add(propertiesButton, buttonFlags);
+    buttonSizer->Add(saveButton, buttonFlags);
 }
 
 void MainWindow::CreatePanelLayout()
 {
+    constexpr int staticBoxBorderSize{ 5 };
 
-    leftColumnSizer->Add(fileListView, 1, wxALL | wxEXPAND);
-    rightColumnTopSizer->Add(tagGeneralInfoSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnTopSizer->Add(tagOstInfoSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnTopSizer->Add(tagTimingSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnTopSizer->Add(tagAudioChannelsSizer, 0, wxALL | wxEXPAND, 5);
-    rightColumnTopSizer->Add(tagDumpInfoSizer, 0, wxALL | wxEXPAND, 5);
+    wxSizerFlags leftColumnFlags = wxSizerFlags(growthProportion).Expand();
+    wxSizerFlags rightColumnFlags = wxSizerFlags(growthProportion).Expand();
+    wxSizerFlags rightColumnTopFlags = wxSizerFlags(noGrowthProportion);
+    wxSizerFlags rightColumnBottomFlags = wxSizerFlags(noGrowthProportion);
+    wxSizerFlags panelFlags = wxSizerFlags(growthProportion).Expand();
+    wxSizerFlags windowFlags = wxSizerFlags(growthProportion).Expand();
+    rightColumnTopFlags.Expand();
+    rightColumnTopFlags.Border(wxALL, staticBoxBorderSize);
+    rightColumnBottomFlags.Align(wxALIGN_RIGHT);
+    rightColumnBottomFlags.Border(wxALL, staticBoxBorderSize);
+
+    leftColumnSizer->Add(fileListView, leftColumnFlags);
+
+    rightColumnTopSizer->Add(tagGeneralInfoSizer, rightColumnTopFlags);
+    rightColumnTopSizer->Add(tagOstInfoSizer, rightColumnTopFlags);
+    rightColumnTopSizer->Add(tagTimingSizer, rightColumnTopFlags);
+    rightColumnTopSizer->Add(tagAudioChannelsSizer, rightColumnTopFlags);
+    rightColumnTopSizer->Add(tagDumpInfoSizer, rightColumnTopFlags);
     rightColumnTopSizer->AddStretchSpacer(1);
-    rightColumnBottomSizer->Add(buttonSizer, 0, wxALL | wxALIGN_RIGHT, 5);
-    rightColumnSizer->Add(rightColumnTopSizer, 1, wxALL | wxEXPAND);
-    rightColumnSizer->Add(rightColumnBottomSizer, 0, wxALL | wxEXPAND);
 
-    panelSizer->Add(leftColumnSizer, 1, wxALL | wxEXPAND);
-    panelSizer->Add(rightColumnSizer, 3, wxALL | wxEXPAND);
+    rightColumnBottomSizer->Add(buttonSizer, rightColumnBottomFlags);
+
+    rightColumnSizer->Add(rightColumnTopSizer, rightColumnFlags);
+    rightColumnFlags.Proportion(noGrowthProportion);
+    rightColumnSizer->Add(rightColumnBottomSizer, rightColumnFlags);
+
+    panelSizer->Add(leftColumnSizer, panelFlags);
+    panelFlags.Proportion(tripleGrowthProportion);
+    panelSizer->Add(rightColumnSizer, panelFlags);
+
     panel->SetSizer(panelSizer);
-    windowSizer->Add(panel, 1, wxEXPAND | wxALL);
+
+    windowSizer->Add(panel, windowFlags);
 
     SetSizerAndFit(windowSizer);
-
-    // Ensure the file list view column fills the entire width.
-    int listViewWidth = fileListView->GetSize().GetWidth();
-    fileListView->SetColumnWidth(0, listViewWidth);
 }
 
 void MainWindow::BindEvents()
@@ -311,6 +346,7 @@ void MainWindow::BindEvents()
          WidgetID::IncrementTrack);
     Bind(wxEVT_MENU, &MainWindow::OnProperties, this, 
          WidgetID::Properties);
+    fileListView->Bind(wxEVT_SIZE, &MainWindow::OnFileListViewResize, this);
 }
 
 void MainWindow::UpdateEnabledControls()
@@ -328,25 +364,6 @@ void MainWindow::UpdateEnabledControls()
     tagAudioChannelsSizer->GetStaticBox()->Enable(hasSelectedFiles);
     tagDumpInfoSizer->GetStaticBox()->Enable(hasSelectedFiles);
 }
-
-/*
-void MainWindow::UpdateSelection()
-{
-    selectedFiles.clear();
-    long itemIndex{ -1 };
-
-    while ((itemIndex = fileListView->GetNextItem(itemIndex, wxLIST_NEXT_ALL, 
-                                                  wxLIST_STATE_SELECTED)) != -1)
-    {
-        selectedFiles.push_back(files.at(itemIndex));
-    }
-
-    menuBar->Enable(wxID_SAVE, !selectedFiles.empty());
-    propertiesButton->Enable(!selectedFiles.empty());
-    UpdateTagSection();
-    UpdateStatusBar();
-}
-*/
 
 void MainWindow::UpdateTagSection()
 {
@@ -378,7 +395,7 @@ void MainWindow::UpdateTagSection()
         Spc::Id666::Tag tag = file->Tag();
         Spc::Header header = file->Header();
 
-        wxString tagType = DetermineTagType(header, tag);
+        wxString tagType = GetTagType(header, tag);
 
         if (tagType == "-")
         {
@@ -389,28 +406,28 @@ void MainWindow::UpdateTagSection()
             tagTypeValues.push_back(tagType);
         }
 
-        songTitleValues.push_back(DetermineFieldValue(tag.SongTitle()));
-        gameTitleValues.push_back(DetermineFieldValue(tag.GameTitle()));
-        dumperNameValues.push_back(DetermineFieldValue(tag.DumperName()));
-        commentsValues.push_back(DetermineFieldValue(tag.Comments()));
-        dateDumpedValues.push_back(DetermineFieldValue(tag.DateDumped()));
-        songLengthValues.push_back(DetermineFieldValue(tag.SongLength()));
-        fadeLengthValues.push_back(DetermineFieldValue(tag.FadeLength()));
-        songArtistValues.push_back(DetermineFieldValue(tag.SongArtist()));
+        songTitleValues.push_back(GetValueOrPlaceholder(tag.SongTitle()));
+        gameTitleValues.push_back(GetValueOrPlaceholder(tag.GameTitle()));
+        dumperNameValues.push_back(GetValueOrPlaceholder(tag.DumperName()));
+        commentsValues.push_back(GetValueOrPlaceholder(tag.Comments()));
+        dateDumpedValues.push_back(GetValueOrPlaceholder(tag.DateDumped()));
+        songLengthValues.push_back(GetValueOrPlaceholder(tag.SongLength()));
+        fadeLengthValues.push_back(GetValueOrPlaceholder(tag.FadeLength()));
+        songArtistValues.push_back(GetValueOrPlaceholder(tag.SongArtist()));
         defaultDisabledChannelsValues.push_back(
-            DetermineFieldValue(tag.DefaultDisabledChannels()));
-        emulatorUsedValues.push_back(DetermineFieldValue(tag.EmulatorUsed()));
-        ostTitleValues.push_back(DetermineFieldValue(tag.OstTitle()));
-        ostDiscValues.push_back(DetermineFieldValue(tag.OstDisc()));
-        ostTrackValues.push_back(DetermineFieldValue(tag.OstTrack()));
-        publisherNameValues.push_back(DetermineFieldValue(tag.PublisherName()));
-        copyrightYearValues.push_back(DetermineFieldValue(tag.CopyrightYear()));
-        introLengthValues.push_back(DetermineFieldValue(tag.IntroLength()));
-        loopLengthValues.push_back(DetermineFieldValue(tag.LoopLength()));
-        endLengthValues.push_back(DetermineFieldValue(tag.EndLength()));
-        mutedVoicesValues.push_back(DetermineFieldValue(tag.MutedVoices()));
-        loopTimesValues.push_back(DetermineFieldValue(tag.LoopTimes()));
-        preampLevelValues.push_back(DetermineFieldValue(tag.PreampLevel()));
+            GetValueOrPlaceholder(tag.DefaultDisabledChannels()));
+        emulatorUsedValues.push_back(GetValueOrPlaceholder(tag.EmulatorUsed()));
+        ostTitleValues.push_back(GetValueOrPlaceholder(tag.OstTitle()));
+        ostDiscValues.push_back(GetValueOrPlaceholder(tag.OstDisc()));
+        ostTrackValues.push_back(GetValueOrPlaceholder(tag.OstTrack()));
+        publisherNameValues.push_back(GetValueOrPlaceholder(tag.PublisherName()));
+        copyrightYearValues.push_back(GetValueOrPlaceholder(tag.CopyrightYear()));
+        introLengthValues.push_back(GetValueOrPlaceholder(tag.IntroLength()));
+        loopLengthValues.push_back(GetValueOrPlaceholder(tag.LoopLength()));
+        endLengthValues.push_back(GetValueOrPlaceholder(tag.EndLength()));
+        mutedVoicesValues.push_back(GetValueOrPlaceholder(tag.MutedVoices()));
+        loopTimesValues.push_back(GetValueOrPlaceholder(tag.LoopTimes()));
+        preampLevelValues.push_back(GetValueOrPlaceholder(tag.PreampLevel()));
     }
 
     SetTextBox(songTitleTextBox, songTitleValues);
@@ -454,7 +471,7 @@ void MainWindow::UpdateStatusBar()
         {
             Spc::Header header = file->Header();
             Spc::Id666::Tag tag = file->Tag();
-            wxString tagType = DetermineTagType(header, tag);
+            wxString tagType = GetTagType(header, tag);
 
             versionMinorValues.push_back(header.versionMinor.ToString());
 
@@ -472,15 +489,16 @@ void MainWindow::UpdateStatusBar()
 
         statusText = "";
         statusText << "SPC Format Version: v0." 
-                   << DetermineValue(versionMinorValues) 
+                   << GetCommonValue(versionMinorValues) 
                    << " | Contains Tag: " 
-                   << DetermineValue(headerContainsTagValues)
-                   << " | Tag Type: " << DetermineValue(tagTypeValues);
+                   << GetCommonValue(headerContainsTagValues)
+                   << " | Tag Type: " << GetCommonValue(tagTypeValues);
         SetStatusText(statusText);
     }
 }
 
-void MainWindow::SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values)
+void MainWindow::SetTextBox(wxTextCtrl* textBox, 
+                            const std::vector<wxString>& values)
 {
     if (values.empty())
     {
@@ -488,7 +506,7 @@ void MainWindow::SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values)
     }
     else
     {
-        wxString value = DetermineValue(values);
+        wxString value = GetCommonValue(values);
 
         if (value == "-")
         {
@@ -498,6 +516,32 @@ void MainWindow::SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values)
         {
             textBox->SetValue(value);
         }
+    }
+}
+
+void MainWindow::TrySetTagField(
+    Spc::Id666::Tag& tag,
+    wxTextCtrl* textBox,
+    const wxString& fieldName,
+    const wxString& filePath,
+    const std::function<void(Spc::Id666::Tag&, const std::string&)>& setField)
+{
+    if (textBox->GetValue() == "<multiple values>")
+    {
+        return;
+    }
+
+    try
+    {
+        setField(tag, textBox->GetValue().ToStdString());
+    }
+    catch (const std::exception& ex)
+    {
+        wxString message;
+        message << fieldName << "\n\nError: unable to set field value."
+                << "\nReason: " << ex.what()
+                << "\n\nFile: " << filePath;
+        wxMessageBox(message, "Error Saving File", wxOK | wxICON_ERROR, this);
     }
 }
 
@@ -527,8 +571,10 @@ void MainWindow::OnOpen(wxCommandEvent& event)
     wxFileDialog dialog(this, "Open SPC Files", wxEmptyString, wxEmptyString, 
                          "SPC Files (*.spc)|*.spc", wxFD_OPEN | wxFD_MULTIPLE);
 
-    if (dialog.ShowModal() != wxID_OK) 
+    if (dialog.ShowModal() != wxID_OK)
+    {
         return;
+    }
 
     files.clear();
     int itemIndex{ 0 };
@@ -558,125 +604,128 @@ void MainWindow::OnSave(wxCommandEvent& event)
     for (std::shared_ptr<Spc::File> file : selectedFiles)
     {
         Spc::Id666::Tag tag = file->Tag();
+        wxString filePath = file->Path();
+
+        TrySetTagField(tag, songTitleTextBox, "Song Title", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetSongTitle(value);
+            });
+        TrySetTagField(tag, gameTitleTextBox, "Game Title", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetGameTitle(value);
+            });
+        TrySetTagField(tag, dumperNameTextBox, "Dumper Name", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetDumperName(value);
+            });
+        TrySetTagField(tag, commentsTextBox, "Comments", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetComments(value);
+            });
+        TrySetTagField(tag, dateDumpedTextBox, "Date Dumped", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetDateDumped(value);
+            });
+        TrySetTagField(tag, songLengthTextBox, "Song Length", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetSongLength(value);
+            });
+        TrySetTagField(tag, fadeLengthTextBox, "Fade Length", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetFadeLength(value);
+            });
+        TrySetTagField(tag, songArtistTextBox, "Song Artist", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetSongArtist(value);
+            });
+        TrySetTagField(tag, defaultDisabledChannelsTextBox,
+            "Disabled by Default", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetDefaultDisabledChannels(value);
+            });
+        TrySetTagField(tag, emulatorUsedTextBox, "Emulator Used", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetEmulatorUsed(value);
+            });
+        TrySetTagField(tag, ostTitleTextBox, "OST Title", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetOstTitle(value);
+            });
+        TrySetTagField(tag, ostDiscTextBox, "OST Disc", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetOstDisc(value);
+            });
+        TrySetTagField(tag, ostTrackTextBox, "OST Track", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetOstTrack(value);
+            });
+        TrySetTagField(tag, publisherNameTextBox, "Publisher Name", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetPublisherName(value);
+            });
+        TrySetTagField(tag, copyrightYearTextBox, "Copyright Year", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetCopyrightYear(value);
+            });
+        TrySetTagField(tag, introLengthTextBox, "Intro Length", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetIntroLength(value);
+            });
+        TrySetTagField(tag, loopLengthTextBox, "Loop Length", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetLoopLength(value);
+            });
+        TrySetTagField(tag, endLengthTextBox, "End Length", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetEndLength(value);
+            });
+        TrySetTagField(tag, mutedVoicesTextBox, "Muted Voices", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetMutedVoices(value);
+            });
+        TrySetTagField(tag, loopTimesTextBox, "Loop Times", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetLoopTimes(value);
+            });
+        TrySetTagField(tag, preampLevelTextBox, "Preamp Level", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetPreampLevel(value);
+            });
+
+        file->SetTag(tag);
 
         try
         {
-            if (songTitleTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetSongTitle(songTitleTextBox->GetValue().ToStdString());
-            }
-
-            if (gameTitleTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetGameTitle(gameTitleTextBox->GetValue().ToStdString());
-            }
-
-            if (dumperNameTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetDumperName(dumperNameTextBox->GetValue().ToStdString());
-            }
-
-            if (commentsTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetComments(commentsTextBox->GetValue().ToStdString());
-            }
-
-            if (dateDumpedTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetDateDumped(dateDumpedTextBox->GetValue().ToStdString());
-            }
-
-            if (songLengthTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetSongLength(songLengthTextBox->GetValue().ToStdString());
-            }
-
-            if (fadeLengthTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetFadeLength(fadeLengthTextBox->GetValue().ToStdString());
-            }
-
-            if (songArtistTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetSongArtist(songArtistTextBox->GetValue().ToStdString());
-            }
-
-            if (defaultDisabledChannelsTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetDefaultDisabledChannels(
-                    defaultDisabledChannelsTextBox->GetValue().ToStdString());
-            }
-
-            if (emulatorUsedTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetEmulatorUsed(
-                    emulatorUsedTextBox->GetValue().ToStdString());
-            }
-
-            if (ostTitleTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetOstTitle(ostTitleTextBox->GetValue().ToStdString());
-            }
-
-            if (ostDiscTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetOstDisc(ostDiscTextBox->GetValue().ToStdString());
-            }
-
-            if (ostTrackTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetOstTrack(ostTrackTextBox->GetValue().ToStdString());
-            }
-
-            if (publisherNameTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetPublisherName(
-                    publisherNameTextBox->GetValue().ToStdString());
-            }
-
-            if (copyrightYearTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetCopyrightYear(
-                    copyrightYearTextBox->GetValue().ToStdString());
-            }
-
-            if (introLengthTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetIntroLength(introLengthTextBox->GetValue().ToStdString());
-            }
-
-            if (loopLengthTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetLoopLength(loopLengthTextBox->GetValue().ToStdString());
-            }
-
-            if (endLengthTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetEndLength(endLengthTextBox->GetValue().ToStdString());
-            }
-
-            if (mutedVoicesTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetMutedVoices(mutedVoicesTextBox->GetValue().ToStdString());
-            }
-
-            if (loopTimesTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetLoopTimes(loopTimesTextBox->GetValue().ToStdString());
-            }
-
-            if (preampLevelTextBox->GetValue() != "<multiple values>")
-            {
-                tag.SetPreampLevel(preampLevelTextBox->GetValue().ToStdString());
-            }
-
-            file->SetTag(tag);
             file->Save();
         }
         catch (const std::exception& ex)
         {
-            wxMessageBox(ex.what(), "Error Saving File", wxOK | wxICON_ERROR);
-            continue;
+            wxString message;
+            message << "Failed to save file:\n" << filePath
+                    << "\n\nReason: " << ex.what();
+            wxMessageBox(message, "Error Saving File", 
+                         wxOK | wxICON_ERROR, this);
         }
     }
 }
@@ -736,4 +785,14 @@ void MainWindow::OnProperties(wxCommandEvent& event)
 {
     PropertiesDialog dialog{ this, selectedFiles };
     dialog.ShowModal();
+}
+
+void MainWindow::OnFileListViewResize(wxSizeEvent& event)
+{
+    // Ensure the file list view column fills the entire width.
+    int listViewWidth = fileListView->GetSize().GetWidth();
+    fileListView->SetColumnWidth(0, listViewWidth);
+
+    // Call Skip() to allow the control to process the event properly.
+    event.Skip();
 }

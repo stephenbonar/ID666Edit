@@ -19,6 +19,7 @@
 
 #include <vector>
 #include <memory>
+#include <functional>
 #include <wx/wx.h>
 #include <wx/listctrl.h>
 #include <wx/filename.h>
@@ -143,6 +144,11 @@ private:
     /// @brief Binds the events to their respective handlers.
     void BindEvents();
 
+    /// @brief Updates which controls are enabled or disabled.
+    ///
+    /// Enables or disables controls that depend on the selection of files in
+    /// the file list view. If no files are selected, certain controls will
+    /// be disabled and vise-versa.
     void UpdateEnabledControls();
 
     /// @brief Updates the controls in the tag section for selected files.
@@ -162,7 +168,21 @@ private:
     /// @brief Sets a text box's text based on the values of selected files.
     /// @param textBox The text box to update.
     /// @param values The values retrieved from the selected files.
-    void SetTextBox(wxTextCtrl* textBox, std::vector<wxString>& values);
+    void SetTextBox(wxTextCtrl* textBox, const std::vector<wxString>& values);
+
+    /// @brief Sets a tag field from a text box using per-field exception
+    /// handling.
+    /// @param tag The tag to update.
+    /// @param textBox The text box that contains the candidate value.
+    /// @param fieldName Friendly field name used in error messages.
+    /// @param filePath The file path shown in error messages.
+    /// @param setField The setter operation to apply to the tag.
+    void TrySetTagField(
+        Spc::Id666::Tag& tag,
+        wxTextCtrl* textBox,
+        const wxString& fieldName,
+        const wxString& filePath,
+        const std::function<void(Spc::Id666::Tag&, const std::string&)>& setField);
 
     /// @brief Click handler for the "Exit" menu item.
     /// @param event The event object.
@@ -173,7 +193,7 @@ private:
     void OnAbout(wxCommandEvent& event);
 
     /// @brief Click handler for the "Open" menu item.
-    /// @param event 
+    /// @param event The event object.
     void OnOpen(wxCommandEvent& event);
 
     /// @brief Click handler for the "Save" menu item.
@@ -196,19 +216,13 @@ private:
     /// @param event The event object.
     void OnSelectionChanged(wxListEvent& event);
 
-    /*
-    /// @brief Event handler for when a file is selected in the list view.
-    /// @param event The event object.
-    void OnSelected(wxListEvent& event);
-
-    /// @brief Event handler for when a file is deselected in the list view.
-    /// @param event The event object.
-    void OnDeselected(wxListEvent& event);
-    */
-
     /// @brief Event handler for when the properties button is clicked.
     /// @param event The event object.
     void OnProperties(wxCommandEvent& event);
+
+    /// @brief Event handler for when the file list view is resized.
+    /// @param event The event object.
+    void OnFileListViewResize(wxSizeEvent& event);
 };
 
 #endif

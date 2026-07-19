@@ -128,7 +128,7 @@ void PropertiesDialog::UpdateHeaderSection()
         Spc::Id666::Tag tag = file->Tag();
         idValues.push_back(wxString{ header.id.ToString() });
 
-        wxString tagType = DetermineTagType(header, tag);
+        wxString tagType = GetTagType(header, tag);
 
         if (tagType == "-")
         {
@@ -171,7 +171,7 @@ void PropertiesDialog::SetTextBox(wxTextCtrl* textBox,
     }
     else
     {
-        wxString value = DetermineValue(values);
+        wxString value = GetCommonValue(values);
 
         if (value == "-")
         {

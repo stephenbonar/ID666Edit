@@ -23,7 +23,12 @@ IncrementTrackWindow::IncrementTrackWindow(
                    wxDefaultPosition, wxSize(300, 150)),
           selectedFiles(selectedFiles)
 {
+    constexpr int mainBorderSize{ 10 };
+    constexpr int buttonBorderSize{ 5 };
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    wxSizerFlags mainFlags = wxSizerFlags(noGrowthProportion);
+    mainFlags.Expand().Border(wxALL, mainBorderSize);
 
     wxString text;
     text << "Increment the track numbers by the specified amount.\n"
@@ -31,18 +36,20 @@ IncrementTrackWindow::IncrementTrackWindow(
          << "increased by 2.\n";
 
     wxStaticText* instructionText = new wxStaticText(this, wxID_ANY, text);
-    mainSizer->Add(instructionText, 0, wxALL | wxEXPAND, 10);
-
     startTrackTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    mainSizer->Add(startTrackTextCtrl, 0, wxALL | wxEXPAND, 10);
+    mainSizer->Add(instructionText, mainFlags);
+    mainSizer->Add(startTrackTextCtrl, mainFlags);
 
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
+    wxSizerFlags buttonFlags = wxSizerFlags(noGrowthProportion);
+    buttonFlags.Border(wxALL, buttonBorderSize);
+    
     wxButton* okButton = new wxButton(this, wxID_OK, "OK");
     okButton->Bind(wxEVT_BUTTON, &IncrementTrackWindow::OnOk, this);
-    buttonSizer->Add(okButton, 0, wxALL, 5);
+    buttonSizer->Add(okButton, buttonFlags);
 
     wxButton* cancelButton = new wxButton(this, wxID_CANCEL, "Cancel");
-    buttonSizer->Add(cancelButton, 0, wxALL, 5);
+    buttonSizer->Add(cancelButton, buttonFlags);
 
     mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER);
 

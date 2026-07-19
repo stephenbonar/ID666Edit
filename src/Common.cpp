@@ -16,81 +16,38 @@
 
 #include "Common.h"
 
-constexpr int labelWidth{ 125 };
-constexpr int valueWidth{ 250 };
-
-void AddToSizer(wxStaticText* label, wxStaticText* value, wxBoxSizer* sizer)
-{
-    // Set consistent label and value widths to ensure visual alignment.
-    //label->SetMinSize(wxSize{ labelWidth, -1 });
-    //value->SetMinSize(wxSize{ valueWidth, -1 });
-
-    wxBoxSizer* valueSizer = new wxBoxSizer{ wxHORIZONTAL };
-    valueSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    valueSizer->Add(value, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    sizer->Add(valueSizer, 0, wxALL | wxEXPAND);
-}
-
 void AddToSizer(wxStaticText* label, wxTextCtrl* textBox, wxBoxSizer* sizer)
 {
-    // Set a consistent label width when adding to the sizer to ensure the
-    // corresponding text boxes are all aligned. 
-    //label->SetMinSize(wxSize{ labelWidth, -1 });
+    constexpr int borderSize{ 5 };
 
+    wxSizerFlags textBoxFlags{ noGrowthProportion };
+    textBoxFlags.Border(wxALL, borderSize);
+    textBoxFlags.Align(wxALIGN_CENTER_VERTICAL);
+    
     wxBoxSizer* textBoxSizer = new wxBoxSizer{ wxHORIZONTAL };
-    textBoxSizer->Add(label, 0, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    textBoxSizer->Add(textBox, 1, wxALIGN_CENTER_VERTICAL | wxALL, 5);
-    sizer->Add(textBoxSizer, 1, wxALL | wxEXPAND);
+    textBoxSizer->Add(label, textBoxFlags);
+    textBoxFlags.Proportion(growthProportion);
+    textBoxSizer->Add(textBox, textBoxFlags);
+    sizer->Add(textBoxSizer, growthProportion, wxALL | wxEXPAND);
 }
 
-wxString DetermineFieldValue(const Spc::Field& field)
+wxString GetCommonValue(const std::vector<wxString>& values)
 {
-    if (field.IsPresent())
-    {
-        return field.ToString();
-    }
-    else
-    {
-        return "-";
-    }
-}
+    constexpr int beginningIndex{ 0 };
+    bool exactlyOneValue = values.size() == 1;
 
-wxString DetermineTagType(Spc::Header& header, Spc::Id666::Tag& tag)
-{
-    if (header.containsTag.ToUInt32() == Spc::headerContainsTag)
-    {
-        switch (tag.DetermineType())
-        {
-            case Spc::Id666::TagType::Text:
-                return "Text";
-            case Spc::Id666::TagType::Binary:
-                return "Binary";
-            case Spc::Id666::TagType::TextMixed:
-                return "Mixed";
-            default:
-                return "-";
-        }
-    }
-    else
-    {
-        return "-";
-    }
-}
-
-wxString DetermineValue(const std::vector<wxString>& values)
-{
     if (values.empty())
     {
         return "";
     }
-    else if (values.size() == 1)
+    else if (exactlyOneValue)
     {
-        return values.at(0);
+        return values.at(beginningIndex);
     }
     else
     {
         bool allSame = true;
-        const wxString& firstValue = values.at(0);
+        const wxString& firstValue = values.at(beginningIndex);
 
         for (const wxString& value : values)
         {
@@ -112,6 +69,40 @@ wxString DetermineValue(const std::vector<wxString>& values)
     }
 }
 
+wxString GetValueOrPlaceholder(const Spc::Field& field)
+{
+    if (field.IsPresent())
+    {
+        return field.ToString();
+    }
+    else
+    {
+        return "-";
+    }
+}
+
+wxString GetTagType(const Spc::Header& header, const Spc::Id666::Tag& tag)
+{
+    if (header.containsTag.ToUInt32() == Spc::headerContainsTag)
+    {
+        switch (tag.DetermineType())
+        {
+            case Spc::Id666::TagType::Text:
+                return "Text";
+            case Spc::Id666::TagType::Binary:
+                return "Binary";
+            case Spc::Id666::TagType::TextMixed:
+                return "Mixed";
+            default:
+                return "-";
+        }
+    }
+    else
+    {
+        return "-";
+    }
+}
+
 void CreateLabel(wxStaticText*& label, wxWindow* parent, 
                  std::vector<wxStaticText*>& labels, wxString text)
 {
@@ -121,7 +112,8 @@ void CreateLabel(wxStaticText*& label, wxWindow* parent,
 
 void ResizeLabels(std::vector<wxStaticText*>& labels)
 {
-    int maxWidth = 0;
+    constexpr int autoHeight{ -1 };
+    int maxWidth{ 0 };
 
     for (wxStaticText* label : labels)
     {
@@ -133,6 +125,6 @@ void ResizeLabels(std::vector<wxStaticText*>& labels)
 
     for (wxStaticText* label : labels)
     {
-        label->SetMinSize(wxSize{ maxWidth, -1 });
+        label->SetMinSize(wxSize{ maxWidth, autoHeight });
     }
 }
