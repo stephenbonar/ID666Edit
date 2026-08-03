@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+# Configure Version.h to pull in project version and other metadata from
+# CMake so the program can display it in the About dialog and other places.
 configure_file(${PROJECT_SOURCE_DIR}/include/Version.h.in
                ${CMAKE_BINARY_DIR}/Version.h
                @ONLY)
@@ -22,6 +24,8 @@ set(INCLUDES
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR})
 
+# Add Windows specific resource information into the executable so the program
+# can display version information, other metadata, and the icon.
 if(WIN32)
     function(add_windows_resource_metadata target file_description)
         set(WINDOWS_FILE_DESCRIPTION "${file_description}")
@@ -44,14 +48,27 @@ if(WIN32)
     endfunction()
 endif()
 
+# Define the main executable target for the command line version so we can
+# build the command line executable.
 add_executable(id666editc main.cpp Program.cpp)
+
+# Configure the include directories so the compiler can find the header files.
+target_include_directories(id666editc PUBLIC ${INCLUDES})
+
+# Link the command line application against the LibCppCmdLine and LibCppSpc 
+# libraries so it can use those APIs.
+target_link_libraries(id666editc LibCppCmdLine LibCppSpc)
 
 if(WIN32)
     add_windows_resource_metadata(id666editc "ID666Edit CLI")
 endif()
 
+# Define the GUI executable target if the user has requested to build the GUI
+# version of the app.
 if(BUILD_GUI)
     if (APPLE)
+        # On macOS, we need to build the GUI version as a bundle so it can be
+        # run as a proper macOS application, including proper icon and metadata.
         add_executable(ID666Edit MACOSX_BUNDLE
                        ID666Edit.cpp
                        Common.cpp
@@ -61,6 +78,9 @@ if(BUILD_GUI)
                        TagToFileNameWindow.cpp
                        IncrementTrackWindow.cpp)
     elseif (WIN32)
+        # On Windows, we need to build the GUI version as a WIN32 executable
+        # so it can be run as a proper Windows application, including proper 
+        # icon and metadata.
         add_executable(ID666Edit WIN32
                        ID666Edit.cpp 
                        Common.cpp
@@ -87,10 +107,16 @@ if(BUILD_GUI)
                        IncrementTrackWindow.cpp)
     endif()
 
+    # Configure the include directories so the compiler can find the header 
+    # files.
     target_include_directories(ID666Edit PUBLIC ${INCLUDES})
 
+    # Link the GUI application against the wxWidgets libraries and the 
+    # LibCppSpc libraries so it can use those APIs.
     target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
 
+    # Configure the macOS bundle with the proper icon and metadata if we are
+    # building on macOS.
     if(APPLE)
         find_program(ICONUTIL_EXECUTABLE iconutil REQUIRED)
         find_program(SIPS_EXECUTABLE sips REQUIRED)
@@ -135,7 +161,3 @@ if(BUILD_GUI)
         add_windows_resource_metadata(ID666Edit "ID666Edit SPC Tag Editor")
     endif()
 endif()
-
-target_include_directories(id666editc PUBLIC ${INCLUDES})
-
-target_link_libraries(id666editc LibCppCmdLine LibCppSpc)

@@ -33,7 +33,7 @@ project(ID666Edit VERSION 1.0.0 LANGUAGES C CXX)
 # program and configured into the program manifests.
 set(PROGRAM_AUTHOR "Stephen Bonar")
 set(PROGRAM_COPYRIGHT "Copyright (C) 2026 Stephen Bonar")
-set(PROGRAM_RELEASE "Beta")
+set(PROGRAM_RELEASE "Release Candidate 1")
 
 # On Windows, tell CMake to enable the resource compiler so we can embed
 # version info and DPI awareness into the executable. 
@@ -41,7 +41,7 @@ if(WIN32)
     enable_language(RC)
 endif()
 
-# Specify the C++ standard.
+# Specify the minimum C++ standard necessary to run the program.
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -49,14 +49,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 # Default ON so GUI builds unless the user passes -DBUILD_GUI=OFF.
 option(BUILD_GUI "Build the GUI application (requires wxWidgets)" ON)
 
+# Add the LibCppSpc submodule to the project for manipulating ID666 tags.
 add_subdirectory(lib/LibCppSpc)
 
+# Add the LibCppCmdLine submodule to the project for command-line parsing.
 add_subdirectory(lib/LibCppCmdLine)
 
+# If the user has requested to build the GUI version of the application
+# (on by default), then add the wxWidgets submodule to the project for cross
+# platform GUI capabilities.
 if(BUILD_GUI)
     set(wxBUILD_SHARED OFF)
     set(wxBUILD_USE_STATIC_RUNTIME ON)
     add_subdirectory(lib/wxWidgets)
 endif()
 
+# Add the source code directory to the project so we can build the application.
 add_subdirectory(src)
