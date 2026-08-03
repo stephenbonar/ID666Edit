@@ -26,13 +26,13 @@
 #include <LibCppCmdLine.h>
 #include <LibCppSpc.h>
 
-/// @brief Provides the main program logic.
+/// @brief Provides the main program logic for the command line version.
 class Program
 {
 public:
     /// @brief Runs the main program.
     /// @param arguments The command line arguments passed into the program.
-    /// @return Returns a statust code for the main method to use.
+    /// @return Returns a status code for the main method to use.
     int Run(std::vector<std::string> arguments);
 private:
     std::unique_ptr<CmdLine::ProgParam> progParam;
@@ -125,10 +125,13 @@ private:
     /// @brief Prints information about the program to the screen.
     void PrintVersion();
 
+    /// @brief Defines the positional parameters for command line arguments.
     void DefinePosParams();
 
+    /// @brief Defines the options for command line arguments.
     void DefineOptions();
 
+    /// @brief Defines the option parameters for command line arguments.
     void DefineOptionParams();
 
     /// @brief Defines the command line parameters the program supports.
@@ -147,8 +150,21 @@ private:
     /// @return The status code returned by the selected mode upon completion.
     int SelectMode();
 
+    /// @brief Checks if a specific where parameter matches the given value.
+    /// @param param The where parameter to check.
+    /// @param value The value to match against.
+    /// @return True if the parameter matches the value, false otherwise.
     bool MatchWhereParam(CmdLine::OptionParam* param, std::string value);
 
+    /// @brief Matches the .spc file against the specified where parameters.
+    ///
+    /// The -w, --where option allows the user to specify sets of field-value
+    /// pairs in the .spc file that must match specific values. This allows the
+    /// user to filter out any files that do not have the matching attribute
+    /// values.
+    ///
+    /// @param file The SPC file to match.
+    /// @return True if the file matches the where parameters, false otherwise.
     bool MatchWhereParams(Spc::File& file);
 
     /// @brief Processes one SPC file using the mode selected by args.
@@ -156,25 +172,21 @@ private:
     /// @return The status code returned by the selected operation.
     int ProcessSpcFile(const std::string& path);
 
+    /// @brief Prints a line of the specified length to the console.
+    /// @param length The number of characters to print in the line.
     void PrintLine(int length);
 
+    /// @brief Prints a heading to the console.
+    /// @param title The title of the heading.
     void PrintHeading(std::string title);
 
+    /// @brief Prints a sub-heading to the console.
+    /// @param title The title of the sub-heading.
     void PrintSubHeading(std::string title);
 
-    void PrintField(Spc::Field* field);
-
-    void PrintField(Spc::TextField field);
-
-    void PrintField(Spc::DateField field);
-
-    void PrintField(Spc::NumericField field);
-
-    void PrintField(Spc::TrackField field);
-
-    void PrintField(Spc::EmulatorField field);
-
-    void PrintField(Spc::BinaryField field);
+    /// @brief Prints the specified SPC field to the console.
+    /// @param field The field to print.
+    void PrintField(const Spc::Field& field);
 
     int PrintSpcFile(Spc::File& file);
 

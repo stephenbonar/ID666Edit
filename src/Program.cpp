@@ -43,7 +43,7 @@ void Program::DefineOptions()
     CmdLine::ValueOption::Definition printDef;
     printDef.shortName = 'p';
     printDef.longName = "print";
-    printDef.description = "Prints the specified item in the file(s)";
+    printDef.description = "Prints the specified field in the file(s)";
     printOption = std::make_unique<CmdLine::ValueOption>(printDef);
 
     CmdLine::ValueOption::Definition editDef;
@@ -56,7 +56,7 @@ void Program::DefineOptions()
     whereDef.shortName = 'w';
     whereDef.longName = "where";
     whereDef.description = 
-        "Filter on matching parameter values (use \"name=value\")";
+        "Filter on matching .spc fields (use \"name=value\")";
     whereOption = std::make_unique<CmdLine::ValueOption>(whereDef);
 
     CmdLine::ValueOption::Definition fileNameToTagDef;
@@ -234,7 +234,7 @@ void Program::DefineOptionParams()
     CmdLine::OptionParam::Definition channelDef;
     channelDef.name = "channels";
     channelDef.description = 
-        "Default disabled channels (0 = enabled, 1 = disabled)";
+        "Default disabled channels bit field (1 = disabled)";
     channelPrintParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     channelEditParam = std::make_unique<CmdLine::OptionParam>(channelDef);
     channelWhereParam = std::make_unique<CmdLine::OptionParam>(channelDef);
@@ -609,39 +609,9 @@ void Program::PrintSubHeading(std::string title)
     PrintLine(79);
 }
 
-void Program::PrintField(Spc::Field* field)
+void Program::PrintField(const Spc::Field& field)
 {
     std::cout << FormatField(field) << std::endl;
-}
-
-void Program::PrintField(Spc::TextField field)
-{
-    PrintField(&field);
-}
-
-void Program::PrintField(Spc::DateField field)
-{
-    PrintField(&field);
-}
-
-void Program::PrintField(Spc::NumericField field)
-{
-    PrintField(&field);
-}
-
-void Program::PrintField(Spc::TrackField field)
-{
-    PrintField(&field);
-}
-
-void Program::PrintField(Spc::EmulatorField field)
-{
-    PrintField(&field);
-}
-
-void Program::PrintField(Spc::BinaryField field)
-{
-    PrintField(&field);
 }
 
 int Program::PrintSpcFile(Spc::File& file)
