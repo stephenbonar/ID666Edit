@@ -21,17 +21,23 @@
 #include <memory>
 #include <wx/wx.h>
 #include <LibCppSpc.h>
+#include "Common.h"
 
+/// @brief A dialog for converting tag values to file names.
 class TagToFileNameWindow : public wxDialog
 {
 public:
-    TagToFileNameWindow(
-        wxWindow* parent, 
-        std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
+    /// @brief Constructs a TagToFileNameWindow dialog.
+    /// @param parent The parent window.
+    /// @param selectedFiles The files selected for conversion.
+    TagToFileNameWindow(wxWindow* parent, 
+                        std::vector<std::shared_ptr<Spc::File>>& selectedFiles);
 private:
         wxTextCtrl* patternTextCtrl;
         std::vector<std::shared_ptr<Spc::File>>& selectedFiles;
 
+        /// @brief Event handler for the OK button click event.
+        /// @param event The event object.
         void OnOk(wxCommandEvent& event);
 };
 

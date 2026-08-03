@@ -16,10 +16,11 @@
 
 #include "PropertiesDialog.h"
 
-PropertiesDialog::PropertiesDialog(wxWindow* parent, std::vector<std::shared_ptr<Spc::File>> selectedFiles) : 
-    wxDialog(parent, wxID_ANY, "Properties", 
-             wxDefaultPosition, wxSize(600, 400)),
-    selectedFiles(selectedFiles)
+PropertiesDialog::PropertiesDialog(wxWindow* parent, 
+    std::vector<std::shared_ptr<Spc::File>> selectedFiles) : 
+        wxDialog(parent, wxID_ANY, "Properties", 
+                 wxDefaultPosition, wxSize(600, 400)),
+        selectedFiles(selectedFiles)
 {
     panel = new wxPanel(this);
     CreateSizers();
@@ -82,29 +83,34 @@ void PropertiesDialog::CreateTextBoxes()
 
 void PropertiesDialog::CreateHeaderLayout()
 {
+    wxSizerFlags headerFlags = wxSizerFlags(noGrowthProportion).Expand();
+
     AddToSizer(idLabel, idTextBox, headerSizer);
 
     AddToSizer(containsTagLabel, containsTagTextBox, headerTagSizer);
     AddToSizer(tagTypeLabel, tagTypeTextBox, headerTagSizer);
     AddToSizer(versionMinorLabel, versionMinorTextBox, headerTagSizer);
-    headerSizer->Add(headerTagSizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerTagSizer, headerFlags);
 
     AddToSizer(pcRegisterLabel, pcRegisterTextBox, headerSpecialRegisterSizer);
     AddToSizer(spRegisterLabel, spRegisterTextBox, headerSpecialRegisterSizer);
     AddToSizer(pswRegisterLabel, pswRegisterTextBox, headerSpecialRegisterSizer);
-    headerSizer->Add(headerSpecialRegisterSizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerSpecialRegisterSizer, headerFlags);
     
     AddToSizer(aRegisterLabel, aRegisterTextBox, headerRegisterSizer);
     AddToSizer(xRegisterLabel, xRegisterTextBox, headerRegisterSizer);
     AddToSizer(yRegisterLabel, yRegisterTextBox, headerRegisterSizer);
-    headerSizer->Add(headerRegisterSizer, 0, wxALL | wxEXPAND);
+    headerSizer->Add(headerRegisterSizer, headerFlags);
 }
 
 void PropertiesDialog::CreatePanelLayout()
 {
-    panelSizer->Add(headerSizer, 1, wxALL | wxEXPAND, 5);
+    constexpr int panelBorderSize{ 5 };
+
+    panelSizer->Add(headerSizer, noGrowthProportion, wxALL | wxEXPAND, 
+                    panelBorderSize);
     panel->SetSizer(panelSizer);
-    windowSizer->Add(panel, 1, wxEXPAND | wxALL);
+    windowSizer->Add(panel, noGrowthProportion, wxEXPAND | wxALL);
 
     SetSizerAndFit(windowSizer);
 }

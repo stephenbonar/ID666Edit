@@ -182,7 +182,8 @@ private:
         wxTextCtrl* textBox,
         const wxString& fieldName,
         const wxString& filePath,
-        const std::function<void(Spc::Id666::Tag&, const std::string&)>& setField);
+        const std::function<void(Spc::Id666::Tag&, const std::string&)>& 
+            setField);
 
     /// @brief Click handler for the "Exit" menu item.
     /// @param event The event object.

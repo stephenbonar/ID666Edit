@@ -26,6 +26,12 @@
 #include <LibCppCmdLine.h>
 #include <LibCppSpc.h>
 
+/// @brief Indicates the program exited successfully.
+inline constexpr int exitStatusSuccess{ 0 };
+
+/// @brief Indicates the program exited with a failure.
+inline constexpr int exitStatusFailure{ 1 };
+
 /// @brief Provides the main program logic for the command line version.
 class Program
 {
@@ -33,7 +39,7 @@ public:
     /// @brief Runs the main program.
     /// @param arguments The command line arguments passed into the program.
     /// @return Returns a status code for the main method to use.
-    int Run(std::vector<std::string> arguments);
+    int Run(const std::vector<std::string>& arguments);
 private:
     std::unique_ptr<CmdLine::ProgParam> progParam;
     std::unique_ptr<CmdLine::MultiPosParam> spcFileParam;
@@ -144,7 +150,7 @@ private:
 
     /// @brief Initializes the CmdLine::Parser.
     /// @param arguments The command line arguments to load into the parser.
-    void InitializeParser(std::vector<std::string> arguments);
+    void InitializeParser(const std::vector<std::string>& arguments);
 
     /// @brief Selects the program's mode of operation based on the arguments.
     /// @return The status code returned by the selected mode upon completion.
@@ -154,7 +160,8 @@ private:
     /// @param param The where parameter to check.
     /// @param value The value to match against.
     /// @return True if the parameter matches the value, false otherwise.
-    bool MatchWhereParam(CmdLine::OptionParam* param, std::string value);
+    bool MatchWhereParam(const CmdLine::OptionParam* param, 
+                         const std::string& value);
 
     /// @brief Matches the .spc file against the specified where parameters.
     ///
@@ -165,7 +172,7 @@ private:
     ///
     /// @param file The SPC file to match.
     /// @return True if the file matches the where parameters, false otherwise.
-    bool MatchWhereParams(Spc::File& file);
+    bool MatchWhereParams(const Spc::File& file);
 
     /// @brief Processes one SPC file using the mode selected by args.
     /// @param path The path to the SPC file to process.
@@ -178,56 +185,68 @@ private:
 
     /// @brief Prints a heading to the console.
     /// @param title The title of the heading.
-    void PrintHeading(std::string title);
+    void PrintHeading(const std::string& title);
 
     /// @brief Prints a sub-heading to the console.
     /// @param title The title of the sub-heading.
-    void PrintSubHeading(std::string title);
+    void PrintSubHeading(const std::string& title);
 
     /// @brief Prints the specified SPC field to the console.
     /// @param field The field to print.
     void PrintField(const Spc::Field& field);
 
-    int PrintSpcFile(Spc::File& file);
+    /// @brief Prints tag information from the SPC file to the console.
+    /// @param file The SPC file to print.
+    /// @return The status code returned by the operation.
+    int PrintSpcFile(const Spc::File& file);
 
     /// @brief Prints the entire SPC file's metadata including tags & headers.
     /// @return The status code returned by the operation.
-    int PrintSpcFileDetailed(Spc::File& file);
+    int PrintSpcFileDetailed(const Spc::File& file);
 
     /// @brief Prints the SPC file header.
     /// @param header The header to print.
-    void PrintFileHeader(Spc::Header& header);
+    void PrintFileHeader(const Spc::Header& header);
 
     /// @brief Prints all tag information, including the extended tag info.
     /// @param stream The file stream to print the tag from.
-    void PrintTag(Spc::File& file);
+    void PrintTag(const Spc::File& file);
 
-    void PrintHasTag(Spc::Header& header);
+    /// @brief Prints whether the SPC file header indicates a tag is present.
+    /// @param header The header to check.
+    void PrintHasTag(const Spc::Header& header);
 
-    void PrintTagType(Spc::Id666::Tag& tag);
+    /// @brief Prints the type of the ID666 tag (text, binary, or mixed).
+    /// @param tag The tag to check.
+    void PrintTagType(const Spc::Id666::Tag& tag);
 
-    void PrintHasExtended(Spc::Id666::Tag& tag);
+    /// @brief Prints whether the ID666 tag has extended information.
+    /// @param tag The tag to check.
+    void PrintHasExtended(const Spc::Id666::Tag& tag);
 
     /// @brief Prints the text formattted ID666 tag.
     /// @param file The file stream to use for printing.
-    void PrintTextTag(Spc::File& file);
+    void PrintTextTag(const Spc::File& file);
 
     /// @brief Prints the binary formatted ID666 tag.
     /// @param file The file stream to use for printing.
-    void PrintBinaryTag(Spc::File& file);
+    void PrintBinaryTag(const Spc::File& file);
 
     /// @brief Prints the extended ID666 tag.
     /// @param file The file to use for printing. 
-    void PrintExtendedTag(Spc::File& file);
+    void PrintExtendedTag(const Spc::File& file);
 
     /// @brief Prints the items in the .spc file that were specified via args.
-    int PrintSpecifiedItems(Spc::File& file);
+    int PrintSpecifiedItems(const Spc::File& file);
 
     /// @brief Edits the items in the .spc file that were specified via args.
     /// @param file The file to edit.
     /// @return The status code.
     int EditSpecifiedItems(Spc::File& file);
 
+    /// @brief Increments the track number by amount specified in cmdline args.
+    /// @param file The file to edit.
+    /// @return The status code.
     int IncrementTrack(Spc::File& file);
 };
 

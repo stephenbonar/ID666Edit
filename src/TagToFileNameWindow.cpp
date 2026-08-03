@@ -23,6 +23,9 @@ TagToFileNameWindow::TagToFileNameWindow(
         wxDialog(parent, wxID_ANY, "Tag to Filename", 
                  wxDefaultPosition, wxSize(400, 300))
 {
+    constexpr int mainBorderSize{ 10 };
+    constexpr int buttonBorderSize{ 5 };
+
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
 
     wxString text;
@@ -36,18 +39,23 @@ TagToFileNameWindow::TagToFileNameWindow(
          << "%disc% - The disc number\n"
          << "%track% - The track number\n";
 
+    wxSizerFlags mainFlags = wxSizerFlags(noGrowthProportion).Expand();
+    mainFlags.Border(wxALL, mainBorderSize);
+
     wxStaticText* instructionLabel = new wxStaticText{ this, wxID_ANY, text };
-    mainSizer->Add(instructionLabel, 0, wxALL | wxEXPAND, 10);
+    mainSizer->Add(instructionLabel, mainFlags);
 
     patternTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    mainSizer->Add(patternTextCtrl, 0, wxALL | wxEXPAND, 10);
+    mainSizer->Add(patternTextCtrl, mainFlags);
 
+    wxSizerFlags buttonSizerFlags = wxSizerFlags(noGrowthProportion);
+    buttonSizerFlags.Border(wxALL, buttonBorderSize);
     wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
     wxButton* okButton = new wxButton(this, wxID_OK, "OK");
     wxButton* cancelButton = new wxButton(this, wxID_CANCEL, "Cancel");
-    buttonSizer->Add(okButton, 0, wxALL, 5);
-    buttonSizer->Add(cancelButton, 0, wxALL, 5);
-    mainSizer->Add(buttonSizer, 0, wxALIGN_CENTER);
+    buttonSizer->Add(okButton, buttonSizerFlags);
+    buttonSizer->Add(cancelButton, buttonSizerFlags);
+    mainSizer->Add(buttonSizer, noGrowthProportion, wxALIGN_CENTER);
 
     okButton->Bind(wxEVT_BUTTON, &TagToFileNameWindow::OnOk, this);
 

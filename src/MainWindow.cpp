@@ -597,6 +597,20 @@ void MainWindow::OnOpen(wxCommandEvent& event)
         fileListView->InsertItem(itemIndex, nameOnly);
         itemIndex++;
     }
+
+    if (!files.empty())
+    {
+        // Preselect the first file so tag fields are ready for editing.
+        fileListView->Select(0);
+        fileListView->Focus(0);
+        fileListView->EnsureVisible(0);
+
+        selectedFiles.clear();
+        selectedFiles.push_back(files.front());
+        UpdateEnabledControls();
+        UpdateTagSection();
+        UpdateStatusBar();
+    }
 }
 
 void MainWindow::OnSave(wxCommandEvent& event)

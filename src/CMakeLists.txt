@@ -23,10 +23,6 @@ set(INCLUDES
     ${CMAKE_BINARY_DIR})
 
 if(WIN32)
-    #set(WINDOWS_COMPANY_NAME "Stephen Bonar")
-    #set(WINDOWS_COPYRIGHT "Copyright (C) 2026 Stephen Bonar")
-    #set(WINDOWS_PRODUCT_NAME "ID666Edit")
-
     function(add_windows_resource_metadata target file_description)
         set(WINDOWS_FILE_DESCRIPTION "${file_description}")
         set(WINDOWS_INTERNAL_NAME "${target}")

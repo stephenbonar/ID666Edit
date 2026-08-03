@@ -376,7 +376,7 @@ void Program::DefineParams()
     DefineOptionParams();
 }
 
-void Program::InitializeParser(std::vector<std::string> arguments)
+void Program::InitializeParser(const std::vector<std::string>& arguments)
 {
     parser = std::make_unique<CmdLine::Parser>(progParam.get(), arguments);
     parser->Set(spcFileParam.get());
@@ -395,18 +395,17 @@ int Program::SelectMode()
     if (versionOption->IsSpecified())
     {
         PrintVersion();
-        return 0;
+        return exitStatusSuccess;
     }
     else if (spcFileParam->IsSpecified())
     {
         const std::vector<std::string> spcFiles = spcFileParam->Values();
 
         for (const std::string& filePath : spcFiles)
-        {
-                
+        {   
             int result = ProcessSpcFile(filePath);
 
-            if (result != 0)
+            if (result != exitStatusSuccess)
             {
                 return result;
             }
@@ -419,47 +418,60 @@ int Program::SelectMode()
                       << std::endl;
         }
 
-        return 0;
+        return exitStatusSuccess;
     }
     else if (parser->BuiltInHelpOptionIsSpecified())
     {
         PrintVersion();
         std::cout << parser->GenerateHelp();
-        return 0;
+        return exitStatusSuccess;
     }
     else
     {
         PrintVersion();
         std::cerr << parser->GenerateUsage();
-        return 1;
+        return exitStatusFailure;
     }
 }
 
-bool Program::MatchWhereParam(CmdLine::OptionParam* param, std::string value)
+bool Program::MatchWhereParam(const CmdLine::OptionParam* param, 
+                              const std::string& value)
 {
     if (!param->IsSpecified())
     {
+        // If the specified where option parameter is not specified, then
+        // we are not trying to filter by it and everything should match, so
+        // we always return true.
         return true;
     }
     else
     {
+        // Otherwise we are trying to filter by this parameter, so only return
+        // true if the value matches the specified value.
         std::string paramValue = param->Value();
         return paramValue == value;
     }
 }
 
-bool Program::MatchWhereParams(Spc::File& file)
+bool Program::MatchWhereParams(const Spc::File& file)
 {
     Spc::Header header = file.Header();
     Spc::Id666::Tag tag = file.Tag();
 
     if (!whereOption->IsSpecified())
     {
+        // When the where option is not specified, everything should match
+        // so we always return true.
         return true;
     }
     else
     {
+        // We assume everyting matches until the first reported mismatch by
+        // doing bitwise with the result of each parameter match check.
+        // If a particular parameter is not specified, it is automatically
+        // considered a match.
         bool matches = true;
+
         matches &= MatchWhereParam(idWhereParam.get(), header.id.ToString());
         matches &= MatchWhereParam(hasTagWhereParam.get(), 
                                    header.ContainsTag() ? "true" : "false");
@@ -529,7 +541,7 @@ bool Program::MatchWhereParams(Spc::File& file)
 
 int Program::ProcessSpcFile(const std::string& path)
 {
-    int result = 0;
+    int result = exitStatusSuccess;
     Spc::File file{ path };
 
     try
@@ -539,12 +551,15 @@ int Program::ProcessSpcFile(const std::string& path)
     catch (const std::exception& e)
     {
         std::cerr << "ERROR: unable to open file: " << e.what() << std::endl;
-        return 2;
+        return exitStatusFailure;
     }
 
+    // If the current SPC file does not match the specified --where option
+    // parameters, then we skip processing this file and return success since
+    // this will filter out the file as the user intended.
     if (!MatchWhereParams(file))
     {
-        return 0;
+        return exitStatusSuccess;
     }
 
     if (printOption->IsSpecified())
@@ -558,7 +573,7 @@ int Program::ProcessSpcFile(const std::string& path)
     else if (fileNameToTagOption->IsSpecified())
     {
         file.FileNameToTag(fileNameToTagOption->Values()[0]);
-        return result;
+        return exitStatusSuccess;
     }
     else if (tagToFileNameOption->IsSpecified())
     {
@@ -596,14 +611,14 @@ void Program::PrintLine(int length)
     std::cout << std::endl;
 }
 
-void Program::PrintHeading(std::string title)
+void Program::PrintHeading(const std::string& title)
 {
     PrintLine(79);
     std::cout << title << std::endl;
     PrintLine(79);
 }
 
-void Program::PrintSubHeading(std::string title)
+void Program::PrintSubHeading(const std::string& title)
 {
     std::cout << title << std::endl;
     PrintLine(79);
@@ -614,7 +629,7 @@ void Program::PrintField(const Spc::Field& field)
     std::cout << FormatField(field) << std::endl;
 }
 
-int Program::PrintSpcFile(Spc::File& file)
+int Program::PrintSpcFile(const Spc::File& file)
 {
     PrintHeading(file.Path());
     std::cout << std::endl;
@@ -622,7 +637,7 @@ int Program::PrintSpcFile(Spc::File& file)
     return 0;
 }
 
-int Program::PrintSpcFileDetailed(Spc::File& file)
+int Program::PrintSpcFileDetailed(const Spc::File& file)
 {
     Spc::Header header = file.Header();
     PrintHeading(file.Path());
@@ -633,13 +648,13 @@ int Program::PrintSpcFileDetailed(Spc::File& file)
     return 0;
 }
 
-void Program::PrintFileHeader(Spc::Header& header)
+void Program::PrintFileHeader(const Spc::Header& header)
 {
     PrintSubHeading("SPC File Header");
     std::cout << header.ToString();
 }
 
-void Program::PrintTag(Spc::File& file)
+void Program::PrintTag(const Spc::File& file)
 {
     PrintSubHeading("ID666 Tag");
     Spc::Header header = file.Header();
@@ -675,7 +690,7 @@ void Program::PrintTag(Spc::File& file)
     }
 }
 
-void Program::PrintHasTag(Spc::Header& header)
+void Program::PrintHasTag(const Spc::Header& header)
 {
     if (header.ContainsTag())
     {
@@ -689,7 +704,7 @@ void Program::PrintHasTag(Spc::Header& header)
     }
 }
 
-void Program::PrintTagType(Spc::Id666::Tag& tag)
+void Program::PrintTagType(const Spc::Id666::Tag& tag)
 {
     switch (tag.DetermineType())
     {
@@ -710,20 +725,20 @@ void Program::PrintTagType(Spc::Id666::Tag& tag)
     }
 }
 
-void Program::PrintHasExtended(Spc::Id666::Tag& tag)
+void Program::PrintHasExtended(const Spc::Id666::Tag& tag)
 {
     if (tag.ExtendedData() != nullptr)
     {
-            if (tag.HasExtendedData())
-            {
-                std::cout << Spc::FormatValue("Has Extended Tag Data", "True")
-                          << std::endl;
-            }
-            else
-            {
-                std::cout << Spc::FormatValue("Has Extended Tag Data", "False")
-                          << std::endl;
-            }
+        if (tag.HasExtendedData())
+        {
+            std::cout << Spc::FormatValue("Has Extended Tag Data", "True")
+                        << std::endl;
+        }
+        else
+        {
+            std::cout << Spc::FormatValue("Has Extended Tag Data", "False")
+                        << std::endl;
+        }
     }
     else
     {
@@ -732,7 +747,7 @@ void Program::PrintHasExtended(Spc::Id666::Tag& tag)
     }
 }
 
-int Program::PrintSpecifiedItems(Spc::File& file)
+int Program::PrintSpecifiedItems(const Spc::File& file)
 {
     Spc::Header header = file.Header();
     Spc::Id666::Tag tag = file.Tag();
@@ -741,89 +756,141 @@ int Program::PrintSpecifiedItems(Spc::File& file)
     std::cout << std::endl;
 
     if (headerPrintParam->IsSpecified())
+    {
         PrintFileHeader(header);
+    }
 
     if (idPrintParam->IsSpecified())
+    {
         PrintField(header.id);
+    }
 
     if (hasTagPrintParam->IsSpecified())
+    {
         PrintHasTag(header);
+    }
 
     if (tagPrintParam->IsSpecified())
+    {
         PrintTag(file);
+    }
 
     if (tagTypePrintParam->IsSpecified())
+    {
         PrintTagType(tag);
+    }
 
     if (hasExtendedPrintParam->IsSpecified())
+    {
         PrintHasExtended(tag);
+    }
 
     if (songPrintParam->IsSpecified())
+    {
         PrintField(tag.SongTitle());
+    }
 
     if (gamePrintParam->IsSpecified())
+    {
         PrintField(tag.GameTitle());
+    }
 
     if (dumperPrintParam->IsSpecified())
+    {
         PrintField(tag.DumperName());
+    }
 
     if (commentsPrintParam->IsSpecified())
+    {
         PrintField(tag.Comments());
+    }
     
     if (datePrintParam->IsSpecified())
+    {
         PrintField(tag.DateDumped());
+    }
 
     if (songLengthPrintParam->IsSpecified())
+    {
         PrintField(tag.SongLength());
+    }
 
     if (fadeLengthPrintParam->IsSpecified())
+    {
         PrintField(tag.FadeLength());
+    }
 
     if (artistPrintParam->IsSpecified())
+    {
         PrintField(tag.SongArtist());
+    }
 
     if (channelPrintParam->IsSpecified())
+    {
         PrintField(tag.DefaultDisabledChannels());
+    }
 
     if (emulatorPrintParam->IsSpecified())
+    {
         PrintField(tag.EmulatorUsed());
+    }
 
     if (titlePrintParam->IsSpecified())
+    {
         PrintField(tag.OstTitle());
+    }
 
     if (discPrintParam->IsSpecified())
+    {
         PrintField(tag.OstDisc());
+    }
 
     if (trackPrintParam->IsSpecified())
+    {
         PrintField(tag.OstTrack());
+    }
 
     if (publisherPrintParam->IsSpecified())
+    {
         PrintField(tag.PublisherName());
+    }
 
     if (copyrightPrintParam->IsSpecified())
+    {
         PrintField(tag.CopyrightYear());
+    }
 
     if (introLengthPrintParam->IsSpecified())
+    {
         PrintField(tag.IntroLength());
+    }
 
     if (loopLengthPrintParam->IsSpecified())
+    {
         PrintField(tag.LoopLength());
+    }
 
     if (endLengthPrintParam->IsSpecified())
+    {
         PrintField(tag.EndLength());
+    }
 
     if (mutedPrintParam->IsSpecified())
+    {
         PrintField(tag.MutedVoices());
+    }
 
     if (loopTimesPrintParam->IsSpecified())
+    {
         PrintField(tag.LoopTimes());
+    }
 
     if (preampPrintParam->IsSpecified())
+    {
         PrintField(tag.PreampLevel());
+    }
 
-    //std::cout << std::endl;
-
-    return 0;
+    return exitStatusSuccess;
 }
 
 int Program::EditSpecifiedItems(Spc::File& file)
@@ -969,8 +1036,6 @@ int Program::EditSpecifiedItems(Spc::File& file)
         std::cerr << "ERROR: unable to edit tag: " << e.what() << std::endl;
         return 1;
     }
-
-    //std::cout << std::endl;
         
     return 0;
 }
@@ -988,7 +1053,7 @@ int Program::IncrementTrack(Spc::File& file)
     return 0;
 }
 
-int Program::Run(std::vector<std::string> arguments)
+int Program::Run(const std::vector<std::string>& arguments)
 {
     DefineParams();
     InitializeParser(arguments);

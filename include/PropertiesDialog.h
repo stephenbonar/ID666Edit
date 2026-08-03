@@ -22,9 +22,13 @@
 #include <LibCppSpc.h>
 #include "Common.h"
 
+/// @brief A dialog that displays the properties of selected SPC files.
 class PropertiesDialog : public wxDialog
 {
 public:
+    /// @brief Constructs a PropertiesDialog.
+    /// @param parent The parent window.
+    /// @param selectedFiles The selected SPC files to display properties for.
     PropertiesDialog(wxWindow* parent, 
                      std::vector<std::shared_ptr<Spc::File>> selectedFiles);
 private:
@@ -58,14 +62,19 @@ private:
     wxTextCtrl* spRegisterTextBox;
     std::vector<wxStaticText*> labels;
 
+    /// @brief Creates the sizers for the dialog layout.
     void CreateSizers();
 
+    /// @brief Creates the labels for the dialog.
     void CreateLabelText();
 
+    /// @brief Creates the text boxes for the dialog.
     void CreateTextBoxes();
 
+    /// @brief Creates the layout for the SPC file header static box.
     void CreateHeaderLayout();
 
+    /// @brief Creates the layout for the dialog panel.
     void CreatePanelLayout();
 
     /// @brief Updates the controls in the header section for selected files.
