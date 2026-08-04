@@ -75,6 +75,7 @@ private:
     std::unique_ptr<CmdLine::OptionParam> introLengthPrintParam;
     std::unique_ptr<CmdLine::OptionParam> loopLengthPrintParam;
     std::unique_ptr<CmdLine::OptionParam> endLengthPrintParam;
+    std::unique_ptr<CmdLine::OptionParam> fadeLengthExtPrintParam;
     std::unique_ptr<CmdLine::OptionParam> mutedPrintParam;
     std::unique_ptr<CmdLine::OptionParam> loopTimesPrintParam;
     std::unique_ptr<CmdLine::OptionParam> preampPrintParam;
@@ -96,6 +97,7 @@ private:
     std::unique_ptr<CmdLine::OptionParam> introLengthEditParam;
     std::unique_ptr<CmdLine::OptionParam> loopLengthEditParam;
     std::unique_ptr<CmdLine::OptionParam> endLengthEditParam;
+    std::unique_ptr<CmdLine::OptionParam> fadeLengthExtEditParam;
     std::unique_ptr<CmdLine::OptionParam> mutedEditParam;
     std::unique_ptr<CmdLine::OptionParam> loopTimesEditParam;
     std::unique_ptr<CmdLine::OptionParam> preampEditParam;
@@ -123,6 +125,7 @@ private:
     std::unique_ptr<CmdLine::OptionParam> introLengthWhereParam;
     std::unique_ptr<CmdLine::OptionParam> loopLengthWhereParam;
     std::unique_ptr<CmdLine::OptionParam> endLengthWhereParam;
+    std::unique_ptr<CmdLine::OptionParam> fadeLengthExtWhereParam;
     std::unique_ptr<CmdLine::OptionParam> mutedWhereParam;
     std::unique_ptr<CmdLine::OptionParam> loopTimesWhereParam;
     std::unique_ptr<CmdLine::OptionParam> preampWhereParam;

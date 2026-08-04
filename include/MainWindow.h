@@ -55,6 +55,7 @@ private:
     wxBoxSizer* ostHorizontalSizer;
     wxBoxSizer* timingHorizontalSizer1;
     wxBoxSizer* timingHorizontalSizer2;
+    wxBoxSizer* timingHorizontalSizer3;
     wxBoxSizer* outputHorizontalSizer;
     wxBoxSizer* dumpInfoHorizontalSizer;
     wxBoxSizer* buttonSizer;
@@ -82,6 +83,7 @@ private:
     wxStaticText* introLengthLabel;
     wxStaticText* loopLengthLabel;
     wxStaticText* endLengthLabel;
+    wxStaticText* fadeLengthExtLabel;
     wxStaticText* mutedVoicesLabel;
     wxStaticText* loopTimesLabel;
     wxStaticText* preampLevelLabel;
@@ -103,6 +105,7 @@ private:
     wxTextCtrl* introLengthTextBox;
     wxTextCtrl* loopLengthTextBox;
     wxTextCtrl* endLengthTextBox;
+    wxTextCtrl* fadeLengthExtTextBox;
     wxTextCtrl* mutedVoicesTextBox;
     wxTextCtrl* loopTimesTextBox;
     wxTextCtrl* preampLevelTextBox;
@@ -169,6 +172,9 @@ private:
     /// @param textBox The text box to update.
     /// @param values The values retrieved from the selected files.
     void SetTextBox(wxTextCtrl* textBox, const std::vector<wxString>& values);
+
+    /// @brief Rebuilds the file list view from the current files collection.
+    void RefreshFileListView();
 
     /// @brief Sets a tag field from a text box using per-field exception
     /// handling.

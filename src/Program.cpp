@@ -338,6 +338,16 @@ void Program::DefineOptionParams()
     editOption->Add(endLengthEditParam.get());
     whereOption->Add(endLengthWhereParam.get());
 
+    CmdLine::OptionParam::Definition fadeLengthExtDef;
+    fadeLengthExtDef.name = "fadelengthext";
+    fadeLengthExtDef.description = "The length of fade of the song, in ticks";
+    fadeLengthExtPrintParam = std::make_unique<CmdLine::OptionParam>(fadeLengthExtDef);
+    fadeLengthExtEditParam = std::make_unique<CmdLine::OptionParam>(fadeLengthExtDef);
+    fadeLengthExtWhereParam = std::make_unique<CmdLine::OptionParam>(fadeLengthExtDef);
+    printOption->Add(fadeLengthExtPrintParam.get());
+    editOption->Add(fadeLengthExtEditParam.get());
+    whereOption->Add(fadeLengthExtWhereParam.get());
+
     CmdLine::OptionParam::Definition mutedDef;
     mutedDef.name = "muted";
     mutedDef.description = "8-bit value where each set bit mutes a voice";
@@ -528,6 +538,8 @@ bool Program::MatchWhereParams(const Spc::File& file)
                                    tag.LoopLength().ToString());
         matches &= MatchWhereParam(endLengthWhereParam.get(), 
                                    tag.EndLength().ToString());
+        matches &= MatchWhereParam(fadeLengthExtWhereParam.get(), 
+                                   tag.FadeLengthExt().ToString());
         matches &= MatchWhereParam(mutedWhereParam.get(), 
                                    tag.MutedVoices().ToString());
         matches &= MatchWhereParam(loopTimesWhereParam.get(), 
@@ -684,6 +696,7 @@ void Program::PrintTag(const Spc::File& file)
         PrintField(tag.IntroLength());
         PrintField(tag.LoopLength());
         PrintField(tag.EndLength());
+        PrintField(tag.FadeLengthExt());
         PrintField(tag.MutedVoices());
         PrintField(tag.LoopTimes());
         PrintField(tag.PreampLevel());
@@ -875,6 +888,11 @@ int Program::PrintSpecifiedItems(const Spc::File& file)
         PrintField(tag.EndLength());
     }
 
+    if (fadeLengthExtPrintParam->IsSpecified())
+    {
+        PrintField(tag.FadeLengthExt());
+    }
+
     if (mutedPrintParam->IsSpecified())
     {
         PrintField(tag.MutedVoices());
@@ -1010,6 +1028,12 @@ int Program::EditSpecifiedItems(Spc::File& file)
             PrintField(tag.EndLength());
         }
 
+        if (fadeLengthExtEditParam->IsSpecified())
+        {
+            tag.SetFadeLengthExt(fadeLengthExtEditParam->Value());
+            PrintField(tag.FadeLengthExt());
+        }
+
         if (mutedEditParam->IsSpecified())
         {
             tag.SetMutedVoices(mutedEditParam->Value());
@@ -1034,10 +1058,10 @@ int Program::EditSpecifiedItems(Spc::File& file)
     catch (const std::exception& e)
     {
         std::cerr << "ERROR: unable to edit tag: " << e.what() << std::endl;
-        return 1;
+        return exitStatusFailure;
     }
         
-    return 0;
+    return exitStatusSuccess;
 }
 
 int Program::IncrementTrack(Spc::File& file)
@@ -1050,7 +1074,7 @@ int Program::IncrementTrack(Spc::File& file)
     PrintField(tag.OstTrack());
     file.SetTag(tag);
     file.Save();
-    return 0;
+    return exitStatusSuccess;
 }
 
 int Program::Run(const std::vector<std::string>& arguments)
@@ -1066,6 +1090,6 @@ int Program::Run(const std::vector<std::string>& arguments)
     else
     {
         std::cerr << parser->GenerateUsage();
-        return 1;
+        return exitStatusFailure;
     }
 }

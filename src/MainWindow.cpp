@@ -87,6 +87,7 @@ void MainWindow::CreateSizers()
     ostHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     timingHorizontalSizer1 = new wxBoxSizer{ wxHORIZONTAL };
     timingHorizontalSizer2 = new wxBoxSizer{ wxHORIZONTAL };
+    timingHorizontalSizer3 = new wxBoxSizer{ wxHORIZONTAL };
     outputHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     dumpInfoHorizontalSizer = new wxBoxSizer{ wxHORIZONTAL };
     buttonSizer = new wxBoxSizer{ wxHORIZONTAL };
@@ -126,6 +127,8 @@ void MainWindow::CreateLabels()
     CreateLabel(introLengthLabel, tagTimingBox, labels, "Intro Length (ticks)");
     CreateLabel(loopLengthLabel, tagTimingBox, labels, "Loop Length (ticks)");
     CreateLabel(endLengthLabel, tagTimingBox, labels, "End Length (ticks)");
+    CreateLabel(fadeLengthExtLabel, tagTimingBox, labels, 
+                "Fade Length (ticks)");
     CreateLabel(loopTimesLabel, tagTimingBox, labels, "Loop Times");
 
     wxStaticBox* tagAudioChannelsBox = tagAudioChannelsSizer->GetStaticBox();
@@ -161,6 +164,7 @@ void MainWindow::CreateTextBoxes()
     introLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
     loopLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
     endLengthTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
+    fadeLengthExtTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
     loopTimesTextBox = new wxTextCtrl{ tagTimingBox, wxID_ANY, "" };
     
     wxStaticBox* tagAudioChannelsBox = tagAudioChannelsSizer->GetStaticBox();
@@ -204,6 +208,8 @@ void MainWindow::CreateToolTips()
         "The length of each loop of the song (1/64000 of a second)");
     endLengthTextBox->SetToolTip(
         "The length of the song's ending in ticks (1/64000 of a second)");
+    fadeLengthExtTextBox->SetToolTip(
+        "The length of the song's fade out in ticks (1/64000 of a second)");
     loopTimesTextBox->SetToolTip(
         "The number of times the song loops before reaching the end");
 
@@ -240,6 +246,10 @@ void MainWindow::CreateFileListView()
         panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_REPORT 
     };
 
+    // Keep the list view horizontally shrinkable regardless of prior
+    // auto-sized column widths, preserving sizer proportions when shrinking.
+    fileListView->SetMinSize(wxSize{ 0, -1 });
+
     fileListView->AppendColumn("Filename");
     fileListView->Bind(wxEVT_LIST_ITEM_SELECTED, 
                        &MainWindow::OnSelectionChanged, this);
@@ -271,11 +281,18 @@ void MainWindow::CreateTagLayout()
     AddToSizer(fadeLengthLabel, fadeLengthTextBox, timingHorizontalSizer1);
     AddToSizer(introLengthLabel, introLengthTextBox, timingHorizontalSizer1);
     AddToSizer(loopLengthLabel, loopLengthTextBox, timingHorizontalSizer2);
-    AddToSizer(loopTimesLabel, loopTimesTextBox, timingHorizontalSizer2);
     AddToSizer(endLengthLabel, endLengthTextBox, timingHorizontalSizer2);
+    AddToSizer(fadeLengthExtLabel, fadeLengthExtTextBox, 
+               timingHorizontalSizer2);
+    AddToSizer(loopTimesLabel, loopTimesTextBox, timingHorizontalSizer3);
+
+    // Keep the third timing row aligned with the 3-field rows above.
+    timingHorizontalSizer3->AddStretchSpacer(growthProportion);
+    timingHorizontalSizer3->AddStretchSpacer(growthProportion);
+
     tagTimingSizer->Add(timingHorizontalSizer1, horizontalFlags);
     tagTimingSizer->Add(timingHorizontalSizer2, horizontalFlags);
-    
+    tagTimingSizer->Add(timingHorizontalSizer3, horizontalFlags);
     AddToSizer(defaultDisabledChannelsLabel, defaultDisabledChannelsTextBox, 
                outputHorizontalSizer);
     AddToSizer(mutedVoicesLabel, mutedVoicesTextBox, outputHorizontalSizer);
@@ -318,12 +335,14 @@ void MainWindow::CreatePanelLayout()
     rightColumnBottomSizer->Add(buttonSizer, rightColumnBottomFlags);
 
     rightColumnSizer->Add(rightColumnTopSizer, rightColumnFlags);
-    rightColumnFlags.Proportion(noGrowthProportion);
-    rightColumnSizer->Add(rightColumnBottomSizer, rightColumnFlags);
+    wxSizerFlags rightColumnFlagsMod = wxSizerFlags(rightColumnFlags);
+    rightColumnFlagsMod.Proportion(noGrowthProportion);
+    rightColumnSizer->Add(rightColumnBottomSizer, rightColumnFlagsMod);
 
     panelSizer->Add(leftColumnSizer, panelFlags);
-    panelFlags.Proportion(tripleGrowthProportion);
-    panelSizer->Add(rightColumnSizer, panelFlags);
+    wxSizerFlags panelFlagsMod = wxSizerFlags(panelFlags);
+    panelFlagsMod.Proportion(tripleGrowthProportion);
+    panelSizer->Add(rightColumnSizer, panelFlagsMod);
 
     panel->SetSizer(panelSizer);
 
@@ -386,6 +405,7 @@ void MainWindow::UpdateTagSection()
     std::vector<wxString> introLengthValues;
     std::vector<wxString> loopLengthValues;
     std::vector<wxString> endLengthValues;
+    std::vector<wxString> fadeLengthExtValues;
     std::vector<wxString> mutedVoicesValues;
     std::vector<wxString> loopTimesValues;
     std::vector<wxString> preampLevelValues;
@@ -420,11 +440,15 @@ void MainWindow::UpdateTagSection()
         ostTitleValues.push_back(GetValueOrPlaceholder(tag.OstTitle()));
         ostDiscValues.push_back(GetValueOrPlaceholder(tag.OstDisc()));
         ostTrackValues.push_back(GetValueOrPlaceholder(tag.OstTrack()));
-        publisherNameValues.push_back(GetValueOrPlaceholder(tag.PublisherName()));
-        copyrightYearValues.push_back(GetValueOrPlaceholder(tag.CopyrightYear()));
+        publisherNameValues.push_back(
+            GetValueOrPlaceholder(tag.PublisherName()));
+        copyrightYearValues.push_back(
+            GetValueOrPlaceholder(tag.CopyrightYear()));
         introLengthValues.push_back(GetValueOrPlaceholder(tag.IntroLength()));
         loopLengthValues.push_back(GetValueOrPlaceholder(tag.LoopLength()));
         endLengthValues.push_back(GetValueOrPlaceholder(tag.EndLength()));
+        fadeLengthExtValues.push_back(
+            GetValueOrPlaceholder(tag.FadeLengthExt()));
         mutedVoicesValues.push_back(GetValueOrPlaceholder(tag.MutedVoices()));
         loopTimesValues.push_back(GetValueOrPlaceholder(tag.LoopTimes()));
         preampLevelValues.push_back(GetValueOrPlaceholder(tag.PreampLevel()));
@@ -448,6 +472,7 @@ void MainWindow::UpdateTagSection()
     SetTextBox(introLengthTextBox, introLengthValues);
     SetTextBox(loopLengthTextBox, loopLengthValues);
     SetTextBox(endLengthTextBox, endLengthValues);
+    SetTextBox(fadeLengthExtTextBox, fadeLengthExtValues);
     SetTextBox(mutedVoicesTextBox, mutedVoicesValues);
     SetTextBox(loopTimesTextBox, loopTimesValues);
     SetTextBox(preampLevelTextBox, preampLevelValues);
@@ -519,6 +544,18 @@ void MainWindow::SetTextBox(wxTextCtrl* textBox,
     }
 }
 
+void MainWindow::RefreshFileListView()
+{
+    fileListView->DeleteAllItems();
+
+    for (size_t itemIndex = 0; itemIndex < files.size(); itemIndex++)
+    {
+        wxFileName fileName{ files.at(itemIndex)->Path() };
+        fileListView->InsertItem(static_cast<long>(itemIndex),
+                                 fileName.GetFullName());
+    }
+}
+
 void MainWindow::TrySetTagField(
     Spc::Id666::Tag& tag,
     wxTextCtrl* textBox,
@@ -577,9 +614,6 @@ void MainWindow::OnOpen(wxCommandEvent& event)
     }
 
     files.clear();
-    int itemIndex{ 0 };
-    fileListView->DeleteAllItems();
-
     wxArrayString filePaths;
     dialog.GetPaths(filePaths);
 
@@ -588,15 +622,9 @@ void MainWindow::OnOpen(wxCommandEvent& event)
         auto file = std::make_shared<Spc::File>(path.ToStdString());
         file->Load();
         files.push_back(file);
-
-        // Extract the file name from the path.
-        wxFileName fileName{ path };
-        wxString nameOnly = fileName.GetFullName();
-
-        // Insert the file name into the fileListView.
-        fileListView->InsertItem(itemIndex, nameOnly);
-        itemIndex++;
     }
+
+    RefreshFileListView();
 
     if (!files.empty())
     {
@@ -711,6 +739,12 @@ void MainWindow::OnSave(wxCommandEvent& event)
             {
                 targetTag.SetEndLength(value);
             });
+        TrySetTagField(tag, fadeLengthExtTextBox, 
+                      "Fade Length (ticks)", filePath,
+            [](Spc::Id666::Tag& targetTag, const std::string& value)
+            {
+                targetTag.SetFadeLengthExt(value);
+            });
         TrySetTagField(tag, mutedVoicesTextBox, "Muted Voices", filePath,
             [](Spc::Id666::Tag& targetTag, const std::string& value)
             {
@@ -760,12 +794,7 @@ void MainWindow::OnTagToFileName(wxCommandEvent& event)
 
     if (dialog.ShowModal() == wxID_OK)
     {
-        fileListView->DeleteAllItems();
-
-        for (std::shared_ptr<Spc::File> file : files)
-        {
-            fileListView->InsertItem(0, file->Path());
-        }
+        RefreshFileListView();
     }
 }
 
@@ -803,9 +832,10 @@ void MainWindow::OnProperties(wxCommandEvent& event)
 
 void MainWindow::OnFileListViewResize(wxSizeEvent& event)
 {
-    // Ensure the file list view column fills the entire width.
-    int listViewWidth = fileListView->GetSize().GetWidth();
-    fileListView->SetColumnWidth(0, listViewWidth);
+    // Use the new size from the event to avoid stale dimensions while resizing.
+    int columnWidth = event.GetSize().GetWidth();
+    columnWidth = columnWidth > 0 ? columnWidth : 0;
+    fileListView->SetColumnWidth(0, columnWidth);
 
     // Call Skip() to allow the control to process the event properly.
     event.Skip();

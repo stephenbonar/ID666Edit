@@ -59,9 +59,9 @@ IncrementTrackWindow::IncrementTrackWindow(
 
 void IncrementTrackWindow::OnOk(wxCommandEvent& event)
 {
-    long increment;
+    long amount;
 
-    if (!startTrackTextCtrl->GetValue().ToLong(&increment) || increment <= 0)
+    if (!startTrackTextCtrl->GetValue().ToLong(&amount) || amount <= 0)
     {
         wxMessageBox("Please enter a valid positive integer", "Invalid Input",
                      wxOK | wxICON_ERROR);
@@ -71,8 +71,8 @@ void IncrementTrackWindow::OnOk(wxCommandEvent& event)
     for (size_t i = 0; i < selectedFiles.size(); ++i)
     {
         Spc::Id666::Tag tag = selectedFiles[i]->Tag();
-        increment += tag.OstTrack().ToInt32();
-        tag.SetOstTrack(std::to_string(increment));
+        int32_t trackNumber = tag.OstTrack().ToInt32();
+        tag.SetOstTrack(std::to_string(trackNumber + amount));
         selectedFiles[i]->SetTag(tag);
         selectedFiles[i]->Save();
     }
