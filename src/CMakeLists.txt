@@ -20,6 +20,30 @@ configure_file(${PROJECT_SOURCE_DIR}/include/Version.h.in
                ${CMAKE_BINARY_DIR}/Version.h
                @ONLY)
 
+if(UNIX AND NOT APPLE)
+    include(GNUInstallDirs)
+    
+    option(BUILD_APPIMAGE "Build an AppImage bundle for Linux" ON)
+    set(APPIMAGE_OUTPUT_DIR
+        "${CMAKE_BINARY_DIR}/appimage"
+        CACHE PATH
+        "Output directory for generated AppImage files")
+    set(LINUXDEPLOY_EXECUTABLE
+        ""
+        CACHE FILEPATH
+        "Path to linuxdeploy executable or linuxdeploy AppImage")
+    set(LINUXDEPLOY_GTK_PLUGIN
+        ""
+        CACHE FILEPATH
+        "Path to linuxdeploy GTK plugin script")
+
+    set(APPIMAGE_ARCH "${CMAKE_SYSTEM_PROCESSOR}")
+    string(TOLOWER "${APPIMAGE_ARCH}" APPIMAGE_ARCH)
+    if(APPIMAGE_ARCH STREQUAL "amd64")
+        set(APPIMAGE_ARCH "x86_64")
+    endif()
+endif()
+
 set(INCLUDES 
     ${PROJECT_SOURCE_DIR}/include
     ${CMAKE_BINARY_DIR})
@@ -114,6 +138,97 @@ if(BUILD_GUI)
     # Link the GUI application against the wxWidgets libraries and the 
     # LibCppSpc libraries so it can use those APIs.
     target_link_libraries(ID666Edit wx::net wx::core wx::base LibCppSpc)
+
+    if(UNIX AND NOT APPLE)
+        set(LINUX_APP_ID "com.stephenbonar.id666edit")
+        set(LINUX_ICON_SOURCES
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 16x16.png"
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 20x20.png"
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 24x24.png"
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 32x32.png"
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 40x40.png"
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 48x48.png"
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 64x64.png")
+
+        # Keep executable basename lowercase so desktop environments can match
+        # app id and desktop entry/icon names consistently.
+        set_target_properties(ID666Edit PROPERTIES OUTPUT_NAME id666edit)
+
+        set(LINUX_RUNTIME_ICON_SOURCE
+            "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 64x64.png")
+
+        # Copy a runtime icon next to the executable so Linux can set the
+        # window icon even when running directly from the build tree.
+        add_custom_command(TARGET ID666Edit POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "${LINUX_RUNTIME_ICON_SOURCE}"
+                    "$<TARGET_FILE_DIR:ID666Edit>/id666edit.png"
+            VERBATIM
+        )
+
+        add_custom_command(TARGET ID666Edit POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E rm -f "$<TARGET_FILE_DIR:ID666Edit>/ID666Edit"
+            COMMAND ${CMAKE_COMMAND} -E create_symlink
+                "id666edit"
+                "$<TARGET_FILE_DIR:ID666Edit>/ID666Edit"
+            VERBATIM
+        )
+
+        configure_file(
+            ${PROJECT_SOURCE_DIR}/resources/linux/id666edit.desktop.in
+            ${CMAKE_CURRENT_BINARY_DIR}/${LINUX_APP_ID}.desktop
+            @ONLY
+        )
+
+        install(TARGETS ID666Edit
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+
+        foreach(icon_size IN ITEMS 16 20 24 32 40 48 64)
+            install(FILES
+                "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon ${icon_size}x${icon_size}.png"
+                DESTINATION
+                "${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${icon_size}x${icon_size}/apps"
+                RENAME id666edit.png
+            )
+        endforeach()
+
+        install(FILES
+                "${PROJECT_SOURCE_DIR}/resources/icons/ID666Edit Icon 64x64.png"
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps
+                RENAME id666edit.png)
+
+        install(FILES
+            ${CMAKE_CURRENT_BINARY_DIR}/${LINUX_APP_ID}.desktop
+                DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications)
+
+        set(APPIMAGE_OUTPUT_FILE
+            "${APPIMAGE_OUTPUT_DIR}/id666edit-${APPIMAGE_ARCH}.AppImage")
+
+        add_custom_command(
+            OUTPUT ${APPIMAGE_OUTPUT_FILE}
+            COMMAND ${CMAKE_COMMAND}
+                -DAPP_ID=${LINUX_APP_ID}
+                -DAPP_NAME=id666edit
+                -DAPP_EXECUTABLE=$<TARGET_FILE:ID666Edit>
+                -DDESKTOP_FILE=${CMAKE_CURRENT_BINARY_DIR}/${LINUX_APP_ID}.desktop
+                -DICONS_SOURCE_DIR=${PROJECT_SOURCE_DIR}/resources/icons
+                -DAPPDIR_ROOT=${CMAKE_BINARY_DIR}/AppDir
+                -DAPPIMAGE_OUTPUT_DIR=${APPIMAGE_OUTPUT_DIR}
+                -DLINUXDEPLOY_EXECUTABLE=${LINUXDEPLOY_EXECUTABLE}
+                -DLINUXDEPLOY_GTK_PLUGIN=${LINUXDEPLOY_GTK_PLUGIN}
+                -P ${PROJECT_SOURCE_DIR}/cmake/GenerateLinuxAppImage.cmake
+            DEPENDS
+                ID666Edit
+                ${CMAKE_CURRENT_BINARY_DIR}/${LINUX_APP_ID}.desktop
+                ${PROJECT_SOURCE_DIR}/cmake/GenerateLinuxAppImage.cmake
+                ${LINUX_ICON_SOURCES}
+            COMMENT "Building Linux AppImage bundle"
+            VERBATIM
+        )
+
+        add_custom_target(appimage ALL
+            DEPENDS ${APPIMAGE_OUTPUT_FILE})
+    endif()
 
     # Configure the macOS bundle with the proper icon and metadata if we are
     # building on macOS.

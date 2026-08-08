@@ -15,6 +15,11 @@
 // limitations under the License.
 
 #include "MainWindow.h"
+
+#if defined(__linux__)
+#include <wx/filefn.h>
+#include <wx/stdpaths.h>
+#endif
  
 MainWindow::MainWindow(wxString version) : 
     wxFrame(nullptr, wxID_ANY, version), version{ version }
@@ -23,6 +28,17 @@ MainWindow::MainWindow(wxString version) :
     // On Windows, we need to set the application icon at runtime from the
     // resource file compiled into the application.
     SetIcon(wxICON(IDI_MAIN));
+#elif defined(__linux__)
+    // On Linux, load the icon copied next to the executable by CMake.
+    wxFileName executablePath{ wxStandardPaths::Get().GetExecutablePath() };
+    wxString iconPath = executablePath.GetPathWithSep() + "id666edit.png";
+    wxIconBundle icons;
+    
+    if (wxFileExists(iconPath))
+    {
+        icons.AddIcon(iconPath, wxBITMAP_TYPE_ANY);
+        SetIcons(icons);
+    }
 #endif
 
     panel = new wxPanel(this);

@@ -19,6 +19,14 @@
 
 bool ID666Edit::OnInit()
 {
+#if defined(__linux__)
+    // Keep Linux desktop integration stable by using a consistent app id.
+    SetAppName("id666edit");
+    SetClassName("com.stephenbonar.id666edit");
+    SetAppDisplayName("ID666Edit");
+    wxInitAllImageHandlers();
+#endif
+
     wxString versionString = wxString::Format("%s v%s %s",
                                               PROGRAM_NAME, 
                                               PROGRAM_VERSION, 

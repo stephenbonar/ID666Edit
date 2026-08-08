@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ID666Edit
+Comment=ID666 metadata tag editor for SPC files
+Exec=id666edit
+Icon=id666edit
+Terminal=false
+Categories=AudioVideo;Audio;Utility;
+StartupWMClass=@LINUX_APP_ID@
+StartupNotify=true
