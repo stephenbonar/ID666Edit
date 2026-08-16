@@ -33,7 +33,7 @@ IncrementTrackWindow::IncrementTrackWindow(
     wxString text;
     text << "Increment the track numbers by the specified amount.\n"
          << "For instance, if you enter 2, each track number will be\n"
-         << "increased by 2.\n";
+         << "increased by 2. Use negative values to decrement.\n";
 
     wxStaticText* instructionText = new wxStaticText(this, wxID_ANY, text);
     startTrackTextCtrl = new wxTextCtrl(this, wxID_ANY);
@@ -61,12 +61,21 @@ void IncrementTrackWindow::OnOk(wxCommandEvent& event)
 {
     long amount;
 
+    if (!startTrackTextCtrl->GetValue().ToLong(&amount))
+    {
+        wxMessageBox("Please enter a valid integer", PROGRAM_NAME,
+                     wxOK | wxICON_ERROR);
+        return;
+    }
+
+    /*
     if (!startTrackTextCtrl->GetValue().ToLong(&amount) || amount <= 0)
     {
         wxMessageBox("Please enter a valid positive integer", "Invalid Input",
                      wxOK | wxICON_ERROR);
         return;
     }
+    */
 
     for (size_t i = 0; i < selectedFiles.size(); ++i)
     {

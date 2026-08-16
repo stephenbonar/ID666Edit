@@ -22,6 +22,7 @@
 #include <wx/wx.h>
 #include <LibCppSpc.h>
 #include "Common.h"
+#include "Version.h"
 
 /// @brief A dialog for converting tag values to file names.
 class TagToFileNameWindow : public wxDialog

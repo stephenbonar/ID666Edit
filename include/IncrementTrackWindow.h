@@ -22,6 +22,7 @@
 #include <wx/wx.h>
 #include <LibCppSpc.h>
 #include "Common.h"
+#include "Version.h"
 
 /// @brief A dialog window for incrementing the track number in ID666 tag data.
 class IncrementTrackWindow : public wxDialog

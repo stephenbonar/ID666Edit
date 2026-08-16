@@ -67,10 +67,33 @@ void TagToFileNameWindow::OnOk(wxCommandEvent& event)
 {
     wxString pattern = patternTextCtrl->GetValue();
 
+    int successCount{ 0 };
+
     for (std::shared_ptr<Spc::File> file : selectedFiles)
     {
-        file->TagToFileName(pattern.ToStdString());
-        file->Save();
+        if (file->TagToFileName(pattern.ToStdString()))
+        {
+            file->Save();
+
+            if (std::filesystem::exists(file->Path()))
+            {
+                ++successCount;
+            }
+        }
+    }
+
+    if (successCount == selectedFiles.size())
+    {
+        wxMessageBox("Newly renamed files created successfully.", 
+                     PROGRAM_NAME, wxOK | wxICON_INFORMATION);
+    }
+    else
+    {
+        wxString text;
+        text << "Failed to create some newly renamed files. Ensure the pattern"
+             << " is valid and that\nthe resulting filenames will not contain"
+             << " illegal characters on your platform.";
+        wxMessageBox(text, PROGRAM_NAME, wxOK | wxICON_ERROR);
     }
 
     EndModal(wxID_OK);
