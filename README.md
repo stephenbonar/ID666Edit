@@ -26,7 +26,7 @@ support for multiple CPU architectures.
 
 Documentation on how to get started using the program can be found here:
 
-[Getting Started](docs/getting-started.md)
+[Getting Started](docs/index.md)
 
 ## Downloading
 
