@@ -22,6 +22,12 @@ support for multiple CPU architectures.
 - Supports incrementing OST track numbers
 - Command line version supports printing, editing, and filtering on specific fields across multiple files at the same time.
 
+## Getting Started
+
+Documentation on how to get started using the program can be found here:
+
+[Getting Started](docs/getting-started.md)
+
 ## Downloading
 
 You can download pre-compiled binaries for most major platforms and CPU 

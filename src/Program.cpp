@@ -589,8 +589,18 @@ int Program::ProcessSpcFile(const std::string& path)
     }
     else if (tagToFileNameOption->IsSpecified())
     {
-        file.TagToFileName(tagToFileNameOption->Values()[0]);
-        return result;
+        if (file.TagToFileName(tagToFileNameOption->Values()[0]))
+        {
+            return exitStatusSuccess;
+        }
+        else
+        {
+            std::cerr << "Failed to create some newly renamed files. "
+                      << "Ensure the pattern is valid and that" << std::endl
+                      << "the resulting filenames will not contain"
+                      << " illegal characters on your platform.";
+            return exitStatusFailure;
+        }
     }
     else if (incrementOption->IsSpecified())
     {

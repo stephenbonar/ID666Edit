@@ -19,7 +19,7 @@
 IncrementTrackWindow::IncrementTrackWindow(
     wxWindow* parent, 
     std::vector<std::shared_ptr<Spc::File>>& selectedFiles) 
-        : wxDialog(parent, wxID_ANY, "Increment Tr ack Numbers", 
+        : wxDialog(parent, wxID_ANY, "Increment Track Numbers", 
                    wxDefaultPosition, wxSize(300, 150)),
           selectedFiles(selectedFiles)
 {
