@@ -24,7 +24,8 @@ enum WidgetID
     FileNameToTag = 3,
     TagToFileName = 4,
     IncrementTrack = 5,
-    Properties = 6
+    Properties = 6,
+    Documentation = 7
 };
 
 #endif

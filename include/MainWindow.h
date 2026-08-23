@@ -227,6 +227,10 @@ private:
     /// @param event The event object.
     void OnProperties(wxCommandEvent& event);
 
+    /// @brief Event handler for when the documentation menu item is clicked.
+    /// @param event The event object.
+    void OnDocumentation(wxCommandEvent& event);
+
     /// @brief Event handler for when the file list view is resized.
     /// @param event The event object.
     void OnFileListViewResize(wxSizeEvent& event);

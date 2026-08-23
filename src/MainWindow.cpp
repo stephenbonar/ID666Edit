@@ -82,6 +82,9 @@ void MainWindow::CreateMenuBar()
               "Show properties of the selected files");
 
     helpMenu = new wxMenu;
+    helpMenu->Append(WidgetID::Documentation, "Documentation...", 
+                     "View the online documentation in your system browser");
+    helpMenu->AppendSeparator();
     helpMenu->Append(wxID_ABOUT, "&About\tF1", 
                      "Show information about the application");
 
@@ -381,6 +384,8 @@ void MainWindow::BindEvents()
          WidgetID::IncrementTrack);
     Bind(wxEVT_MENU, &MainWindow::OnProperties, this, 
          WidgetID::Properties);
+    Bind(wxEVT_MENU, &MainWindow::OnDocumentation, 
+         this, WidgetID::Documentation);
     fileListView->Bind(wxEVT_SIZE, &MainWindow::OnFileListViewResize, this);
 }
 
@@ -844,6 +849,11 @@ void MainWindow::OnProperties(wxCommandEvent& event)
 {
     PropertiesDialog dialog{ this, selectedFiles };
     dialog.ShowModal();
+}
+
+void MainWindow::OnDocumentation(wxCommandEvent& event)
+{
+    wxLaunchDefaultBrowser("https://github.com/stephenbonar/ID666Edit/blob/main/docs/index.md");
 }
 
 void MainWindow::OnFileListViewResize(wxSizeEvent& event)
